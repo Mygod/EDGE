@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<achievements>
+  <!-- Milestone Achievements -->
+  <achievement id="FinishedLevelsStep1" picture="Millimeter" title="Millimeter" points="6"
+               description="Complete 12 normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="FinishedLevelsStep2" picture="Centimeter" title="Centimeter" points="9"
+               description="Complete 24 normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="FinishedLevelsStep3" picture="Decimeter" title="Decimeter" points="10"
+               description="Complete 36 normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="FinishedNormalLevels" picture="Meter" title="Meter"
+			         description="Complete 45 normal levels" help="http://www.tudou.com/playlist/id/15540683/" points="10" />
+  <achievement id="FinishedAllOriginalLevels" picture="Kilometer" title="Kilometer" points="15"
+               description="Complete all normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="FinishedBonusLevels" picture="Decameter" title="Decameter" points="15"
+               description="Complete all bonus levels" help="http://www.tudou.com/playlist/id/15540690/" />
+  <achievement id="FinishedExtendedLevels" picture="Hectometer" title="Hectometer" points="15"
+               description="Complete all extended levels" disabled="true" help="http://www.tudou.com/playlist/id/15540688/" />
+  <achievement id="AllPrisms" picture="Rainbow" title="Rainbow" points="25"
+               description="Collect all prisms in the normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="AllPrismsOriginalLevels" picture="Double Rainbow" title="Double Rainbow" points="25"
+               description="Collect all prisms in the game" help="http://www.tudou.com/home/playlist_u112031677p1.html" />
+
+  <!-- Edge Time Achievements -->
+  <achievement id="EdgeTimeShortSmall" picture="Microsecond" title="Microsecond" points="15"
+               description="Get 10 seconds of EDGE time as a mini cube"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/DPgK0xaWma8.html" />
+  <achievement id="EdgeTimeShort" picture="Second" title="Second"
+               description="Get 10 seconds of EDGE time" help="http://www.tudou.com/listplay/Y_giS1VJoBU/rToZjgN5QpU.html" points="8" />
+  <achievement id="EdgeTimeMedium" picture="Minute" title="Minute"
+			         description="Get 30 seconds of EDGE time" help="http://www.tudou.com/listplay/Y_giS1VJoBU/rToZjgN5QpU.html" points="10" />
+  <achievement id="EdgeTimeLong" picture="Hour" title="Hour" description="Get 60 seconds of EDGE time"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/rToZjgN5QpU.html" points="15" />
+  <achievement id="EdgeTimeMovingPlatform" picture="Hitchhike" title="Hitchhike" points="25"
+               description="Get 30 seconds of EDGE time on a moving platform"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/rToZjgN5QpU.html" />
+  <achievement id="EdgeTimeOnBumper" picture="Daredevil" title="Daredevil" points="15"
+               description="Get more than 0.5 seconds of EDGE time on the active side of a bumper"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/yrWDTzIWiPg.html" />
+  <achievement id="EdgeTimeOnFloor" picture="Balance" title="Balance" points="25"
+               description="Balance on the floor for at least 5 seconds"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/YtqcqhG3UZU.html" />
+  <achievement id="EdgeTimeBackpack" picture="Backpack" title="Backpack" points="25"
+               description="Get at least 8 seconds of EDGE time on the human figure in &quot;edge time&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/qBi7Qs7urI0.html" />
+  <achievement id="EdgeTimeDroppedByPlatform" picture="Dropoff" title="Dropoff" points="8"
+               description="Get dropped off by a platform and continue hanging on the wall"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/q5uI8HfBsHI.html" />
+  <achievement id="EdgeTimeGrabbedByPlatform" picture="Pickup" title="Pickup" points="8"
+               description="Get picked up by a platform while hanging on an edge"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/kOFns_5fWEU.html" />
+  <achievement id="EdgeTimeRoundtripByPlatform" picture="Roundtrip" title="Roundtrip" points="10"
+               description="Get picked up by a platform and then dropped off by a platform"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/oVJyDyQQX5A.html" />
+  <achievement id="EdgeTimeOnAllClimbs" picture="Edgaholic" title="Edgaholic" points="15"
+               description="Finish a level by getting EDGE time on every edge climbed"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/Y9mOVws2P20.html" />
+
+  <!-- Skill Achievements -->
+  <achievement id="Fall" picture="Long Fall" title="Long Fall"
+			         description="Fall more than 16 meters and survive" help="http://www.tudou.com/listplay/Y_giS1VJoBU/n3UvG-DnpAg.html"
+			         points="8" />
+  <achievement id="CubeCrushed" picture="Compact" title="Compact" description="Get crushed 10 times"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/KFBw3rZCPAs.html" points="9" />
+  <achievement id="Winter" picture="Snowblind" title="Snowblind" points="8"
+               description="Find the six hidden switches in the snow-covered levels in December" disabled="true"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/YY6JVTMqFNo.html" />
+  <achievement id="FinishedLevelWithNoPrisms" picture="Colorblind" title="Colorblind" points="15"
+               description="Finish a level without collecting any prisms"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/VQFFFI8K3CI.html" />
+  <achievement id="FinishedLevelWithSmallCube" picture="Pinhole" title="Pinhole" points="15"
+               description="Finish a level in mini form" help="http://www.tudou.com/listplay/Y_giS1VJoBU/UyVORDpxj2A.html" />
+  <achievement id="AllLevelsARank" picture="A-list" title="A-list" points="25"
+               description="Get an A rank on all normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+  <achievement id="AllLevelsSPlusRank" picture="Stardom" title="Stardom" points="25"
+               description="Get an S+ rank on all normal levels" help="http://www.tudou.com/playlist/id/15540683/" />
+
+
+  <!-- Button Achievements (sort by achievement ID)-->
+  <achievement id="id_Invader" picture="Invader" title="Invader" points="25"
+               description="Get on top of an invader" help="http://www.tudou.com/listplay/Y_giS1VJoBU/-3vnOX3-RUI.html" />
+  <achievement id="id_EnemyOfMyEnemy" picture="An enemy of my enemy" title="An enemy of my enemy" points="25"
+               description="Cross the block-enemy section in &quot;cube invaders&quot; without activating any of the three bridges"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/MBzcKf4eOXo.html" />
+  <achievement id="id_Subway" picture="Subway" title="Subway" points="25"
+               description="Ride the complete subway track" help="http://www.tudou.com/listplay/Y_giS1VJoBU/0RBXT4qDzvA.html" />
+  <achievement id="id_QuickResponse" picture="Quick response" title="Quick response" points="10"
+               description="Find the QR code" help="http://www.tudou.com/listplay/Y_giS1VJoBU/hkpwW9s4ts8.html" />
+  <achievement id="id_TumblingTravels" picture="Tumbling travels" title="Tumbling travels" points="25"
+               description="Grab the prism after the wall sequence in &quot;higher&quot; as mini cube"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/rVWSFerNbrY.html" />
+  <achievement id="id_PerfectLanding" picture="Perfect landing" title="Perfect landing" points="10"
+               description="Fall directly on the exit square in &quot;star castle&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/scACHtfEAUU.html" />
+  <achievement id="id_Jumper" picture="Jumper" title="Jumper" points="15"
+               description="Jump on top of a car in &quot;peripherique&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/0djNhBfuIgA.html" />
+  <achievement id="id_TurnstileJumper" picture="Turnstile jumper" title="Turnstile jumper" points="15"
+               description="Evade the subway fare" help="http://www.tudou.com/listplay/Y_giS1VJoBU/Xx4G_RLmNqI.html" />
+  <achievement id="id_Chicken" picture="Chicken" title="Chicken" points="25"
+               description="Find Toki Tori" help="http://www.tudou.com/listplay/Y_giS1VJoBU/q6aLyRg3LWk.html" />
+  <achievement id="id_NailedIt" picture="Nailed it" title="Nailed it" points="25"
+               description="Get to the exit of &quot;hammer&quot; fast"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/b_-q5bpVHr0.html" />
+  <achievement id="id_Monkey" picture="Monkey" title="Monkey" points="25"
+               description="Unleash the nibbling totem monkey head in &quot;babylonian&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/YgLPeP4rdZI.html" />
+  <achievement id="id_MythicalBird" picture="Mythical bird" title="Mythical bird" points="25"
+               description="Summon the mythical bird in &quot;mystic&quot;"
+               help="http://www.tudou.com/listplay/NIPTWBQ1PCY/3jW56zL5Xhs.html" />
+  <achievement id="id_Shuffle" picture="Shuffled" title="Shuffled" points="15"
+               description="Get shuffled in &quot;magic&quot;" help="http://www.tudou.com/listplay/NIPTWBQ1PCY/14kH5K6w8sU.html" />
+  <achievement id="id_Stubborn" picture="Stubborn" title="Stubborn" points="25"
+               description="Press the first nine switches in &quot;don't click!&quot; and finish the level"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/7TOYER0unAs.html" />
+  <achievement id="id_HardWired" picture="Hard wired" title="Hard wired" points="25"
+               description="Don't skip any of the moving wires in &quot;wire&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/rqShXs-KGJA.html" />
+  <achievement id="id_Hitchup" picture="Hitchup" title="Hitchup" points="25"
+               description="Escape the clutch of the elevator in &quot;star dust&quot; and get across"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/zAj1JQgROng.html" />
+  <achievement id="id_Minimalist" picture="Minimalist" title="Minimalist" points="25"
+               description="Use only one of the nine switches at the end of &quot;click&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/TsNOI9c9P-k.html" />
+  <achievement id="id_Flag" picture="Flag" title="Flag" points="25"
+               description="Climb the flag in &quot;highest flag&quot;"
+               help="http://www.tudou.com/listplay/Y_giS1VJoBU/StIXeczkjjM.html" />
+  <achievement id="id_LeapOfFaith" picture="Leap of faith" title="Leap of faith" points="15"
+               description="Take a leap of faith" help="http://www.tudou.com/listplay/NIPTWBQ1PCY/Ae-GtfV6LP0.html" />
+</achievements>
