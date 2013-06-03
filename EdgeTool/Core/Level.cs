@@ -753,6 +753,11 @@ namespace Mygod.Edge.Tool
                 || !short.TryParse(numbers[2].Trim(), out z)) throw new FormatException("无法识别的坐标！");
             return new Point3D16(x, y, z);
         }
+
+        public static Point3D16 operator +(Point3D16 a, Point3D16 b)
+        {
+            return new Point3D16((short) (a.X + b.X), (short) (a.Y + b.Y), (short) (a.Z + b.Z));
+        }
     }
 
     public struct Size2D
@@ -804,8 +809,7 @@ namespace Mygod.Edge.Tool
             ushort width, length;
             byte height;
             if (numbers.Length != 3 || !ushort.TryParse(numbers[0].Trim(), out width) || !ushort.TryParse(numbers[1].Trim(), out length)
-                || !byte.TryParse(numbers[2].Trim(), out height) || width == 0 || length == 0 || height == 0)
-                throw new FormatException("无法识别的关卡大小！");
+                || !byte.TryParse(numbers[2].Trim(), out height)) throw new FormatException("无法识别的关卡大小！");
             return new Size3D(height, width, length);
         }
 
@@ -998,12 +1002,28 @@ namespace Mygod.Edge.Tool
         {
             id = element.GetAttributeValue("ID");
             if (id != null) id = id.Trim();
-            element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", NullableBoolean.True);
-            element.GetAttributeValueWithDefault(out Looped, "Looped", NullableBoolean.True);
-            element.GetAttributeValueWithDefault(out Clones, "Clones", (short)-1);
-            if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
-            element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", true);
-            foreach (var e in element.ElementsCaseInsensitive("Waypoint")) Waypoints.Add(new Waypoint(e));
+            var relatedTo = element.GetAttributeValue("RelatedTo");
+            if (string.IsNullOrEmpty(relatedTo))
+            {
+                element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", NullableBoolean.True);
+                element.GetAttributeValueWithDefault(out Looped, "Looped", NullableBoolean.True);
+                element.GetAttributeValueWithDefault(out Clones, "Clones", (short)-1);
+                if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
+                element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", true);
+                foreach (var e in element.ElementsCaseInsensitive("Waypoint")) Waypoints.Add(new Waypoint(e));
+            }
+            else
+            {
+                var relative = parent[relatedTo];
+                element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", relative.AutoStart);
+                element.GetAttributeValueWithDefault(out Looped, "Looped", relative.Looped);
+                element.GetAttributeValueWithDefault(out Clones, "Clones", relative.Clones);
+                if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
+                element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", relative.FullBlock);
+                var offset = element.GetAttributeValueWithDefault<Point3D16>("Offset");
+                foreach (var waypoint in relative.Waypoints) Waypoints.Add(new Waypoint
+                    { Position = waypoint.Position + offset, PauseTime = waypoint.PauseTime, TravelTime = waypoint.TravelTime });
+            }
         }
 
         private readonly MovingPlatforms parent;
@@ -1039,7 +1059,6 @@ namespace Mygod.Edge.Tool
         public string ID { get { if (!IDGenerated) id = parent.RequestID(); return id; } set { id = value; } }
         public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
     }
-
     public sealed class Waypoints : XElementObjectList<Waypoint>
     {
         public override void Write(BinaryWriter writer)
