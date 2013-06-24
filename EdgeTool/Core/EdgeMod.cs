@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -71,8 +72,10 @@ namespace Mygod.Edge.Tool
                             Xsl = extractor.ExtractString(i);
                             break;
                         default:
-                            if (fileName.StartsWith("mods/", StringComparison.Ordinal))
+                            if (fileName.StartsWith("mods/", true, CultureInfo.InvariantCulture))
                                 throw new FormatException("EdgeMod 不允许修改 mods 文件夹内的内容！");
+                            if (fileName.EndsWith(".bak", true, CultureInfo.InvariantCulture))
+                                throw new FormatException("EdgeMod 不允许有以 .bak 为扩展名的文件！");
                             break;
                     }
                     i++;
@@ -152,7 +155,7 @@ namespace Mygod.Edge.Tool
                                         || Math.Abs(fileInfo.LastWriteTime.Ticks - e.ArchiveFileInfo.LastWriteTime.Ticks)
                                         > new TimeSpan(0, 0, 1).Ticks)  // 快速检测
                                     {
-                                        CreateCopy(path);
+                                        CreateCopy(modifiedFiles, path);
                                         File.Delete(path);
                                         e.ExtractToFile = path;
                                     }
@@ -181,7 +184,7 @@ namespace Mygod.Edge.Tool
             {
                 if (Xsl == null) return;
                 var mappingPath = Path.Combine(parent.GameDirectory, "levels\\mapping.xml");
-                CreateCopy(mappingPath);
+                CreateCopy(modifiedFiles, mappingPath);
                 var transform = new XslCompiledTransform(true);
                 transform.Load(XmlReader.Create(new StringReader(Xsl)), new XsltSettings(true, true), new XmlUrlResolver());
                 var writer = new StringWriter();
@@ -197,9 +200,9 @@ namespace Mygod.Edge.Tool
             }
         }
 
-        private static void CreateCopy(string path)
+        private static void CreateCopy(HashSet<string> modifiedFiles, string path)
         {
-            if (!File.Exists(path)) return;
+            if (!File.Exists(path) || modifiedFiles.Contains(path)) return; // does not exists or new file overrided
             var bakPath = path + ".bak";
             if (!File.Exists(bakPath)) File.Move(path, path + ".bak");
         }
@@ -260,9 +263,8 @@ namespace Mygod.Edge.Tool
         public void RestoreCopy(string filePath)
         {
             string path = Path.Combine(GameDirectory, filePath), bakPath = path + ".bak";
-            if (!File.Exists(path) || !File.Exists(bakPath)) return;
-            File.Delete(path);
-            File.Move(bakPath, path);
+            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(bakPath)) File.Move(bakPath, path);
         }
         public void CleanUp()
         {
@@ -278,7 +280,11 @@ namespace Mygod.Edge.Tool
             var error = new StringBuilder();
             var conflicts = new Dictionary<string, EdgeMod>();
             var cancelled = false;
-            RestoreCopy("levels/mapping.xml");
+            if (oldModifiedFiles.Contains("levels/mapping.xml"))
+            {
+                oldModifiedFiles.Remove("levels/mapping.xml");
+                RestoreCopy("levels/mapping.xml");
+            }
             foreach (var group in Mods.Where(mod => mod.Enabled).GroupBy(mod => mod.Type).OrderByDescending(group => group.Key)
                                       .Select(group => group.ToList()))
             {

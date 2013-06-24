@@ -50,8 +50,8 @@ namespace LibTwoTribes
 
         public static AssetHash Parse(string value)
         {
-            return new AssetHash(uint.Parse(value.Substring(0, 4), NumberStyles.HexNumber),
-                                 uint.Parse(value.Substring(4, 4), NumberStyles.HexNumber));
+            return new AssetHash(uint.Parse(value.Substring(0, 8), NumberStyles.HexNumber),
+                                 uint.Parse(value.Substring(8, 8), NumberStyles.HexNumber));
         }
 
         public override string ToString()

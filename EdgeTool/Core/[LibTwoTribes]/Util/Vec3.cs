@@ -7,18 +7,13 @@ using System.Threading.Tasks;
 
 namespace LibTwoTribes.Util
 {
-    public class Vec3
+    public struct Vec3 : IEquatable<Vec3>
     {
         private float m_X, m_Y, m_Z;
 
         public float X { get { return m_X; } set { m_X = value; } }
         public float Y { get { return m_Y; } set { m_Y = value; } }
         public float Z { get { return m_Z; } set { m_Z = value; } }
-
-        public Vec3()
-            : this(0, 0, 0)
-        {
-        }
 
         public Vec3(float x, float y, float z)
         {
@@ -97,6 +92,21 @@ namespace LibTwoTribes.Util
                 a.Y / b,
                 a.Z / b
             );
+        }
+
+        public bool Equals(Vec3 other)
+        {
+            return Math.Abs(X - other.X) < 1e-4 && Math.Abs(Y - other.Y) < 1e-4 && Math.Abs(Z - other.Z) < 1e-4;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1},{2}", X, Y, Z);
+        }
+        public static Vec3 Parse(string value)
+        {
+            var numbers = value.Trim('(', ')').Split(',').Select(float.Parse).ToArray();
+            return new Vec3(numbers[0], numbers[1], numbers[2]);
         }
     }
 }

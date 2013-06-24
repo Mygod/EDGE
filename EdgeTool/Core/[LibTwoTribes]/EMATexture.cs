@@ -38,7 +38,7 @@ namespace LibTwoTribes
                 {
                     throw new Exception("IntArray2 must have a length of " + INT_ARRAY_2_LENGTH);
                 }
-                m_IntArray1 = value;
+                m_IntArray2 = value;
             }
         }
 

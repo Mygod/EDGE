@@ -29,8 +29,7 @@
                     <AccessText>你的_Edge游戏exe：</AccessText>
                 </StackPanel>
             </Label>
-            <m:AutoCompleteBox Grid.Column="1" Name="GamePath" x:FieldModifier="private" VerticalAlignment="Center"
-                               PreviewMouseLeftButtonUp="ShowDropdown" FilterMode="Contains" />
+            <ComboBox Grid.Column="1" Name="GamePath" x:FieldModifier="private" VerticalAlignment="Center" IsEditable="True" />
             <Button Grid.Column="3" Content="加载(_L)" VerticalAlignment="Center" Click="Load" IsDefault="True" />
             <Button Grid.Column="5" Content="运行游戏(_R)" VerticalAlignment="Center" Click="RunGame"
                     Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
@@ -47,9 +46,10 @@
                         要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
                         <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
                         <LineBreak />
-                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean 文件；textures 文件夹中的 .etx 文件；其对应的反编译产物。
+                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；其对应的反编译产物。
                     </TextBlock>
-                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1" />
+                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
+                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
                 </Grid>
             </TabItem>
             <TabItem Header="Mod 管理" AllowDrop="True" PreviewDragEnter="OnModDragEnter" PreviewDragOver="OnDragOver"

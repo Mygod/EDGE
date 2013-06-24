@@ -40,6 +40,10 @@ namespace LibTwoTribes
         public int Footer4 { get { return m_Footer4; } set { m_Footer4 = value; } }
         public int Footer5 { get { return m_Footer5; } set { m_Footer5 = value; } }
 
+        public EMA()
+        {
+        }
+
         private EMA(Stream stream)
         {
             _CreateFromStream(stream);

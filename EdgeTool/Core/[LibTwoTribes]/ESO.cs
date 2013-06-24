@@ -20,6 +20,10 @@ namespace LibTwoTribes
         public bool HasFooter { get { return m_HasFooter; } set { m_HasFooter = value; } }
         public ESOFooter Footer { get { return m_Footer; } set { m_Footer = value; } }
 
+        public ESO()
+        {
+        }
+
         private ESO(Stream stream)
         {
             _CreateFromStream(stream);

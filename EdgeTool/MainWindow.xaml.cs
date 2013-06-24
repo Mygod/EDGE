@@ -156,11 +156,6 @@ namespace Mygod.Edge.Tool
             DropTargetHelper.DragLeave(e.Data);
         }
 
-        private void ShowDropdown(object sender, MouseButtonEventArgs e)
-        {
-            GamePath.IsDropDownOpen = !GamePath.IsDropDownOpen;
-        }
-
         #endregion
 
         #region Browse levels
@@ -362,8 +357,20 @@ namespace Mygod.Edge.Tool
                                     Level.CreateFromDecompiled(inputPath).Compile(outputPath + ".bin");
                                     break;
                                 case "animation":
-                                    EanHelper.Parse(root, fileName)
+                                    AssetHelper.ParseEan(root, fileName)
                                         .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models", true) + ".ean"));
+                                    break;
+                                case "material":
+                                    var actualFileName = Path.GetFileNameWithoutExtension(fileName);
+                                    var ema = AssetHelper.ParseEma(root, actualFileName);
+                                    ema.Name = Path.GetExtension(fileName).Substring(1);
+                                    //ema.Save(Path.Combine(directory, AssetUtil.CRCFullName(actualFileName, "models", true) + ".ema"));
+                                    ema.Save(Path.Combine(directory, fileName + ".ema"));
+                                    Warning.WriteLine("对不起，当前不支持生成 .ema 文件的文件名，请手动重命名 .ema 文件。");
+                                    break;
+                                case "models":
+                                    AssetHelper.ParseEso(root, fileName).Save(Path.Combine(directory, fileName + ".eso"));
+                                    Warning.WriteLine("对不起，当前不支持生成 .eso 文件的文件名，请手动重命名 .eso 文件。");
                                     break;
                             }
                             break;
@@ -390,7 +397,19 @@ namespace Mygod.Edge.Tool
                         case ".ean":
                             var ean = EAN.FromFile(file);
                             File.WriteAllText(Path.Combine(directory, ean.AssetHeader.Name + ".xml"), 
-                                              EanHelper.GetEanElement(ean).GetString());
+                                              AssetHelper.GetEanElement(ean).GetString());
+                            break;
+                        case ".ema":
+                        {
+                            var ema = EMA.FromFile(file);
+                            File.WriteAllText(Path.Combine(directory, ema.AssetHeader.Name + '.' + ema.Name + ".xml"),
+                                              AssetHelper.GetEmaElement(ema).GetString());
+                            break;
+                        }
+                        case ".eso":
+                            var eso = ESO.FromFile(file);
+                            File.WriteAllText(Path.Combine(directory, eso.AssetHeader.Name + ".xml"),
+                                              AssetHelper.GetEsoElement(eso).GetString());
                             break;
                         default:
                             throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");

@@ -44,6 +44,9 @@ namespace LibTwoTribes
         public Vec3 BoundingMin { get { return m_BoundingMin; } set { m_BoundingMin = value; } }
         public Vec3 BoundingMax { get { return m_BoundingMax; } set { m_BoundingMax = value; } }
 
+        public ESOHeader()
+        {
+        }
         private ESOHeader(Stream stream)
         {
             using (TTBinaryReader br = new TTBinaryReader(stream))

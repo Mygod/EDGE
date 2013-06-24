@@ -119,7 +119,7 @@ struct camera_trigger {
                 short duration;
                 short value;
                 bool single_use;
-                bool value_is_zoom;      // value is field of view if false
+                bool value_is_fov;      // value is field of view or angle
         // endif
 };
 
@@ -161,7 +161,7 @@ struct block_event {
 
 struct button {
         bool? visible;
-        bool? enabled;
+        char press_count;
         char mode;
                 // mode == 0: reverses the event when the button is released
                 // mode == 1: event is permanent, button stays up when released

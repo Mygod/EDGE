@@ -7,17 +7,12 @@ using System.Threading.Tasks;
 
 namespace LibTwoTribes.Util
 {
-    public class Vec2
+    public struct Vec2 : IEquatable<Vec2>
     {
         private float m_X, m_Y;
 
         public float X { get { return m_X; } set { m_X = value; } }
         public float Y { get { return m_Y; } set { m_Y = value; } }
-
-        public Vec2()
-            : this(0, 0)
-        {
-        }
 
         public Vec2(float x, float y)
         {
@@ -88,6 +83,21 @@ namespace LibTwoTribes.Util
                 a.X / b,
                 a.Y / b
             );
+        }
+
+        public bool Equals(Vec2 other)
+        {
+            return Math.Abs(X - other.X) < 1e-4 && Math.Abs(Y - other.Y) < 1e-4;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", X, Y);
+        }
+        public static Vec2 Parse(string value)
+        {
+            var numbers = value.Trim('(', ')').Split(',').Select(float.Parse).ToArray();
+            return new Vec2(numbers[0], numbers[1]);
         }
     }
 }

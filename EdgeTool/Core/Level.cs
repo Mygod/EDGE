@@ -393,7 +393,7 @@ namespace Mygod.Edge.Tool
                         break;
                     case "resizergrow":
                     case "resizershrink":
-                        Resizers.Add(new Resizer(e));
+                        Resizers.Add(new Resizer(this, e));
                         break;
                     case "miniblock":
                         MiniBlocks.Add(new MiniBlock(e));
@@ -747,16 +747,21 @@ namespace Mygod.Edge.Tool
 
         public static Point3D16 Parse(string str)
         {
-            var numbers = str.Trim('(', ')').Split(',');
-            short x, y, z;
-            if (numbers.Length != 3 || !short.TryParse(numbers[0].Trim(), out x) || !short.TryParse(numbers[1].Trim(), out y)
-                || !short.TryParse(numbers[2].Trim(), out z)) throw new FormatException("无法识别的坐标！");
-            return new Point3D16(x, y, z);
+            var numbers = str.Trim('(', ')').Split(',').Select(short.Parse).ToArray();
+            return new Point3D16(numbers[0], numbers[1], numbers[2]);
         }
 
         public static Point3D16 operator +(Point3D16 a, Point3D16 b)
         {
             return new Point3D16((short) (a.X + b.X), (short) (a.Y + b.Y), (short) (a.Z + b.Z));
+        }
+        public static Point3D16 operator -(Point3D16 a, Point3D16 b)
+        {
+            return a + -b;
+        }
+        public static Point3D16 operator -(Point3D16 value)
+        {
+            return new Point3D16((short)-value.X, (short)-value.Y, (short)-value.Z);
         }
     }
 
@@ -1228,6 +1233,7 @@ namespace Mygod.Edge.Tool
         public FallingPlatform(BinaryReader reader)
         {
             Position = new Point3D16(reader);
+            if (Position.Z <= 0) Warning.WriteLine("FallingPlatform/@Position 的 Z 坐标小于等于 0！在破解版游戏中运行该关会导致崩溃。");
             FloatTime = reader.ReadUInt16();
         }
         public FallingPlatform(XElement element)
@@ -1307,9 +1313,9 @@ namespace Mygod.Edge.Tool
             Reset = reader.ReadBoolean();
             StartDelay = reader.ReadUInt16();
             Duration = reader.ReadUInt16();
-            Value = reader.ReadUInt16();
+            Value = reader.ReadInt16();
             SingleUse = reader.ReadBoolean();
-            ValueIsZoom = reader.ReadBoolean();
+            ValueIsFieldOfView = reader.ReadBoolean();
         }
         public CameraTrigger(XElement element)
         {
@@ -1324,16 +1330,16 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out Duration, "Duration");
                 element.GetAttributeValueWithDefault(out SingleUse, "SingleUse");
                 element.GetAttributeValueWithDefault(out Value,
-                    (ValueIsZoom = element.GetAttributeValue("FieldOfView") == null) ? "Zoom" : "FieldOfView");
+                    (ValueIsFieldOfView = element.GetAttributeValue("FieldOfView") != null) ? "FieldOfView" : "Angle");
             }
         }
 
         public Point3D16 Position;
-        public short Zoom;
+        public short Zoom, Value;
         public Point2D8 Radius;
         public bool Reset;
-        public ushort StartDelay, Duration, Value;
-        public bool SingleUse, ValueIsZoom;
+        public ushort StartDelay, Duration;
+        public bool SingleUse, ValueIsFieldOfView;
 
         public void Write(BinaryWriter writer)
         {
@@ -1346,7 +1352,7 @@ namespace Mygod.Edge.Tool
             writer.Write(Duration);
             writer.Write(Value);
             writer.Write(SingleUse);
-            writer.Write(ValueIsZoom);
+            writer.Write(ValueIsFieldOfView);
         }
 
         public XElement GetXElement()
@@ -1360,7 +1366,7 @@ namespace Mygod.Edge.Tool
                 result.SetAttributeValueWithDefault("StartDelay", StartDelay);
                 result.SetAttributeValueWithDefault("Duration", Duration);
                 result.SetAttributeValueWithDefault("SingleUse", SingleUse);
-                result.SetAttributeValueWithDefault(ValueIsZoom ? "Zoom" : "FieldOfView", Value);
+                result.SetAttributeValueWithDefault(ValueIsFieldOfView ? "FieldOfView" : "Angle", Value);
             }
             else result.SetAttributeValueWithDefault("Zoom", Zoom);
             return result;
@@ -1480,7 +1486,8 @@ namespace Mygod.Edge.Tool
                 var type = (BlockEventType) i;
                 var attr = element.GetAttributeValue(type.ToString() + 's');
                 if (attr == null) continue;
-                foreach (var e in attr.Split(',').Select(str => BlockEvent.Parse(Parent, type, str)))
+                foreach (var e in attr.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(str => BlockEvent.Parse(Parent, type, str)))
                 {
                     yield return (ushort) BlockEvents.Count;
                     BlockEvents.Add(e);
@@ -1507,7 +1514,7 @@ namespace Mygod.Edge.Tool
         public Button(Buttons parent, BinaryReader reader) : this(parent)
         {
             Visible = (NullableBoolean)reader.ReadByte();
-            Enabled = (NullableBoolean)reader.ReadByte();
+            PressCount = reader.ReadByte();
             Mode = (ButtonMode) reader.ReadByte();
             ParentID = reader.ReadInt16();
             SequenceInOrder = reader.ReadBoolean();
@@ -1535,18 +1542,17 @@ namespace Mygod.Edge.Tool
             Initialize(element);
             Events = new List<ushort>(parent.AddEvents(element));
         }
-
         private void Initialize(XElement element)
         {
             initialized = true;
             id = element.GetAttributeValue("ID");
             if (id != null) id = id.Trim();
             element.GetAttributeValueWithDefault(out Visible, "Visible", NullableBoolean.True);
-            element.GetAttributeValueWithDefault(out Enabled, "Enabled");
+            element.GetAttributeValueWithDefault(out PressCount, "PressCount");
             element.GetAttributeValueWithDefault(out Mode, "Mode", ButtonMode.StayDown);
             if (IsMoving = element.GetAttributeValue("MovingBlockID") != null)
                 MovingBlockID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingBlockID"));
-            else element.GetAttributeValue(out Position, "Position");
+            else element.GetAttributeValueWithDefault(out Position, "Position");
             parent.Add(this);
         }
 
@@ -1557,7 +1563,8 @@ namespace Mygod.Edge.Tool
         public string ID { get { if (!IDGenerated) id = parent.RequestID(); return id; } set { id = value; } }
         public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
 
-        public NullableBoolean Visible = NullableBoolean.True, Enabled;
+        public NullableBoolean Visible = NullableBoolean.True;
+        public byte PressCount;
         public ButtonMode Mode = ButtonMode.StayDown;
         public short ParentID = -1;
         public bool SequenceInOrder;
@@ -1583,7 +1590,7 @@ namespace Mygod.Edge.Tool
         public void Write(BinaryWriter writer)
         {
             writer.Write((byte)Visible);
-            writer.Write((byte)Enabled);
+            writer.Write(PressCount);
             writer.Write((byte) Mode);
             writer.Write(ParentID);
             writer.Write(SequenceInOrder);
@@ -1601,7 +1608,7 @@ namespace Mygod.Edge.Tool
             var result = new XElement("Button");
             if (IDGenerated) result.SetAttributeValue("ID", ID);
             result.SetAttributeValueWithDefault("Visible", Visible, NullableBoolean.True);
-            result.SetAttributeValueWithDefault("Enabled", Enabled);
+            result.SetAttributeValueWithDefault("PressCount", PressCount);
             if (type == ButtonType.Standalone) result.SetAttributeValueWithDefault("Mode", Mode, ButtonMode.StayDown);
             if (IsMoving) result.SetAttributeValueWithDefault("MovingBlockID", MovingBlockID.Name);
             else result.SetAttributeValue("Position", Position);
@@ -1648,6 +1655,7 @@ namespace Mygod.Edge.Tool
                     default: return id;
                 }
             }
+            set { id = (IDReference) value; }
         }
 
         public void Write(BinaryWriter writer)
@@ -1729,15 +1737,86 @@ namespace Mygod.Edge.Tool
             var id = element.GetAttributeValue("MovingBlockSync");
             var sync = id == null ? new IDReference<MovingPlatform>(parent.MovingPlatforms, -1)
                                   : new IDReference<MovingPlatform>(parent.MovingPlatforms, id);
-            if (element.Name == "OtherCube") MovingBlockSync = sync;
+            element.GetAttributeValueWithDefault(out DarkCubeRadius, "Radius");
+            element.GetAttributeValue(out PositionCube, "PositionCube");
+            foreach (var e in element.Elements())
+                try
+                {
+                    KeyEvents.Add(new KeyEvent(e));
+                }
+                catch
+                {
+                    if (!e.Name.LocalName.Equals("MovingPlatform", StringComparison.InvariantCultureIgnoreCase)
+                        && !e.Name.LocalName.Equals("Button", StringComparison.InvariantCultureIgnoreCase))
+                        Warning.WriteLine(element.Name + " 有无法识别的子元素：" + e.Name);
+                }
+            if (element.Name == "OtherCube")
+            {
+                MovingBlockSync = sync;
+                var mode = element.GetAttributeValueWithDefault("Mode", OtherCubeMode.AutoHide);
+                var moveDirection = element.GetAttributeValueWithDefault("MoveDirection", GetDefaultDirection(mode));
+                if (mode == OtherCubeMode.Hole) PositionTrigger -= moveDirection;
+                AddHelper(parent, mode, PositionTrigger, moveDirection, element);
+                if (DarkCubeRadius.Equals(default(Point2D8))) return;
+                var radius = DarkCubeRadius;
+                DarkCubeRadius = default(Point2D8);
+                for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++) if (x != 0 || y != 0)
+                {
+                    var position = PositionTrigger + new Point3D16((short) x, (short) y, 0);
+                    parent.OtherCubes.Add(new OtherCube { PositionTrigger = position, MovingBlockSync = MovingBlockSync,
+                                                          PositionCube = PositionCube, KeyEvents = KeyEvents });
+                    AddHelper(parent, mode, position, moveDirection, element);
+                }
+            }
             else
             {
                 MovingBlockSync = new IDReference<MovingPlatform>(parent.MovingPlatforms, -2);
-                element.GetAttributeValueWithDefault(out DarkCubeRadius, "Radius");
                 DarkCubeMovingBlockSync = sync;
             }
-            element.GetAttributeValue(out PositionCube, "PositionCube");
-            foreach (var e in element.Elements()) KeyEvents.Add(new KeyEvent(e));
+        }
+
+        private static Point3D16 GetDefaultDirection(OtherCubeMode mode)
+        {
+            switch (mode)
+            {
+                case OtherCubeMode.MoveAway: return new Point3D16(0, -1, 0);
+                case OtherCubeMode.Hole: return new Point3D16(0, 0, 1);
+                default: return default(Point3D16);
+            }
+        }
+
+        private static void AddHelper(Level level, OtherCubeMode mode, Point3D16 position, Point3D16 moveDirection,
+                                      XContainer container)
+        {
+            if (mode == OtherCubeMode.AutoHide) return;
+            var child = container.ElementCaseInsensitive("Button");
+            if (child == null) level.Buttons.Add(new Button(level.Buttons) { Position = position, Visible = NullableBoolean.False, 
+                                                            Events = new List<ushort> { (ushort) level.Buttons.BlockEvents.Count } });
+            else
+            {
+                var button = new Button(level.Buttons, child) { Position = child.GetAttributeValueWithDefault("Position", position),
+                    Visible = child.GetAttributeValueWithDefault("Visible", NullableBoolean.False) };
+                button.Events.Add((ushort)level.Buttons.BlockEvents.Count);
+            }
+            level.Buttons.BlockEvents.Add(new BlockEvent(level)
+                { ID = new IDReference((short) level.MovingPlatforms.Count), Type = BlockEventType.AffectMovingPlatform });
+            child = container.ElementCaseInsensitive("MovingPlatform");
+            MovingPlatform platform;
+            if (child == null) platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = NullableBoolean.False, 
+                                                                                      Looped = NullableBoolean.False };
+            else
+            {
+                platform = new MovingPlatform(level.MovingPlatforms, child) {
+                    AutoStart = child.GetAttributeValueWithDefault<NullableBoolean>("AutoStart"), 
+                    Looped = child.GetAttributeValueWithDefault<NullableBoolean>("Looped") };
+            }
+            if (platform.Waypoints.Count == 0)
+            {
+                platform.Waypoints.Add(new Waypoint { Position = position });
+                platform.Waypoints.Add(new Waypoint { Position = position + moveDirection, 
+                                                      TravelTime = (ushort) (mode == OtherCubeMode.Hole ? 1 : 32000) });
+            }
+            level.MovingPlatforms.Add(platform);
         }
 
         public Point3D16 PositionTrigger;
@@ -1775,6 +1854,10 @@ namespace Mygod.Edge.Tool
             foreach (var e in KeyEvents.GetXElements()) result.Add(e);
             return result;
         }
+    }
+    public enum OtherCubeMode
+    {
+        AutoHide, MoveAway, Hole
     }
     public sealed class KeyEvent : IXElement
     {
@@ -1834,11 +1917,16 @@ namespace Mygod.Edge.Tool
             Visible = reader.ReadBoolean();
             Direction = (ResizeDirection) reader.ReadByte();
         }
-        public Resizer(XElement element)
+        public Resizer(Level parent, XElement element)
         {
             Direction = (ResizeDirection)Enum.Parse(typeof(ResizeDirection), element.Name.LocalName.Remove(0, 7), true);
             element.GetAttributeValue(out Position, "Position");
             element.GetAttributeValueWithDefault(out Visible, "Visible", true);
+            var radius = element.GetAttributeValueWithDefault<Point2D8>("Radius");
+            if (radius.Equals(default(Point2D8))) return;
+            for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++) if (x != 0 || y != 0)
+                parent.Resizers.Add(new Resizer { Position = Position + new Point3D16((short)x, (short)y, 0), 
+                                                  Visible = Visible, Direction = Direction });
         }
 
         public Point3D16 Position;
