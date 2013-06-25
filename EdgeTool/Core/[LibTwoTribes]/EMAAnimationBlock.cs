@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using LibTwoTribes.Util;
+using Mygod.Edge.Tool;
 
 namespace LibTwoTribes
 {
@@ -28,6 +29,7 @@ namespace LibTwoTribes
             using (TTBinaryReader br = new TTBinaryReader(stream))
             {
                 m_ProbablyTextureId = br.ReadInt32();
+                if (m_ProbablyTextureId != 0) Warning.WriteLine("ProbablyTextureId != 0!");
                 m_ScaleU = new KeyframeBlock(stream);
                 m_ScaleV = new KeyframeBlock(stream);
                 m_Rotation = new KeyframeBlock(stream);

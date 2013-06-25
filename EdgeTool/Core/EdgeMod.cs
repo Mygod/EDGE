@@ -223,13 +223,14 @@ namespace Mygod.Edge.Tool
             GameDirectory = Path.GetDirectoryName(GamePath);
             Directory.CreateDirectory(ModsDirectory = Path.Combine(GameDirectory, "mods"));
             LevelsDirectory = Path.Combine(GameDirectory, "levels");
+            ModelsDirectory = Path.Combine(GameDirectory, "models");
             TexturesDirectory = Path.Combine(GameDirectory, "textures");
             DisabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
             RefreshMods();
         }
 
-        public string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, TexturesDirectory;
+        public string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
         public StringSetFile DisabledMods, ModifiedFiles;
         public Version EngineVersion;

@@ -43,9 +43,9 @@ namespace LibTwoTribes
             }
         }
 
-        public string GenerateFilename(bool strip_extension)
+        public string GenerateFilename()
         {
-            return AssetUtil.CRCFullName(m_Name, m_Namespace, strip_extension);
+            return AssetUtil.CRCFullName(m_Name, m_Namespace);
         }
 
         public void Save(Stream stream)

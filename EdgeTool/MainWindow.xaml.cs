@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using LibTwoTribes;
 using LibTwoTribes.Util;
 using Mygod.Windows;
@@ -347,7 +348,15 @@ namespace Mygod.Edge.Tool
                     switch (Path.GetExtension(file).ToLowerInvariant())
                     {
                         case ".bin":
-                            Level.CreateFromCompiled(file).Decompile(outputPath);
+                            if (fileName.Equals("cos", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                var array = new short[181];
+                                using (var stream = File.OpenRead(file)) using (var reader = new BinaryReader(stream))
+                                    for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
+                                File.WriteAllText(outputPath + ".txt", 
+                                    string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                            }
+                            else Level.CreateFromCompiled(file).Decompile(outputPath);
                             break;
                         case ".xml":
                             var root = XHelper.Load(file).Elements().First();
@@ -358,20 +367,24 @@ namespace Mygod.Edge.Tool
                                     break;
                                 case "animation":
                                     AssetHelper.ParseEan(root, fileName)
-                                        .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models", true) + ".ean"));
+                                        .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models") + ".ean"));
                                     break;
                                 case "material":
-                                    var actualFileName = Path.GetFileNameWithoutExtension(fileName);
-                                    var ema = AssetHelper.ParseEma(root, actualFileName);
-                                    ema.Name = Path.GetExtension(fileName).Substring(1);
-                                    //ema.Save(Path.Combine(directory, AssetUtil.CRCFullName(actualFileName, "models", true) + ".ema"));
-                                    ema.Save(Path.Combine(directory, fileName + ".ema"));
-                                    Warning.WriteLine("对不起，当前不支持生成 .ema 文件的文件名，请手动重命名 .ema 文件。");
+                                {
+                                    string name, compiledFileName;
+                                    Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                    var ema = AssetHelper.ParseEma(root, name);
+                                    ema.Save(Path.Combine(directory, compiledFileName + ".ema"));
                                     break;
+                                }
                                 case "models":
-                                    AssetHelper.ParseEso(root, fileName).Save(Path.Combine(directory, fileName + ".eso"));
-                                    Warning.WriteLine("对不起，当前不支持生成 .eso 文件的文件名，请手动重命名 .eso 文件。");
+                                {
+                                    string name, compiledFileName;
+                                    Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                    var eso = AssetHelper.ParseEso(root, name);
+                                    eso.Save(Path.Combine(directory, compiledFileName + ".eso"));
                                     break;
+                                }
                             }
                             break;
                         case ".loc":
@@ -389,7 +402,7 @@ namespace Mygod.Edge.Tool
                                 "仅适用于 Steam 正版。（非 Demo）", TaskDialogType.YesNoQuestion) == TaskDialogSimpleResult.Yes;
                             using (var bitmap = new Bitmap(file))
                             {
-                                var name = AssetUtil.CRCFullName(fileName, "textures", true) + ".etx";
+                                var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
                                 if (exFormat.Value) ETX1804.CreateFromImage(bitmap, fileName).Save(Path.Combine(directory, name));
                                 else ETX1803.CreateFromImage(bitmap, fileName).Save(Path.Combine(directory, name));
                             }
@@ -402,14 +415,23 @@ namespace Mygod.Edge.Tool
                         case ".ema":
                         {
                             var ema = EMA.FromFile(file);
-                            File.WriteAllText(Path.Combine(directory, ema.AssetHeader.Name + '.' + ema.Name + ".xml"),
+                            File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
                                               AssetHelper.GetEmaElement(ema).GetString());
                             break;
                         }
                         case ".eso":
+                        {
                             var eso = ESO.FromFile(file);
-                            File.WriteAllText(Path.Combine(directory, eso.AssetHeader.Name + ".xml"),
+                            File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
                                               AssetHelper.GetEsoElement(eso).GetString());
+                            break;
+                        }
+                        case ".txt":
+                            using (var stream = new FileStream(outputPath + ".bin", FileMode.Create, FileAccess.Write, FileShare.Read))
+                            using (var writer = new BinaryWriter(stream))
+                                foreach (var num in File.ReadAllText(file).Split(new[] { '\r', '\n' },
+                                    StringSplitOptions.RemoveEmptyEntries).Select(double.Parse))
+                                    writer.Write((short) Math.Round(num * 256));
                             break;
                         default:
                             throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
@@ -549,6 +571,71 @@ namespace Mygod.Edge.Tool
         {
             foreach (var mod in Edge.Mods.Where(mod => !mod.Enabled)) File.Delete(mod.FilePath);
             RefreshMods();
+        }
+
+        #endregion
+
+        #region Model Tree
+
+        private void DrawModelTree(object sender, RoutedEventArgs e)
+        {
+            ModelTreeView.Items.Clear();
+            DrawEso(ModelTreeView.Items, AssetUtil.CRCFullName(ModelNameBox.Text, "models", false));
+        }
+
+        private static void DrawEso(IList parent, string fileName)
+        {
+            var item = new TreeViewItem { IsExpanded = true };
+            parent.Add(item);
+            var path = Path.Combine(Edge.ModelsDirectory, fileName + ".eso");
+            if (!File.Exists(path))
+            {
+                item.Header = fileName + ".eso (不存在)";
+                item.Foreground = Brushes.Red;
+                return;
+            }
+            var eso = ESO.FromFile(path);
+            item.Header = string.Format("{0}.eso ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, eso));
+            foreach (var model in eso.Models.Where(model => !model.MaterialAsset.IsZero()))
+                DrawEma(item.Items, model.MaterialAsset.ToString());
+            if (!eso.Header.NodeChild.IsZero()) DrawEso(item.Items, eso.Header.NodeChild.ToString());
+            if (!eso.Header.NodeSibling.IsZero()) DrawEso(parent, eso.Header.NodeSibling.ToString());
+        }
+
+        private static void DrawEma(IList parent, string fileName)
+        {
+            var item = new TreeViewItem { IsExpanded = true };
+            parent.Add(item);
+            var path = Path.Combine(Edge.ModelsDirectory, fileName + ".ema");
+            if (!File.Exists(path))
+            {
+                item.Header = fileName + ".ema (不存在)";
+                item.Foreground = Brushes.Red;
+                return;
+            }
+            var ema = EMA.FromFile(path);
+            item.Header = string.Format("{0}.ema ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, ema));
+            foreach (var texture in ema.Textures) DrawEtx(item.Items, texture.Asset.ToString());
+        }
+
+        private static void DrawEtx(IList parent, string fileName)
+        {
+            var item = new TreeViewItem { IsExpanded = true };
+            parent.Add(item);
+            var path = Path.Combine(Edge.TexturesDirectory, fileName + ".etx");
+            if (!File.Exists(path))
+            {
+                item.Header = fileName + ".etx (不存在)";
+                item.Foreground = Brushes.Red;
+                return;
+            }
+            var etx = ETX.FromFile(path);
+            item.Header = string.Format("{0}.etx ({1}.png)", fileName, etx.AssetHeader.Name);
+        }
+
+        private void GetModelTreeHelp(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://edgefans.tk/developers/file-formats/asset/drawing-model-tree");
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace LibTwoTribes
         private Flags m_TypeFlags;
         private Vec3[] m_Vertices;
         private Vec3[] m_Normals;
-        private uint[] m_Colors;
+        private Color[] m_Colors;
         private Vec2[] m_TexCoords;
         private Vec2[] m_Wat;
         //private ushort[] m_Indices;
@@ -24,7 +25,7 @@ namespace LibTwoTribes
         public Flags TypeFlags { get { return m_TypeFlags; } set { m_TypeFlags = value; } }
         public Vec3[] Vertices { get { return m_Vertices; } set { m_Vertices = value; } }
         public Vec3[] Normals { get { return m_Normals; } set { m_Normals = value; } }
-        public uint[] Colors { get { return m_Colors; } set { m_Colors = value; } }
+        public Color[] Colors { get { return m_Colors; } set { m_Colors = value; } }
         public Vec2[] TexCoords { get { return m_TexCoords; } set { m_TexCoords = value; } }
         public Vec2[] Wat { get { return m_Wat; } set { m_Wat = value; } }
         //public ushort[] Indices { get { return m_Indices; } set { m_Indices = value; } }
@@ -74,15 +75,15 @@ namespace LibTwoTribes
 
                 if (m_TypeFlags.HasFlag(Flags.Colors))
                 {
-                    m_Colors = new uint[numVerts];
+                    m_Colors = new Color[numVerts];
                     for (int i = 0; i < numVerts; i++)
                     {
-                        m_Colors[i] = br.ReadUInt32();
+                        m_Colors[i] = Color.FromArgb(br.ReadInt32());
                     }
                 }
                 else
                 {
-                    m_Colors = new uint[0];
+                    m_Colors = new Color[0];
                 }
 
                 if (m_TypeFlags.HasFlag(Flags.TexCoords))
@@ -111,6 +112,7 @@ namespace LibTwoTribes
                     m_Wat = new Vec2[0];
                 }
 
+                br.BaseStream.Position += numVerts << 1;
                 /*
                 m_Indices = new ushort[m_NumPolys * 3];
                 for (int i = 0; i < m_NumPolys * 3; i++)
@@ -158,12 +160,12 @@ namespace LibTwoTribes
                 {
                     for (int i = 0; i < m_Vertices.Length; i++)
                     {
-                        bw.Write(m_Colors[i]);
+                        bw.Write(m_Colors[i].ToArgb());
                     }
                 }
                 else
                 {
-                    m_Colors = new uint[0];
+                    m_Colors = new Color[0];
                 }
 
                 if (m_TypeFlags.HasFlag(Flags.TexCoords))

@@ -35,14 +35,14 @@ namespace LibTwoTribes.Util
             return "[0x" + ((ulong)version).ToString("X16") + "]";
         }
 
-        public static string CRCFullName(string name, string name_space, bool strip_extension = false)
+        public static string CRCFullName(string name, string name_space, bool strip_extension = true)
         {
-            if (strip_extension && name.Contains(".")) name = name.Substring(0, name.LastIndexOf('.'));
-            return CRCName(name).ToString("X8") + CRCNamespace(name_space).ToString("X8");
+            return CRCName(name, strip_extension).ToString("X8") + CRCNamespace(name_space).ToString("X8");
         }
 
-        public static uint CRCName(string name)
+        public static uint CRCName(string name, bool strip_extension = true)
         {
+            if (strip_extension && name.Contains(".")) name = name.Substring(0, name.LastIndexOf('.'));
             return s_CRC32_Name.CalculateCRC(BinaryUtil.Reverse(Encoding.ASCII.GetBytes(name)));
         }
 

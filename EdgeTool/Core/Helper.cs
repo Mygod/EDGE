@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using ExcelLibrary.SpreadSheet;
 using LibTwoTribes;
@@ -64,6 +65,30 @@ namespace Mygod.Edge.Tool
         public static Color Parse(string value)
         {
             return string.IsNullOrWhiteSpace(value) ? Color.Transparent : ColorTranslator.FromHtml(value);
+        }
+
+        private static readonly Regex CompiledFileNameAnalyzer = new Regex(@"^(.+)\.([0-9A-Fa-f]{8})$", RegexOptions.Compiled);
+
+        public static void AnalyzeFileName(out string name, out string compiledFileName, string fileName, string nameSpace = "models")
+        {
+            var match = CompiledFileNameAnalyzer.Match(fileName);
+            if (match.Success)
+            {
+                name = match.Groups[1].Value;
+                compiledFileName = match.Groups[2].Value + AssetUtil.CRCNamespace(nameSpace).ToString("X8");
+            }
+            else
+            {
+                name = fileName;
+                compiledFileName = AssetUtil.CRCFullName(fileName, nameSpace);
+            }
+        }
+
+        public static string GetDecompiledFileName(string fileName, Asset asset)
+        {
+            var correctHash = fileName.Substring(0, 8);
+            if (correctHash == AssetUtil.CRCName(asset.AssetHeader.Name).ToString("X8")) return asset.AssetHeader.Name;
+            return asset.AssetHeader.Name + '.' + correctHash;
         }
     }
 
@@ -191,6 +216,7 @@ namespace Mygod.Edge.Tool
         public static XElement GetEmaElement(EMA ema)
         {
             var result = new XElement("Material");
+            result.SetAttributeValueWithDefault("Name", ema.Name);
             result.SetAttributeValueWithDefault("Color1", ema.Color1.GetString(), "Transparent");
             result.SetAttributeValueWithDefault("Color2", ema.Color2.GetString(), "Transparent");
             result.SetAttributeValueWithDefault("Color3", ema.Color3.GetString(), "Transparent");
@@ -205,8 +231,8 @@ namespace Mygod.Edge.Tool
             {
                 var e = new XElement("Texture");
                 e.SetAttributeValueWithDefault("Asset", texture.Asset);
-                e.SetAttributeValueWithDefault("IntArray1", string.Join(",", texture.IntArray1));
-                e.SetAttributeValueWithDefault("IntArray2", string.Join(",", texture.IntArray2));
+                e.SetAttributeValueWithDefault("IntArray1", string.Join(",", texture.IntArray1), "0,0,0,0");
+                e.SetAttributeValueWithDefault("IntArray2", string.Join(",", texture.IntArray2), "0,0,0");
                 result.Add(e);
             }
             foreach (var transform in ema.DefaultTransforms)
@@ -222,7 +248,6 @@ namespace Mygod.Edge.Tool
             foreach (var block in ema.AnimationBlocks)
             {
                 var e = new XElement("AnimationBlock");
-                e.SetAttributeValueWithDefault("TextureID", block.ProbablyTextureId.ToString("X8"), "00000000");
                 e.AddIfNotEmpty(GetKeyframeBlockElement(block.ScaleU, "ScaleU"));
                 e.AddIfNotEmpty(GetKeyframeBlockElement(block.ScaleV, "ScaleV"));
                 e.AddIfNotEmpty(GetKeyframeBlockElement(block.Rotation, "Rotation"));
@@ -262,7 +287,6 @@ namespace Mygod.Edge.Tool
                 case "animationblock":
                     blocks.Add(new EMAAnimationBlock
                     {
-                        ProbablyTextureId = int.Parse(e.GetAttributeValueWithDefault("TextureID", "0"), NumberStyles.HexNumber),
                         ScaleU = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleU")),
                         ScaleV = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleV")),
                         Rotation = ParseKeyframeBlock(element.ElementCaseInsensitive("Rotation")),
@@ -280,7 +304,7 @@ namespace Mygod.Edge.Tool
                 Int2 = element.GetAttributeValueWithDefault<int>("Int2"), Int3 = element.GetAttributeValueWithDefault<int>("Int3"),
                 Footer4 = element.GetAttributeValueWithDefault<int>("Footer4"), Textures = textures.ToArray(), 
                 Footer5 = element.GetAttributeValueWithDefault<int>("Footer5"), DefaultTransforms = transforms.ToArray(),
-                AnimationBlocks = blocks.ToArray()
+                AnimationBlocks = blocks.ToArray(), Name = element.GetAttributeValue("Name")
             };
         }
 
@@ -340,7 +364,7 @@ namespace Mygod.Edge.Tool
                     e.ElementsCaseInsensitive("Triangle").SelectMany(triangle => triangle.ElementsCaseInsensitive("Vertex")).ToArray();
                 var model = new ESOModel
                 {
-                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"), Colors = new uint[vertices.Length],
+                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"), Colors = new Color[vertices.Length],
                     Normals = new Vec3[vertices.Length], TexCoords = new Vec2[vertices.Length], Vertices = new Vec3[vertices.Length],
                     Wat = new Vec2[vertices.Length]
                 };
@@ -354,7 +378,7 @@ namespace Mygod.Edge.Tool
                     }
                     if (vertices[i].AttributeCaseInsensitive("Color") != null)
                     {
-                        vertices[i].GetAttributeValueWithDefault(out model.Colors[i], "Color");
+                        model.Colors[i] = Helper.Parse(vertices[i].GetAttributeValueWithDefault("Color", "Transparent"));
                         model.TypeFlags |= ESOModel.Flags.Colors;
                     }
                     if (vertices[i].AttributeCaseInsensitive("TexCoord") != null)
@@ -403,7 +427,8 @@ namespace Mygod.Edge.Tool
             var element = new XElement("Vertex");
             element.SetAttributeValueWithDefault("Position", model.Vertices[index]);
             if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals)) element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors)) element.SetAttributeValueWithDefault("Color", model.Colors[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+                element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
             if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
                 element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
             if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat)) element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
