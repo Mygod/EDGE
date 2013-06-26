@@ -995,8 +995,8 @@ namespace Mygod.Edge.Tool
         }
         public MovingPlatform(MovingPlatforms parent, BinaryReader reader) : this(parent)
         {
-            AutoStart = (NullableBoolean) reader.ReadByte();
-            Looped = (NullableBoolean) reader.ReadByte();
+            AutoStart = reader.ReadByte() != 0;
+            LoopStartIndex = reader.ReadByte();
             Clones = reader.ReadInt16();
             if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
             FullBlock = reader.ReadBoolean();
@@ -1010,8 +1010,8 @@ namespace Mygod.Edge.Tool
             var relatedTo = element.GetAttributeValue("RelatedTo");
             if (string.IsNullOrEmpty(relatedTo))
             {
-                element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", NullableBoolean.True);
-                element.GetAttributeValueWithDefault(out Looped, "Looped", NullableBoolean.True);
+                element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", true);
+                element.GetAttributeValueWithDefault(out LoopStartIndex, "LoopStartIndex", (byte) 1);
                 element.GetAttributeValueWithDefault(out Clones, "Clones", (short)-1);
                 if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", true);
@@ -1021,7 +1021,7 @@ namespace Mygod.Edge.Tool
             {
                 var relative = parent[relatedTo];
                 element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", relative.AutoStart);
-                element.GetAttributeValueWithDefault(out Looped, "Looped", relative.Looped);
+                element.GetAttributeValueWithDefault(out LoopStartIndex, "LoopStartIndex", relative.LoopStartIndex);
                 element.GetAttributeValueWithDefault(out Clones, "Clones", relative.Clones);
                 if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", relative.FullBlock);
@@ -1033,7 +1033,8 @@ namespace Mygod.Edge.Tool
 
         private readonly MovingPlatforms parent;
 
-        public NullableBoolean AutoStart = NullableBoolean.True, Looped = NullableBoolean.True;
+        public bool AutoStart = true;
+        public byte LoopStartIndex = 1;
         [Obsolete]
         public short Clones = -1;
         public bool FullBlock = true;
@@ -1041,8 +1042,8 @@ namespace Mygod.Edge.Tool
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write((byte)AutoStart);
-            writer.Write((byte)Looped);
+            writer.Write((byte) (AutoStart ? 2 : 0));
+            writer.Write(LoopStartIndex);
             writer.Write(Clones);
             writer.Write(FullBlock);
             Waypoints.Write(writer);
@@ -1052,8 +1053,8 @@ namespace Mygod.Edge.Tool
         {
             var result = new XElement("MovingPlatform");
             if (IDGenerated) result.SetAttributeValue("ID", ID);
-            result.SetAttributeValueWithDefault("AutoStart", AutoStart, NullableBoolean.True);
-            result.SetAttributeValueWithDefault("Looped", Looped, NullableBoolean.True);
+            result.SetAttributeValueWithDefault("AutoStart", AutoStart, true);
+            result.SetAttributeValueWithDefault("LoopStartIndex", LoopStartIndex, (byte)1);
             result.SetAttributeValueWithDefault("Clones", Clones, (short) -1);
             result.SetAttributeValueWithDefault("FullBlock", FullBlock, true);
             foreach (var element in Waypoints.GetXElements()) result.Add(element);
@@ -1315,7 +1316,7 @@ namespace Mygod.Edge.Tool
             Duration = reader.ReadUInt16();
             Value = reader.ReadInt16();
             SingleUse = reader.ReadBoolean();
-            ValueIsFieldOfView = reader.ReadBoolean();
+            ValueIsAngle = reader.ReadBoolean();
         }
         public CameraTrigger(XElement element)
         {
@@ -1330,7 +1331,7 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out Duration, "Duration");
                 element.GetAttributeValueWithDefault(out SingleUse, "SingleUse");
                 element.GetAttributeValueWithDefault(out Value,
-                    (ValueIsFieldOfView = element.GetAttributeValue("FieldOfView") != null) ? "FieldOfView" : "Angle");
+                    (ValueIsAngle = element.GetAttributeValue("Angle") != null) ? "Angle" : "FieldOfView");
             }
         }
 
@@ -1339,7 +1340,7 @@ namespace Mygod.Edge.Tool
         public Point2D8 Radius;
         public bool Reset;
         public ushort StartDelay, Duration;
-        public bool SingleUse, ValueIsFieldOfView;
+        public bool SingleUse, ValueIsAngle;
 
         public void Write(BinaryWriter writer)
         {
@@ -1352,7 +1353,7 @@ namespace Mygod.Edge.Tool
             writer.Write(Duration);
             writer.Write(Value);
             writer.Write(SingleUse);
-            writer.Write(ValueIsFieldOfView);
+            writer.Write(ValueIsAngle);
         }
 
         public XElement GetXElement()
@@ -1366,7 +1367,7 @@ namespace Mygod.Edge.Tool
                 result.SetAttributeValueWithDefault("StartDelay", StartDelay);
                 result.SetAttributeValueWithDefault("Duration", Duration);
                 result.SetAttributeValueWithDefault("SingleUse", SingleUse);
-                result.SetAttributeValueWithDefault(ValueIsFieldOfView ? "FieldOfView" : "Angle", Value);
+                result.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
             }
             else result.SetAttributeValueWithDefault("Zoom", Zoom);
             return result;
@@ -1802,13 +1803,13 @@ namespace Mygod.Edge.Tool
                 { ID = new IDReference((short) level.MovingPlatforms.Count), Type = BlockEventType.AffectMovingPlatform });
             child = container.ElementCaseInsensitive("MovingPlatform");
             MovingPlatform platform;
-            if (child == null) platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = NullableBoolean.False, 
-                                                                                      Looped = NullableBoolean.False };
+            if (child == null) platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = false, LoopStartIndex = 0 };
             else
             {
                 platform = new MovingPlatform(level.MovingPlatforms, child) {
-                    AutoStart = child.GetAttributeValueWithDefault<NullableBoolean>("AutoStart"), 
-                    Looped = child.GetAttributeValueWithDefault<NullableBoolean>("Looped") };
+                    AutoStart = child.GetAttributeValueWithDefault<bool>("AutoStart"),
+                    LoopStartIndex = child.GetAttributeValueWithDefault<byte>("LoopStartIndex")
+                };
             }
             if (platform.Waypoints.Count == 0)
             {

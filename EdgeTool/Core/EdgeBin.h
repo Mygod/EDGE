@@ -68,8 +68,10 @@ struct vector {
 };
 
 struct moving_platform {
-        bool? auto_start;
-        bool? looped;
+        char auto_start;    
+                // auto_start == 0: inactive
+                // auto_start == 2: active (or any value that is not zero)
+        char loop_start_index;
         short clones;   // deprecated, do not use
         bool full_block;
         char waypoints_count;
@@ -119,7 +121,7 @@ struct camera_trigger {
                 short duration;
                 short value;
                 bool single_use;
-                bool value_is_fov;      // value is field of view or angle
+                bool value_is_angle;      // value is field of view if false
         // endif
 };
 
@@ -160,8 +162,12 @@ struct block_event {
 };
 
 struct button {
-        bool? visible;
-        char press_count;
+        char visibility;
+                // visibility == 0: invisible
+                // visibility == 1: visible, solid
+                // visibility == 2: visible, ghosted
+        char press_count;   // after a button has been pressed `press_count` times, it cannot be re-enabled by an event.
+                            // press_count = 0 can be re-enabled as many times as you like.
         char mode;
                 // mode == 0: reverses the event when the button is released
                 // mode == 1: event is permanent, button stays up when released
@@ -180,8 +186,8 @@ struct button {
         /*
                 this is a tricky one so I feel it needs to be explained.
                 a standalone button uses
-                        visible
-                        enabled
+                        visibility
+                        press_count
                         mode
                         is_moving (and related position system)
                         event_count

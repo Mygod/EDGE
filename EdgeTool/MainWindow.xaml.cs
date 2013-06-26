@@ -205,8 +205,9 @@ namespace Mygod.Edge.Tool
                     for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
                     {
                         var platform = new MovingPlatform(level.MovingPlatforms);
-                        platform.AutoStart =
-                            platform.Looped = result == TaskDialogSimpleResult.Yes ? NullableBoolean.True : NullableBoolean.False;
+#pragma warning disable 665
+                        platform.LoopStartIndex = (byte) ((platform.AutoStart = result == TaskDialogSimpleResult.Yes) ? 1 : 0);
+#pragma warning restore 665
                         platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
                         level.MovingPlatforms.Add(platform);
                     }
