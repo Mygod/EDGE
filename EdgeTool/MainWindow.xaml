@@ -196,7 +196,7 @@
                         <DataGrid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="显示小地图(_M)" Click="ShowMinimap" />
-                                <MenuItem Header="在资源管理器中浏览关卡(_E)" Click="ShowInExplorer" />
+                                <MenuItem Header="在资源管理器中浏览关卡(_E)" Click="ShowLevelInExplorer" />
                                 <MenuItem Header="生成悬浮版自动修复关卡(_A)..." Click="FloatingAutoFix" />
                                 <MenuItem Header="反编译关卡(_C)..." Click="Decompile" />
                             </ContextMenu>
@@ -218,12 +218,16 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Content="请输入模型名：（无需 .r_mdl 扩展名）" Target="{Binding ElementName=ModelNameBox}" />
-                    <TextBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center" />
+                    <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center" IsEditable="True" />
                     <Button Content="绘制(_D)" Click="DrawModelTree" Grid.Column="3" VerticalAlignment="Center" IsDefault="True" />
                     <Button Content="帮助(_H)" Click="GetModelTreeHelp" Grid.Column="5" VerticalAlignment="Center" />
-                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="1" Grid.ColumnSpan="6" />
+                    <Button Content="在资源管理器中找到选中项(_E)" Click="ShowFileInExplorer" Grid.Column="7" VerticalAlignment="Center" />
+                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="1" Grid.ColumnSpan="8" AllowDrop="True"
+                              DragEnter="OnModelDragEnter" DragOver="OnDragOver" DragLeave="OnDragLeave" Drop="OnModelDrop" />
                 </Grid>
             </TabItem>
         </TabControl>

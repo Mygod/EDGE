@@ -294,7 +294,7 @@ namespace Mygod.Edge.Tool
             Zoom = reader.ReadInt16();
             if (Zoom < 0)
             {
-                FieldOfView = reader.ReadUInt16();
+                Angle = reader.ReadInt16();
                 AutoAdjustZoom = reader.ReadBoolean();
             }
             ExitPoint = new Point3D16(reader);
@@ -352,10 +352,10 @@ namespace Mygod.Edge.Tool
             element.GetAttributeValueWithDefault(out MusicJava, "MusicJava");
             element.GetAttributeValueWithDefault(out Music, "Music");
             element.GetAttributeValueWithDefault(out Zoom, "Zoom", (short)-1);
-            element.GetAttributeValueWithDefault(out FieldOfView, "FieldOfView");
+            element.GetAttributeValueWithDefault(out Angle, "Angle");
             element.GetAttributeValueWithDefault(out AutoAdjustZoom, "AutoAdjustZoom");
-            if (Zoom >= 0 && (FieldOfView != 0 || AutoAdjustZoom)) Warning.WriteLine("Level 元素：高级缩放模式被禁用！" +
-                "@FieldOfView 与 @AutoAdjustZoom 将被忽略。要启用请将 @Zoom 删去或设为负值。");
+            if (Zoom >= 0 && (Angle != 0 || AutoAdjustZoom)) Warning.WriteLine("Level 元素：高级缩放模式被禁用！" +
+                "@Angle 与 @AutoAdjustZoom 将被忽略。要启用请将 @Zoom 删去或设为负值。");
             Buttons = new Buttons(this);
             foreach (var e in element.Elements())
                 switch (e.Name.LocalName.ToLower())
@@ -437,8 +437,7 @@ namespace Mygod.Edge.Tool
         public ushort Temp2 { get { return (ushort) (Temp1 + Size.Height + Size.Height); } }
         public Point3D16 SpawnPoint { get; set; }
         public Point3D16 ExitPoint { get; set; }
-        public short Zoom;
-        public ushort FieldOfView;
+        public short Zoom, Angle;
         public bool AutoAdjustZoom;
         public Flat LegacyMinimap;
         public Cube CollisionMap;
@@ -507,7 +506,7 @@ namespace Mygod.Edge.Tool
             writer.Write(Zoom);
             if (Zoom < 0)
             {
-                writer.Write(FieldOfView);
+                writer.Write(Angle);
                 writer.Write(AutoAdjustZoom);
             }
             ExitPoint.Write(writer);
@@ -537,7 +536,7 @@ namespace Mygod.Edge.Tool
             element.SetAttributeValueWithDefault("Music", Music);
             if (Zoom < 0)
             {
-                element.SetAttributeValueWithDefault("FieldOfView", FieldOfView);
+                element.SetAttributeValueWithDefault("Angle", Angle);
                 element.SetAttributeValueWithDefault("AutoAdjustZoom", AutoAdjustZoom);
             }
             else element.SetAttributeValueWithDefault("Zoom", Zoom, (short) -1);

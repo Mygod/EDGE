@@ -22,8 +22,8 @@ struct edge_level {
         vector spawn_point;
         short zoom;
         // if zoom < 0
-                short fov;
-                bool auto_adjust_zoom_for_fov;
+                short angle;
+                bool auto_adjust_zoom_for_angle;
         // endif
         vector exit_point;
         short moving_platform_count;

@@ -45,7 +45,15 @@ namespace Mygod.Edge.Tool
             UserBox.ItemsSource = users;
             GamePath.ItemsSource = Settings.RecentPaths;
             GamePath.Text = Settings.CurrentPath;
+            foreach (var name in ModelNames.Split(',')) ModelNameBox.Items.Add(name);
             Load(null, null);
+        }
+
+        private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done";
+
+        private static void ShowInExplorer(string path)
+        {
+            Process.Start("explorer", "/select,\"" + path + '"');
         }
 
         private void OnHideWindow(object sender, MouseEventArgs e)
@@ -173,9 +181,9 @@ namespace Mygod.Edge.Tool
             if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedIndex = 0;
         }
 
-        private void ShowInExplorer(object sender, RoutedEventArgs e)
+        private void ShowLevelInExplorer(object sender, RoutedEventArgs e)
         {
-            foreach (var level in LevelList.SelectedItems.OfType<Level>()) Process.Start("explorer", "/select,\"" + level.FilePath + '"');
+            foreach (var level in LevelList.SelectedItems.OfType<Level>()) ShowInExplorer(level.FilePath);
         }
 
         private void OnSort(object sender, DataGridSortingEventArgs e)
@@ -589,6 +597,7 @@ namespace Mygod.Edge.Tool
             var item = new TreeViewItem { IsExpanded = true };
             parent.Add(item);
             var path = Path.Combine(Edge.ModelsDirectory, fileName + ".eso");
+            item.Tag = path;
             if (!File.Exists(path))
             {
                 item.Header = fileName + ".eso (不存在)";
@@ -608,6 +617,7 @@ namespace Mygod.Edge.Tool
             var item = new TreeViewItem { IsExpanded = true };
             parent.Add(item);
             var path = Path.Combine(Edge.ModelsDirectory, fileName + ".ema");
+            item.Tag = path;
             if (!File.Exists(path))
             {
                 item.Header = fileName + ".ema (不存在)";
@@ -624,6 +634,7 @@ namespace Mygod.Edge.Tool
             var item = new TreeViewItem { IsExpanded = true };
             parent.Add(item);
             var path = Path.Combine(Edge.TexturesDirectory, fileName + ".etx");
+            item.Tag = path;
             if (!File.Exists(path))
             {
                 item.Header = fileName + ".etx (不存在)";
@@ -637,6 +648,44 @@ namespace Mygod.Edge.Tool
         private void GetModelTreeHelp(object sender, RoutedEventArgs e)
         {
             Process.Start("http://edgefans.tk/developers/file-formats/asset/drawing-model-tree");
+        }
+
+        private void ShowFileInExplorer(object sender, RoutedEventArgs e)
+        {
+            var item = ModelTreeView.SelectedItem as TreeViewItem;
+            if (item != null) ShowInExplorer(item.Tag.ToString());
+        }
+
+        private void OnModelDragEnter(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+            {
+                e.Effects = e.AllowedEffects & DragDropEffects.Copy;
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "绘制模型树");
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects);
+            }
+        }
+
+        private void OnModelDrop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
+            if (e.Effects != DragDropEffects.Copy) return;
+            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            if (files == null || files.Length == 0) return;
+            using (var stream = File.OpenRead(files[0]))
+            {
+                var name = new AssetHeader(stream).Name;
+                if (name.EndsWith(".rmdl", true, CultureInfo.InvariantCulture)) name = name.Remove(name.Length - 5);
+                ModelNameBox.Text = name;
+            }
+            DrawModelTree(sender, e);
         }
 
         #endregion
