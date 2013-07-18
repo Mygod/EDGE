@@ -107,14 +107,6 @@ namespace Mygod.Edge.Tool
                 return bitmapImage;
             }
         }
-
-        public static Bitmap GetColorTile(IEnumerable<Color> colors)
-        {
-            var array = colors.ToArray();
-            var bitmap = new Bitmap(array.Length, 1);
-            for (var x = 0; x < array.Length; x++) bitmap.SetPixel(x, 0, array[x]);
-            return bitmap;
-        }
     }
 
     public static class LocHelper
