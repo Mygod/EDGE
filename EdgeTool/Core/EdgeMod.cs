@@ -189,7 +189,8 @@ namespace Mygod.Edge.Tool
                 transform.Load(XmlReader.Create(new StringReader(Xsl)), new XsltSettings(true, true), new XmlUrlResolver());
                 var writer = new StringWriter();
                 transform.Transform(XmlReader.Create(new StringReader(File.ReadAllText(File.Exists(mappingPath) ? mappingPath
-                    : (mappingPath + ".bak")))), null, XmlWriter.Create(writer, XHelper.WriterSettings), new XmlUrlResolver());
+                                                                                           : (mappingPath + ".bak")))), null,
+                                    XmlWriter.Create(writer, new XmlWriterSettings { Indent = true }), new XmlUrlResolver());
                 File.WriteAllText(mappingPath, writer.ToString());
                 parent.ModifiedFiles.Add("levels\\mapping.xml");
                 modifiedFiles.Add("levels\\mapping.xml");

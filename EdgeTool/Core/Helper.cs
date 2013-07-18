@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using ExcelLibrary.SpreadSheet;
 using LibTwoTribes;
@@ -89,6 +91,29 @@ namespace Mygod.Edge.Tool
             var correctHash = fileName.Substring(0, 8);
             if (correctHash == AssetUtil.CRCName(asset.AssetHeader.Name).ToString("X8")) return asset.AssetHeader.Name;
             return asset.AssetHeader.Name + '.' + correctHash;
+        }
+
+        public static BitmapImage GetBitmapImage(this Bitmap bitmap)
+        {
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
+            }
+        }
+
+        public static Bitmap GetColorTile(IEnumerable<Color> colors)
+        {
+            var array = colors.ToArray();
+            var bitmap = new Bitmap(array.Length, 1);
+            for (var x = 0; x < array.Length; x++) bitmap.SetPixel(x, 0, array[x]);
+            return bitmap;
         }
     }
 

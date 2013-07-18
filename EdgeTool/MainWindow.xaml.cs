@@ -46,6 +46,20 @@ namespace Mygod.Edge.Tool
             GamePath.ItemsSource = Settings.RecentPaths;
             GamePath.Text = Settings.CurrentPath;
             foreach (var name in ModelNames.Split(',')) ModelNameBox.Items.Add(name);
+            var files = new List<string>();
+            foreach (var arg in App.Args) switch (Path.GetExtension(arg).ToLower())
+            {
+                case "exe":
+                    GamePath.Text = arg;
+                    break;
+                case "edgemod":
+                    InstallEdgeMod(arg);
+                    break;
+                default:
+                    files.Add(arg);
+                    break;
+            }
+            if (files.Count > 0) ProcessCore(files);
             Load(null, null);
         }
 
@@ -178,7 +192,7 @@ namespace Mygod.Edge.Tool
         {
             if (outputSelector.ShowDialog(this) != true) return;
             ProcessCore(LevelList.SelectedItems.OfType<Level>().Select(level => level.FilePath), outputSelector.SelectedPath);
-            if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedIndex = 0;
+            if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedItem = CompileTab;
         }
 
         private void ShowLevelInExplorer(object sender, RoutedEventArgs e)
@@ -217,6 +231,7 @@ namespace Mygod.Edge.Tool
                         platform.LoopStartIndex = (byte) ((platform.AutoStart = result == TaskDialogSimpleResult.Yes) ? 1 : 0);
 #pragma warning restore 665
                         platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
+                        if (z == 0) platform.FullBlock = false;
                         level.MovingPlatforms.Add(platform);
                     }
                 var fileName = Path.GetFileNameWithoutExtension(level.FilePath) + "_fixed.bin";
@@ -225,6 +240,15 @@ namespace Mygod.Edge.Tool
                 // ReSharper restore AssignNullToNotNullAttribute
             }
             TaskDialog.Show(this, "修复完毕。", "修复结果存放在levels的文件夹中，文件名以_fixed.bin结尾。", TaskDialogType.Information);
+        }
+
+        private void DrawLevelModelTree(object sender, RoutedEventArgs e)
+        {
+            var level = LevelList.SelectedItem as Level;
+            if (level == null) return;
+            ModelNameBox.Text = Path.GetFileNameWithoutExtension(level.FilePath);
+            Tabs.SelectedItem = DrawModelTreeTab;
+            DrawModelTree(sender, e);
         }
 
         #endregion
@@ -247,10 +271,10 @@ namespace Mygod.Edge.Tool
             var item = AchievementsList.SelectedItem as Achievement;
             if (item != null) if (item.Unlocked)
                 {
-                    if (TaskDialog.Show(this, "确定要取消解锁该成就吗？", "该操作不可逆！", TaskDialogType.YesNoQuestion)
+                    if (TaskDialog.Show(this, "确定要取消解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
                         == TaskDialogSimpleResult.Yes) File.Delete(item.FilePath);
                 }
-                else if (TaskDialog.Show(this, "确定要解锁该成就吗？", "该操作不可逆！", TaskDialogType.YesNoQuestion)
+                else if (TaskDialog.Show(this, "确定要解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
                          == TaskDialogSimpleResult.Yes)
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(item.FilePath));
@@ -312,7 +336,7 @@ namespace Mygod.Edge.Tool
 
         private void ShowReferenceGuide(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://mygod.apphb.com/Online/Edge/");
+            Process.Start("http://edgefans.tk/developers");
         }
 
         private void OnBinaryDragEnter(object sender, DragEventArgs e)
@@ -419,20 +443,20 @@ namespace Mygod.Edge.Tool
                         case ".ean":
                             var ean = EAN.FromFile(file);
                             File.WriteAllText(Path.Combine(directory, ean.AssetHeader.Name + ".xml"), 
-                                              AssetHelper.GetEanElement(ean).GetString());
+                                              AssetHelper.GetEanElement(ean).ToString());
                             break;
                         case ".ema":
                         {
                             var ema = EMA.FromFile(file);
                             File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
-                                              AssetHelper.GetEmaElement(ema).GetString());
+                                              AssetHelper.GetEmaElement(ema).ToString());
                             break;
                         }
                         case ".eso":
                         {
                             var eso = ESO.FromFile(file);
                             File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
-                                              AssetHelper.GetEsoElement(eso).GetString());
+                                              AssetHelper.GetEsoElement(eso).ToString());
                             break;
                         }
                         case ".txt":
@@ -547,25 +571,26 @@ namespace Mygod.Edge.Tool
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (files == null) return;
-            var processed = false;
-            foreach (var file in files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture)))
-            {
-                string id = Path.GetFileNameWithoutExtension(file), target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
-                if (File.Exists(target) && TaskDialog.Show(this, id + " 已存在。", "是否要覆盖？", TaskDialogType.YesNoQuestion)
-                    != TaskDialogSimpleResult.Yes) continue;
+            if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture)).Count(InstallEdgeMod) == 0) return;
+            TaskDialog.Show(this, "安装成功。", type: TaskDialogType.Information);
+            RefreshMods();
+        }
+
+        private bool InstallEdgeMod(string file)
+        {
+            string id = Path.GetFileNameWithoutExtension(file), target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
+            if (File.Exists(target) && TaskDialog.Show(this, id + " 已存在。", "是否要覆盖？", TaskDialogType.YesNoQuestion)
+                == TaskDialogSimpleResult.Yes)
                 try
                 {
                     File.Copy(file, target, true);
-                    processed = true;
+                    return true;
                 }
                 catch (Exception exc)
                 {
                     TaskDialog.Show(this, id + " 安装失败。", exc.Message, TaskDialogType.Error);
                 }
-            }
-            if (!processed) return;
-            TaskDialog.Show(this, "安装成功。", type: TaskDialogType.Information);
-            RefreshMods();
+            return false;
         }
 
         private void DeleteCurrentMod(object sender, RoutedEventArgs e)
@@ -686,6 +711,26 @@ namespace Mygod.Edge.Tool
                 ModelNameBox.Text = name;
             }
             DrawModelTree(sender, e);
+        }
+
+        public static ModelWindow ModelWindow;
+        private void ViewModel(bool debug = false)
+        {
+            var item = ModelTreeView.SelectedItem as TreeViewItem;
+            if (item == null) return;
+            var path = item.Tag.ToString();
+            if (!path.EndsWith(".eso", false, CultureInfo.InvariantCulture)) return;
+            if (ModelWindow == null) (ModelWindow = new ModelWindow()).Show();
+            ModelWindow.Draw(path, debug);
+            ModelWindow.Activate();
+        }
+        private void ViewModel(object sender, RoutedEventArgs e)
+        {
+            ViewModel();
+        }
+        private void ViewModelDebug(object sender, RoutedEventArgs e)
+        {
+            ViewModel(true);
         }
 
         #endregion

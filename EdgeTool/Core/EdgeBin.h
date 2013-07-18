@@ -1,7 +1,5 @@
 ﻿// Downloaded from: http://will.kirk.by/labs/twotribes/edge-bin.html
-// Modified by: Mygod 2013.5.21
-
-// bool? : false, true, null
+// Modified by: Mygod 2013.7.5
 
 #define TIME_THRESHOLDS_LENGTH 5
 

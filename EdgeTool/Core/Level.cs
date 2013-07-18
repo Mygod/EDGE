@@ -476,7 +476,7 @@ namespace Mygod.Edge.Tool
         }
         public void Decompile(string path)
         {
-            File.WriteAllText(path + ".xml", GetXElement().GetString());
+            File.WriteAllText(path + ".xml", GetXElement().ToString());
             LegacyMinimap.SaveToImage(path + ".png");
             for (var z = 0; z < Size.Height; z++) CollisionMap[z].SaveToImage(path + '.' + z + ".png");
         }

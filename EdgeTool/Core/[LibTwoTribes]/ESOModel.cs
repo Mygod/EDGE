@@ -78,7 +78,8 @@ namespace LibTwoTribes
                     m_Colors = new Color[numVerts];
                     for (int i = 0; i < numVerts; i++)
                     {
-                        m_Colors[i] = Color.FromArgb(br.ReadInt32());
+                        var temp = Color.FromArgb(br.ReadInt32());
+                        m_Colors[i] = Color.FromArgb(temp.B, temp.G, temp.R, temp.A);
                     }
                 }
                 else
@@ -160,7 +161,7 @@ namespace LibTwoTribes
                 {
                     for (int i = 0; i < m_Vertices.Length; i++)
                     {
-                        bw.Write(m_Colors[i].ToArgb());
+                        bw.Write(Color.FromArgb(m_Colors[i].B, m_Colors[i].G, m_Colors[i].R, m_Colors[i].A).ToArgb());
                     }
                 }
                 else

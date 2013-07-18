@@ -83,6 +83,9 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
+    <Compile Include="Core\[3DTools]\MathUtils.cs" />
+    <Compile Include="Core\[3DTools]\Matrix3DStack.cs" />
+    <Compile Include="Core\[3DTools]\ScreenSpaceLines3D.cs" />
     <Compile Include="Core\[LibTwoTribes]\Asset.cs" />
     <Compile Include="Core\[LibTwoTribes]\AssetHash.cs" />
     <Compile Include="Core\[LibTwoTribes]\AssetHeader.cs" />
@@ -115,7 +118,14 @@
     <Compile Include="Core\[LibTwoTribes]\Util\TTBinaryWriter.cs" />
     <Compile Include="Core\[LibTwoTribes]\Util\Vec2.cs" />
     <Compile Include="Core\[LibTwoTribes]\Util\Vec3.cs" />
+    <Compile Include="ModelWindow.xaml.cs">
+      <DependentUpon>ModelWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
+    <Page Include="ModelWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -35,8 +35,8 @@
                     Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
         </Grid>
         <TabControl Name="Tabs" x:FieldModifier="private" Grid.Row="2">
-            <TabItem Header="文件(反)编译" AllowDrop="True" PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver"
-                     PreviewDragLeave="OnDragLeave" PreviewDrop="OnBinaryDrop">
+            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True" PreviewDrop="OnBinaryDrop"
+                     PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -196,6 +196,7 @@
                         <DataGrid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="显示小地图(_M)" Click="ShowMinimap" />
+                                <MenuItem Header="绘制模型树(_D)" Click="DrawLevelModelTree" />
                                 <MenuItem Header="在资源管理器中浏览关卡(_E)" Click="ShowLevelInExplorer" />
                                 <MenuItem Header="生成悬浮版自动修复关卡(_A)..." Click="FloatingAutoFix" />
                                 <MenuItem Header="反编译关卡(_C)..." Click="Decompile" />
@@ -205,9 +206,11 @@
                     <TextBlock Grid.Row="2" Text="提示：更多精彩内容只需右击。" />
                 </Grid>
             </TabItem>
-            <TabItem Header="绘制模型树" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
+            <TabItem Header="绘制模型树" Name="DrawModelTreeTab" x:FieldModifier="private"
+                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
@@ -218,15 +221,17 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Content="请输入模型名：（无需 .r_mdl 扩展名）" Target="{Binding ElementName=ModelNameBox}" />
                     <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center" IsEditable="True" />
                     <Button Content="绘制(_D)" Click="DrawModelTree" Grid.Column="3" VerticalAlignment="Center" IsDefault="True" />
                     <Button Content="帮助(_H)" Click="GetModelTreeHelp" Grid.Column="5" VerticalAlignment="Center" />
-                    <Button Content="在资源管理器中找到选中项(_E)" Click="ShowFileInExplorer" Grid.Column="7" VerticalAlignment="Center" />
-                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="1" Grid.ColumnSpan="8" AllowDrop="True"
+                    <StackPanel Grid.Row="1" Grid.ColumnSpan="6" Orientation="Horizontal">
+                        <Button Content="添加到模型查看器，右击启动调试(_V)" Margin="2"
+                                Click="ViewModel" MouseRightButtonUp="ViewModelDebug" />
+                        <Button Content="在资源管理器中找到选中项(_E)" Margin="2" Click="ShowFileInExplorer" />
+                    </StackPanel>
+                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="6" AllowDrop="True"
                               DragEnter="OnModelDragEnter" DragOver="OnDragOver" DragLeave="OnDragLeave" Drop="OnModelDrop" />
                 </Grid>
             </TabItem>
