@@ -3,11 +3,44 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Mygod.IO;
 using Mygod.Windows;
 using Mygod.Xml.Linq;
 
 namespace Mygod.Edge.Tool
 {
+    public sealed class AchievementSection : IniSection
+    {
+        public AchievementSection(IniSection section) : base(section.IniFile, section.Name)
+        {
+            state = new Int64HexData(this, "State");
+            time = new Int64HexData(this, "Time");
+        }
+
+        private readonly Int64HexData state, time;
+        private const long UnlockedState = 0x0100000001;
+
+        public bool Unlocked
+        {
+            get { return state.Get() == UnlockedState; }
+            set
+            {
+                if ((value ? UnlockedState : 0) == state.Get()) return;
+                if (value)
+                {
+                    state.Set(UnlockedState);
+                    time.Set(0x3143333333);
+                }
+                else
+                {
+                    state.Set(0);
+                    time.Set(0);
+                    Remove();
+                }
+            }
+        }
+    }
+
     public class Achievement
     {
         static Achievement()
@@ -28,24 +61,21 @@ namespace Mygod.Edge.Tool
             Title = element.GetAttributeValue("title");
             Description = element.GetAttributeValue("description");
             Help = element.GetAttributeValue("help");
-            Disabled = (element.GetAttributeValue("disabled") ?? string.Empty).ToLower() == "true";
-            Points = int.Parse(element.GetAttributeValue("points"));
+            Points = element.GetAttributeValue<int>("points");
         }
-        public Achievement(User user, Achievement achievement)
+        public Achievement(IniSection section, Achievement achievement)
         {
-            this.user = user;
+            this.section = new AchievementSection(section);
             ID = achievement.ID;
             picture = achievement.picture;
             Title = achievement.Title;
             Description = achievement.Description;
             Help = achievement.Help;
-            Disabled = achievement.Disabled;
             Points = achievement.Points;
         }
 
         private readonly string picture;
-        private readonly User user;
-        public string FilePath { get { return Path.Combine(user.Path, user.Name + "_swarm/wins/" + ID); } }
+        private readonly AchievementSection section;
 
         public string ID { get; private set; }
         public Uri PictureUri
@@ -55,11 +85,9 @@ namespace Mygod.Edge.Tool
         public string Title { get; private set; }
         public string Description { get; private set; }
         public string Help { get; private set; }
-        public bool Unlocked { get { return File.Exists(FilePath); } }
-        public bool Disabled { get; private set; }
+        public bool Unlocked { get { return section.Unlocked; } set { section.Unlocked = value; } }
         public bool NeedHelp { get { return !Unlocked && !string.IsNullOrWhiteSpace(Help); } }
         public bool HelpUnavailable { get { return !Unlocked && string.IsNullOrWhiteSpace(Help); } }
-        public DateTime UnlockTime { get { return Unlocked ? new FileInfo(FilePath).LastWriteTime : DateTime.MaxValue; } }
         public int Points { get; private set; }
 
         public override string ToString()
@@ -70,26 +98,33 @@ namespace Mygod.Edge.Tool
 
     public class User
     {
-        public User(string path)
+        private User(string name)
         {
-            var i = path.LastIndexOf('\\');
-            Path = path.Substring(0, i);
-            Name = path.Substring(i + 1, path.Length - i - 7);
-            Achievements = Achievement.Achievements.Select(a => new Achievement(this, a.Value))
-                .OrderBy(a => a.Unlocked ? 2 : a.Disabled ? 1 : 0).ThenByDescending(a => a.UnlockTime).ToArray();
-            AchievementsUnlockedCount = Achievements.Count(a => a.Unlocked);
-            AchievementsPoints = Achievements.Sum(a => a.Points);
-            AchievementsUnlockedPoints = Achievements.Where(a => a.Unlocked).Sum(a => a.Points);
-            LevelsPlayedCount = new DirectoryInfo(path).EnumerateFiles("heatmap_*.bjson").Count();
+            var achievements = new IniFile(Path.Combine(GetStatsDirectory(Name = name), AchievementFileName));
+            Achievements = Achievement.Achievements.Select(a => new Achievement(achievements[a.Key], a.Value))
+                .OrderBy(a => a.Unlocked).ToArray();
+            UnlockedCount = Achievements.Count(a => a.Unlocked);
+            Points = Achievements.Sum(a => a.Points);
+            UnlockedPoints = Achievements.Where(a => a.Unlocked).Sum(a => a.Points);
         }
 
-        public readonly string Path;
+        public static string GetStatsDirectory(string name)
+        {
+            return Path.Combine(UsersPath, name, "38740/stats");
+        }
+        public static IEnumerable<User> GetUsers()
+        {
+            return new DirectoryInfo(UsersPath).EnumerateDirectories().Select(info => new User(info.Name));
+        }
+
+        public const string AchievementFileName = "achievements.ini";
+        public static readonly string UsersPath
+            = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OUTLAWS");
+
         public string Name { get; private set; }
         public Achievement[] Achievements { get; private set; }
-        public int AchievementsPoints { get; private set; }
-        public int AchievementsUnlockedCount { get; private set; }
-        public int AchievementsUnlockedPoints { get; private set; }
-        public int LevelsPlayedCount { get; private set; }
-        public static int LevelsCount { get; set; }
+        public int Points { get; private set; }
+        public int UnlockedCount { get; private set; }
+        public int UnlockedPoints { get; private set; }
     }
 }

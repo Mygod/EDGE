@@ -10,6 +10,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using Mygod.IO;
 using Mygod.Xml.Linq;
 using SevenZip;
 
@@ -22,7 +23,7 @@ namespace Mygod.Edge.Tool
             this.parent = parent;
             FilePath = path;
             bool initialized = false, containXml = false;
-            MappingLevels mappings = null;
+            IEnumerable<MappingLevel> mappings = null;
             var i = 0;
             using (var extractor = new SevenZipExtractor(path))
             {
@@ -59,7 +60,8 @@ namespace Mygod.Edge.Tool
                                         break;
                                 }
                             }
-                            if (root.HasElements) mappings = new MappingLevels(root);
+                            if (root.HasElements)
+                                mappings = root.ElementsCaseInsensitive("level").Select(e => new MappingLevel(LevelType.Extended, 0, e));
                             initialized = true;
                             break;
                         case "description.txt":
@@ -87,7 +89,10 @@ namespace Mygod.Edge.Tool
             if (mappings == null) return;
             if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！" +
                                                        "请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
-            Xsl = mappings.GetXsl();
+            var xslBuilder = new StringBuilder("<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n");
+            foreach (var item in mappings) xslBuilder.AppendLine("      " + item.GetXElement());
+            xslBuilder.AppendLine("    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
+            Xsl = xslBuilder.ToString();
         }
 
         private static void Set(out HashSet<string> set, string value)
@@ -228,6 +233,7 @@ namespace Mygod.Edge.Tool
             TexturesDirectory = Path.Combine(GameDirectory, "textures");
             DisabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
+            SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
             RefreshMods();
         }
 
@@ -235,6 +241,7 @@ namespace Mygod.Edge.Tool
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
         public StringSetFile DisabledMods, ModifiedFiles;
         public Version EngineVersion;
+        public SteamOtl SteamOtl { get; private set; }
 
         public bool GetIsDisabled(EdgeMod mod)
         {
@@ -446,5 +453,20 @@ namespace Mygod.Edge.Tool
             if (Count == 0) File.Delete(FilePath);
             else File.WriteAllText(FilePath, string.Join(Environment.NewLine, this));
         }
+    }
+
+    public class SteamOtl : IniFile
+    {
+        public SteamOtl(string filePath, uint stringLong = 1024)
+            : base(filePath, stringLong)
+        {
+            Settings = this["Settings"];
+            SettingsUserNameData = new StringData(Settings, "UserName");
+        }
+
+        private readonly IniSection Settings;
+        private readonly StringData SettingsUserNameData;
+
+        public string SettingsUserName { get { return SettingsUserNameData.Get(); } set { SettingsUserNameData.Set(value); } }
     }
 }

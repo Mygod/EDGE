@@ -175,7 +175,7 @@ struct button {
         byte siblings_count;
         bool is_moving;
         // if is_moving
-                short moving_block_id;
+                short moving_platform_id;
         // else
                 vector position;
         // endif

@@ -61,7 +61,16 @@ namespace Mygod.Edge.Tool
             }
             if (files.Count > 0) ProcessCore(files);
             Load(null, null);
+            watcher = new FileSystemWatcher(User.UsersPath) { IncludeSubdirectories = true };
+            watcher.Created += RefreshAchievements;
+            watcher.Changed += RefreshAchievements;
+            watcher.Deleted += RefreshAchievements;
+            watcher.Renamed += RefreshAchievements;
+            watcher.EnableRaisingEvents = true;
+            RefreshAchievements();
         }
+
+        private readonly FileSystemWatcher watcher;
 
         private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done";
 
@@ -127,13 +136,14 @@ namespace Mygod.Edge.Tool
                 if (searcher != null) searcher.Abort();
                 try
                 {
-                    User.LevelsCount = (MappingLevels.Current = new MappingLevels(levelsDir)).Count;
+                    MappingLevels.Current = new MappingLevels(levelsDir);
                 }
                 catch { }
                 levels.Clear();
                 searcher = new Thread(Load);
                 searcher.Start();
-                RefreshAchievements();
+                var current = users.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
+                if (current != null) UserBox.SelectedItem = users;
                 RunGameButton.IsEnabled = true;
                 Settings.CurrentPath = GamePath.Text;
                 GamePath.ItemsSource = Settings.RecentPaths;
@@ -144,8 +154,6 @@ namespace Mygod.Edge.Tool
                 Tabs.IsEnabled = false;
             }
         }
-
-        private FileSystemWatcher watcher;
 
         private void Load()
         {
@@ -263,71 +271,44 @@ namespace Mygod.Edge.Tool
 
         private void SetDefaultProfile(object sender, RoutedEventArgs e)
         {
-            File.WriteAllText(Path.Combine(Edge.GameDirectory, "playername.txt"), ((User)UserBox.SelectedItem).Name);
+            Edge.SteamOtl.SettingsUserName = ((User) UserBox.SelectedItem).Name;
         }
 
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null) if (item.Unlocked)
-                {
-                    if (TaskDialog.Show(this, "确定要取消解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
-                        == TaskDialogSimpleResult.Yes) File.Delete(item.FilePath);
-                }
-                else if (TaskDialog.Show(this, "确定要解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
-                         == TaskDialogSimpleResult.Yes)
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(item.FilePath));
-                    File.WriteAllText(item.FilePath, "CONGRATURATION! YOU SUCSESS!\r\nA WINRAR IS YOU!");
-                }
+            if (item != null && TaskDialog.Show(this, "确定要(取消)解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
+                == TaskDialogSimpleResult.Yes) item.Unlocked = !item.Unlocked;
         }
 
         private void RefreshAchievements(object sender = null, FileSystemEventArgs e = null)
         {
-            var i = 0;
-            if (e != null)
-            {
-                i = e.FullPath.IndexOf(@"_swarm\wins\", StringComparison.InvariantCultureIgnoreCase);
-                if (i < 0) return;
-            }
+            var skipBalloons = false;
+            User currentUser = null;
+            var unlockedAchievements = new HashSet<string>();
             Dispatcher.Invoke(() =>
             {
-                string playerName;
-                try
-                {
-                    playerName = File.ReadAllText(Path.Combine(Edge.GameDirectory, "playername.txt"));
-                }
-                catch
-                {
-                    playerName = Environment.UserName;
-                }
-                var index = UserBox.SelectedIndex < 0 ? 0 : UserBox.SelectedIndex;
+                currentUser = UserBox.SelectedItem as User;
+                if (!(skipBalloons = currentUser == null))
+                    unlockedAchievements = new HashSet<string>(from a in currentUser.Achievements where a.Unlocked select a.ID);
                 users.Clear();
-                User current = null;
-                foreach (var user in Directory.EnumerateDirectories(Edge.GameDirectory, "*_swarm").Select(path => new User(path)))
+                foreach (var user in User.GetUsers())
                 {
-                    if (user.Name == playerName) current = user;
                     users.Add(user);
+                    if (currentUser == null || user.Name == currentUser.Name) UserBox.SelectedItem = currentUser = user;
                 }
-                if (current == null) UserBox.SelectedIndex = index;
-                else UserBox.SelectedItem = current;
-                AchievementsTip.Text = users.Count == 0 ? "对不起，你还没有玩过游戏或你正在使用的是 Steam 版。"
-                                                        : "提示：右击可强制(取消)解锁。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。";
-                if (watcher != null && watcher.Path == Edge.GameDirectory) return;
-                watcher = new FileSystemWatcher(Edge.GameDirectory) { IncludeSubdirectories = true };
-                watcher.Created += RefreshAchievements;
-                watcher.Deleted += RefreshAchievements;
-                watcher.Renamed += RefreshAchievements;
-                watcher.EnableRaisingEvents = true;
+                AchievementsTip.Text = users.Count == 0
+                    ? "对不起，你还没有玩过游戏或你使用了不支持的版本。该功能当前仅支持 V1.0.2483.7086 的破解版。"
+                    : "提示：右击可强制(取消)解锁。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。";
             });
-            if (e == null || e.ChangeType != WatcherChangeTypes.Created) return;
-            var name = e.FullPath.Substring(i + 12);
-            Achievement a = null;
-            if (Achievement.Achievements.ContainsKey(name)) a = Achievement.Achievements[name];
-            while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
-            notifyIcon.ShowBalloonTip(5000, "成就 " + (a == null ? name : a.Title) + " 解锁！", 
-                                      "恭喜你解锁了一个成就！快去 EdgeTool 看看吧！"
-                                      + (a != null ? Environment.NewLine + "说明：" + a.Description : string.Empty), ToolTipIcon.Info);
+            if (skipBalloons || currentUser == null) return;
+            foreach (var achievement in currentUser.Achievements)
+                if (achievement.Unlocked && !unlockedAchievements.Contains(achievement.ID))
+                {
+                    while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
+                    notifyIcon.ShowBalloonTip(5000, "成就 " + achievement.Title + " 解锁！", "恭喜你解锁了一个成就！快去 EdgeTool 看看吧！"
+                        + Environment.NewLine + "说明：" + achievement.Description, ToolTipIcon.Info);
+                }
         }
 
         #endregion
@@ -580,16 +561,16 @@ namespace Mygod.Edge.Tool
         {
             string id = Path.GetFileNameWithoutExtension(file), target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
             if (File.Exists(target) && TaskDialog.Show(this, id + " 已存在。", "是否要覆盖？", TaskDialogType.YesNoQuestion)
-                == TaskDialogSimpleResult.Yes)
-                try
-                {
-                    File.Copy(file, target, true);
-                    return true;
-                }
-                catch (Exception exc)
-                {
-                    TaskDialog.Show(this, id + " 安装失败。", exc.Message, TaskDialogType.Error);
-                }
+                != TaskDialogSimpleResult.Yes) return false;
+            try
+            {
+                File.Copy(file, target, true);
+                return true;
+            }
+            catch (Exception exc)
+            {
+                TaskDialog.Show(this, id + " 安装失败。", exc.Message, TaskDialogType.Error);
+            }
             return false;
         }
 
@@ -767,20 +748,6 @@ namespace Mygod.Edge.Tool
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value != null ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    [ValueConversion(typeof(object), typeof(string))]
-    public sealed class ToStringConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value == null ? null : value.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

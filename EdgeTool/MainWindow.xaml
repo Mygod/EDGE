@@ -5,7 +5,6 @@
         <Grid.Resources>
             <local:VisibleWhileTrueConverter x:Key="VisibleWhileTrue" />
             <local:VisibleWhileNotNullConverter x:Key="VisibleWhileNotNull" />
-            <local:ToStringConverter x:Key="ToString" />
             <local:SecondsConverter x:Key="Seconds" />
             <local:BinFilePathConverter x:Key="BinFilePath" />
         </Grid.Resources>
@@ -35,21 +34,82 @@
                     Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
         </Grid>
         <TabControl Name="Tabs" x:FieldModifier="private" Grid.Row="2">
-            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True" PreviewDrop="OnBinaryDrop"
-                     PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave">
+            <TabItem Header="浏览成就">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
                         <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="5" TextWrapping="Wrap">
-                        要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
-                        <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
-                        <LineBreak />
-                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；cos.bin；其对应的反编译产物。
-                    </TextBlock>
-                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
-                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="请选择你的用户：(_U)" />
+                    <ComboBox Name="UserBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:User}">
+                                <TextBlock>
+                                    <Run Text="{Binding Name, Mode=OneWay}" />
+                                    (<Run Text="{Binding UnlockedCount, Mode=OneWay}" />/<Run
+                                          Text="{Binding Achievements.Length, Mode=OneWay}" />,
+                                    <Run Text="{Binding UnlockedPoints, Mode=OneWay}" />/<Run
+                                         Text="{Binding Points, Mode=OneWay}" />
+                                    点)
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Content="切换到当前存档(_D)" Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center"
+                            IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}" />
+                    <ListBox Name="AchievementsList" x:FieldModifier="private"  Grid.Row="2" Grid.ColumnSpan="4"
+                             ItemsSource="{Binding SelectedItem.Achievements, ElementName=UserBox}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
+                             MouseRightButtonUp="ForceUnlockAchievement">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:Achievement}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="64" Source="{Binding PictureUri}" />
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock TextWrapping="Wrap" ToolTip="{Binding ID}">
+                                            <Run Text="{Binding Title, Mode=OneWay}" FontSize="18" FontWeight="Bold" />
+                                            (<Run Text="{Binding Points, Mode=OneWay}" /> 点)
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap"
+                                                   Visibility="{Binding Description, Converter={StaticResource VisibleWhileNotNull}}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="4" Orientation="Horizontal">
+                                        <StackPanel.Resources>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Margin" Value="0,0,5,0" />
+                                                <Setter Property="Height" Value="32" />
+                                            </Style>
+                                        </StackPanel.Resources>
+                                        <Image Source="/Resources/Images/Unlocked.png" ToolTip="此成就已解锁。"
+                                               Visibility="{Binding Unlocked, Converter={StaticResource VisibleWhileTrue}}" />
+                                        <Image Source="/Resources/Images/Help.png" ToolTip="到底怎么获得此成就？！我要疯了！"
+                                               Visibility="{Binding NeedHelp, Converter={StaticResource VisibleWhileTrue}}"
+                                               MouseUp="ShowHelp" Tag="{Binding Help}" Cursor="Hand" />
+                                        <Image Source="/Resources/Images/HelpDisabled.png"
+                                               ToolTip="暂时没有视频帮助，如果你有获得方法，欢迎通过百度方块边缘吧告诉我们。"
+                                               Visibility="{Binding HelpUnavailable, Converter={StaticResource VisibleWhileTrue}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Name="AchievementsTip" x:FieldModifier="private" Grid.Row="4" Grid.ColumnSpan="4" />
                 </Grid>
             </TabItem>
             <TabItem Header="Mod 管理" AllowDrop="True" PreviewDragEnter="OnModDragEnter" PreviewDragOver="OnDragOver"
@@ -80,92 +140,6 @@
                         <Button Margin="2,0" Content="安装(_I)" Click="InstallMods" />
                         <Button Margin="2,0,0,0" Content="临时全部卸载(_C)" Click="CleanUpInstall" />
                     </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="浏览成就" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="5" />
-                        <RowDefinition />
-                        <RowDefinition Height="5" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Label Content="请选择你的用户：(_U)" />
-                    <ComboBox Name="UserBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:User}">
-                                <TextBlock>
-                                    <Run Text="{Binding Name, Mode=OneWay}" />
-                                    (<Run Text="{Binding AchievementsUnlockedCount, Mode=OneWay}" />/<Run
-                                          Text="{Binding Achievements.Length, Mode=OneWay}" />,
-                                    <Run Text="{Binding AchievementsUnlockedPoints, Mode=OneWay}" />/<Run
-                                         Text="{Binding AchievementsPoints, Mode=OneWay}" />
-                                    Points,
-                                    <Run Text="{Binding LevelsPlayedCount, Mode=OneWay}" />/<Run
-                                         Text="{Binding LevelsCount, Mode=OneWay}" />
-                                    关)
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button Content="切换到当前存档(_D)" Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center" />
-                    <ListBox Name="AchievementsList" x:FieldModifier="private"  Grid.Row="2" Grid.ColumnSpan="4"
-                             ItemsSource="{Binding SelectedItem.Achievements, ElementName=UserBox}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
-                             MouseRightButtonUp="ForceUnlockAchievement">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:Achievement}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="5" />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="5" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Height="64" Source="{Binding PictureUri}" />
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock TextWrapping="Wrap" ToolTip="{Binding ID}">
-                                            <Run Text="{Binding Title, Mode=OneWay}" FontSize="18" FontWeight="Bold" />
-                                            (<Run Text="{Binding Points, Mode=OneWay}" /> Points)
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap"
-                                                   Visibility="{Binding Description, Converter={StaticResource VisibleWhileNotNull}}" />
-                                        <TextBlock Visibility="{Binding Unlocked, Converter={StaticResource VisibleWhileTrue}}"
-                                                   TextWrapping="Wrap">
-                                            解锁时间：<Run Text="{Binding UnlockTime, Mode=OneWay, Converter={StaticResource ToString}}" />
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="4" Orientation="Horizontal">
-                                        <StackPanel.Resources>
-                                            <Style TargetType="Image">
-                                                <Setter Property="Margin" Value="0,0,5,0" />
-                                                <Setter Property="Height" Value="32" />
-                                            </Style>
-                                        </StackPanel.Resources>
-                                        <Image Source="/Resources/Images/Disabled.png" ToolTip="此成就在普通 EDGE Epic 版中不可获得。"
-                                               Visibility="{Binding Disabled, Converter={StaticResource VisibleWhileTrue}}" />
-                                        <Image Source="/Resources/Images/Unlocked.png" ToolTip="此成就已解锁。"
-                                               Visibility="{Binding Unlocked, Converter={StaticResource VisibleWhileTrue}}" />
-                                        <Image Source="/Resources/Images/Help.png" ToolTip="到底怎么获得此成就？！我要疯了！"
-                                               Visibility="{Binding NeedHelp, Converter={StaticResource VisibleWhileTrue}}"
-                                               MouseUp="ShowHelp" Tag="{Binding Help}" Cursor="Hand" />
-                                        <Image Source="/Resources/Images/HelpDisabled.png"
-                                               ToolTip="暂时没有视频帮助，如果你有获得方法，欢迎通过百度方块边缘吧告诉我们。"
-                                               Visibility="{Binding HelpUnavailable, Converter={StaticResource VisibleWhileTrue}}" />
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <TextBlock Name="AchievementsTip" x:FieldModifier="private" Grid.Row="4" Grid.ColumnSpan="4" />
                 </Grid>
             </TabItem>
             <TabItem Header="浏览关卡" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
@@ -206,6 +180,23 @@
                     <TextBlock Grid.Row="2" Text="提示：更多精彩内容只需右击。" />
                 </Grid>
             </TabItem>
+            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True" PreviewDrop="OnBinaryDrop"
+                     PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="5" TextWrapping="Wrap">
+                        要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
+                        <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
+                        <LineBreak />
+                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；cos.bin；其对应的反编译产物。
+                    </TextBlock>
+                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
+                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                </Grid>
+            </TabItem>
             <TabItem Header="绘制模型树" Name="DrawModelTreeTab" x:FieldModifier="private"
                      IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
@@ -229,7 +220,7 @@
                     <StackPanel Grid.Row="1" Grid.ColumnSpan="6" Orientation="Horizontal">
                         <Button Content="添加到模型查看器，右击启动调试(_V)" Margin="2"
                                 Click="ViewModel" MouseRightButtonUp="ViewModelDebug" />
-                        <Button Content="在资源管理器中找到选中项(_E)" Margin="2" Click="ShowFileInExplorer" />
+                        <Button Content="在资源管理器中找到选中项(_X)" Margin="2" Click="ShowFileInExplorer" />
                     </StackPanel>
                     <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="6" AllowDrop="True"
                               DragEnter="OnModelDragEnter" DragOver="OnDragOver" DragLeave="OnDragLeave" Drop="OnModelDrop" />

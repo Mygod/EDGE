@@ -9,7 +9,7 @@ namespace Mygod.Edge.Tool
         static Settings()
         {
             SettingsFile = new IniFile("Settings.ini");
-            SettingsSection = new IniSection(SettingsFile, "Settings");
+            SettingsSection = SettingsFile["Settings"];
             ModLoadedData = new YesNoData(SettingsSection, "ModLoaded");
             RecentPathsData = new StringListData(SettingsFile, "RecentPaths");
             CurrentPathData = new StringData(RecentPathsData, "Current");

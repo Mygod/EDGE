@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -32,7 +31,7 @@ namespace Mygod.Edge.Tool
                 var geom = new MeshGeometry3D
                 {
                     Positions = new Point3DCollection(model.Vertices.Select(vec => ConvertVertex(eso, vec))),
-                    Normals = new Vector3DCollection(model.Normals.Select(ConvertNormal))
+                    Normals = new Vector3DCollection(model.Normals.Select(vec => ConvertNormal(eso, vec)))
                 };
                 var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset.ToString() + ".ema"));
                 if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
@@ -70,18 +69,26 @@ namespace Mygod.Edge.Tool
 
         private static Point3D ConvertVertex(ESO eso, Vec3 vec)
         {
-            return new Point3D(
-                vec.X * eso.Header.Scale.X * eso.Header.ScaleXYZ + eso.Header.Translate.X,
-                vec.Y * eso.Header.Scale.Y * eso.Header.ScaleXYZ + eso.Header.Translate.Y,
-                vec.Z * eso.Header.Scale.Z * eso.Header.ScaleXYZ + eso.Header.Translate.Z);
+            var matrix = new Matrix3D();
+            matrix.Scale(new Vector3D(eso.Header.Scale.X, eso.Header.Scale.Y, eso.Header.Scale.Z));
+            matrix.Scale(new Vector3D(eso.Header.ScaleXYZ, eso.Header.ScaleXYZ, eso.Header.ScaleXYZ));
+            matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
+            matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
+            return matrix.Transform(new Point3D(vec.X, vec.Y, vec.Z));
         }
-        private static Vector3D ConvertNormal(Vec3 vec)
+        private static Vector3D ConvertNormal(ESO eso, Vec3 vec)
         {
-            return new Vector3D(vec.X, vec.Y, vec.Z);
+            var matrix = new Matrix3D();
+            matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
+            return matrix.Transform(new Vector3D(vec.X, vec.Y, vec.Z));
         }
         private static Point ConvertTexCoord(Vec2 vec)
         {
-            return new Point(vec.X, vec.Y);
+            return new Point((vec.X % 1 + 1) % 1, (vec.Y % 1 + 1) % 1);
         }
 
         private bool dragging;

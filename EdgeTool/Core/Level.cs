@@ -326,7 +326,7 @@ namespace Mygod.Edge.Tool
             Music = reader.ReadByte();
             foreach (var button in Buttons)
             {
-                if (button.IsMoving) button.MovingBlockID.Name.DoNothing();
+                if (button.IsMoving) button.MovingPlatformID.Name.DoNothing();
                 foreach (var e in button.Events) Buttons.BlockEvents[e].ID.Name.DoNothing();
             }
             foreach (var cube in OtherCubes)
@@ -610,6 +610,9 @@ namespace Mygod.Edge.Tool
 
     public sealed class MappingLevels : KeyedCollection<string, MappingLevel>
     {
+        public MappingLevels()
+        {
+        }
         public MappingLevels(string levelsDir) : this(XHelper.Load(Path.Combine(levelsDir, "mapping.xml")).Root, levelsDir)
         {
         }
@@ -632,7 +635,7 @@ namespace Mygod.Edge.Tool
 
         private readonly string levelsDir;
 
-        public static MappingLevels Current;
+        public static MappingLevels Current = new MappingLevels();
 
         public static MappingLevel GetMapping(Level level)
         {
@@ -642,19 +645,6 @@ namespace Mygod.Edge.Tool
             var mapping = new MappingLevel(LevelType.None, 0, path, 0, string.Empty);
             Current.Add(mapping);
             return mapping;
-        }
-
-        public string GetXsl()
-        {
-            var result = new StringBuilder("<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n");
-            foreach (var group in this.GroupBy(m => m.Type))
-            {
-                result.AppendFormat("  <xsl:template match=\"/levels/{0}\">\r\n    <xsl:element name=\"{1}\">\r\n      <xsl:for-each select=\"/levels/{0}/@*\">\r\n        <xsl:attribute name=\"{1}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n", group.Key.ToString().ToLower(), "{name()}");
-                foreach (var item in group) result.AppendLine("      " + item.GetXElement());
-                result.AppendLine("    </xsl:element>\r\n  </xsl:template>");
-            }
-            result.AppendLine("</xsl:transform>");
-            return result.ToString();
         }
     }
 
@@ -1520,7 +1510,7 @@ namespace Mygod.Edge.Tool
             SequenceInOrder = reader.ReadBoolean();
             reader.ReadByte();  // Siblings count is useless at this point
             if (IsMoving = reader.ReadBoolean())
-                MovingBlockID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, reader.ReadInt16());
+                MovingPlatformID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, reader.ReadInt16());
             else Position = new Point3D16(reader);
             var count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Events.Add(reader.ReadUInt16());
@@ -1550,8 +1540,8 @@ namespace Mygod.Edge.Tool
             element.GetAttributeValueWithDefault(out Visible, "Visible", NullableBoolean.True);
             element.GetAttributeValueWithDefault(out PressCount, "PressCount");
             element.GetAttributeValueWithDefault(out Mode, "Mode", ButtonMode.StayDown);
-            if (IsMoving = element.GetAttributeValue("MovingBlockID") != null)
-                MovingBlockID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingBlockID"));
+            if (IsMoving = element.GetAttributeValue("MovingPlatformID") != null)
+                MovingPlatformID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingPlatformID"));
             else element.GetAttributeValueWithDefault(out Position, "Position");
             parent.Add(this);
         }
@@ -1569,7 +1559,7 @@ namespace Mygod.Edge.Tool
         public short ParentID = -1;
         public bool SequenceInOrder;
         public bool IsMoving;
-        public IDReference<MovingPlatform> MovingBlockID;
+        public IDReference<MovingPlatform> MovingPlatformID;
         public Point3D16 Position;
         public List<ushort> Events = new List<ushort>();
 
@@ -1596,7 +1586,7 @@ namespace Mygod.Edge.Tool
             writer.Write(SequenceInOrder);
             writer.Write(parent.GetSiblingsCount(this));
             writer.Write(IsMoving);
-            if (IsMoving) writer.Write(MovingBlockID.Index);
+            if (IsMoving) writer.Write(MovingPlatformID.Index);
             else Position.Write(writer);
             writer.Write((ushort) Events.Count);
             foreach (var e in Events) writer.Write(e);
@@ -1610,7 +1600,7 @@ namespace Mygod.Edge.Tool
             result.SetAttributeValueWithDefault("Visible", Visible, NullableBoolean.True);
             result.SetAttributeValueWithDefault("PressCount", PressCount);
             if (type == ButtonType.Standalone) result.SetAttributeValueWithDefault("Mode", Mode, ButtonMode.StayDown);
-            if (IsMoving) result.SetAttributeValueWithDefault("MovingBlockID", MovingBlockID.Name);
+            if (IsMoving) result.SetAttributeValueWithDefault("MovingPlatformID", MovingPlatformID.Name);
             else result.SetAttributeValue("Position", Position);
             return result;
         }

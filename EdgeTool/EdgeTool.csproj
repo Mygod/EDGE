@@ -6,7 +6,6 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C718F9F3-2AF6-44A0-AA69-DB58C12363ED}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mygod.Edge.Tool</RootNamespace>
     <AssemblyName>EdgeTool</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -83,9 +82,9 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
-    <Compile Include="Core\[3DTools]\MathUtils.cs" />
-    <Compile Include="Core\[3DTools]\Matrix3DStack.cs" />
-    <Compile Include="Core\[3DTools]\ScreenSpaceLines3D.cs" />
+    <Compile Include="[3DTools]\MathUtils.cs" />
+    <Compile Include="[3DTools]\Matrix3DStack.cs" />
+    <Compile Include="[3DTools]\ScreenSpaceLines3D.cs" />
     <Compile Include="Core\[LibTwoTribes]\Asset.cs" />
     <Compile Include="Core\[LibTwoTribes]\AssetHash.cs" />
     <Compile Include="Core\[LibTwoTribes]\AssetHeader.cs" />
@@ -151,10 +150,9 @@
     <Compile Include="MinimapWindow.xaml.cs">
       <DependentUpon>MinimapWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
+    <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Disabled.png" />

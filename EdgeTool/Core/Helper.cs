@@ -325,6 +325,9 @@ namespace Mygod.Edge.Tool
             };
         }
 
+        public const float ToDegree = (float)(180 / Math.PI);
+        private const float ToRadian = (float)(Math.PI / 180);
+
         public static XElement GetEsoElement(ESO eso)
         {
             var result = new XElement("Models");
@@ -337,7 +340,7 @@ namespace Mygod.Edge.Tool
             result.SetAttributeValueWithDefault("V09", eso.Header.V09);
             result.SetAttributeValueWithDefault("ScaleXYZ", eso.Header.ScaleXYZ, 1);
             result.SetAttributeValueWithDefault("Translate", eso.Header.Translate);
-            result.SetAttributeValueWithDefault("Rotate", eso.Header.Rotate);
+            result.SetAttributeValueWithDefault("Rotate", eso.Header.Rotate * ToDegree);
             result.SetAttributeValueWithDefault("Scale", eso.Header.Scale, new Vec3(1, 1, 1));
             result.SetAttributeValueWithDefault("V20", eso.Header.V20);
             result.SetAttributeValueWithDefault("V21", eso.Header.V21);
@@ -421,7 +424,7 @@ namespace Mygod.Edge.Tool
                     V09 = element.GetAttributeValueWithDefault<int>("V09"), V21 = element.GetAttributeValueWithDefault<int>("V21"),
                     ScaleXYZ = element.GetAttributeValueWithDefault<float>("ScaleXYZ", 1),
                     Translate = element.GetAttributeValueWithDefault<Vec3>("Translate"),
-                    Rotate = element.GetAttributeValueWithDefault<Vec3>("Rotate"), NumModels = models.Count, 
+                    Rotate = element.GetAttributeValueWithDefault<Vec3>("Rotate") * ToRadian, NumModels = models.Count, 
                     Scale = element.GetAttributeValueWithDefault("Scale", new Vec3(1, 1, 1)), 
                     V20 = element.GetAttributeValueWithDefault<float>("V20")
                 }
