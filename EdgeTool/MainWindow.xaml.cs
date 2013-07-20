@@ -122,9 +122,7 @@ namespace Mygod.Edge.Tool
 
         private void Load(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(GamePath.Text)) return;
-            string gameDirectory = Path.GetDirectoryName(GamePath.Text), levelsDir = Path.Combine(gameDirectory, "levels");
-            if (!File.Exists(GamePath.Text) || !Directory.Exists(levelsDir))
+            if (string.IsNullOrWhiteSpace(GamePath.Text) || !File.Exists(GamePath.Text))
             {
                 if (sender != null) TaskDialog.Show(this, "加载失败。", "路径不合法！", TaskDialogType.Error);
                 return;
@@ -136,22 +134,24 @@ namespace Mygod.Edge.Tool
                 if (searcher != null) searcher.Abort();
                 try
                 {
-                    MappingLevels.Current = new MappingLevels(levelsDir);
+                    MappingLevels.Current = new MappingLevels(Edge.LevelsDirectory);
                 }
                 catch { }
                 levels.Clear();
                 searcher = new Thread(Load);
                 searcher.Start();
-                var current = users.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
+                User current = null;
+                if (Edge.SteamOtl != null) current = users.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
                 if (current != null) UserBox.SelectedItem = users;
                 RunGameButton.IsEnabled = true;
+                SwitchProfileButton.IsEnabled = Edge.SteamOtl != null;
                 Settings.CurrentPath = GamePath.Text;
                 GamePath.ItemsSource = Settings.RecentPaths;
             }
             catch (Exception exc)
             {
                 if (sender != null) TaskDialog.Show(this, "加载失败。", exc.Message, TaskDialogType.Error);
-                Tabs.IsEnabled = false;
+                SwitchProfileButton.IsEnabled = RunGameButton.IsEnabled = false;
             }
         }
 
@@ -271,7 +271,7 @@ namespace Mygod.Edge.Tool
 
         private void SetDefaultProfile(object sender, RoutedEventArgs e)
         {
-            Edge.SteamOtl.SettingsUserName = ((User) UserBox.SelectedItem).Name;
+            if (Edge.SteamOtl != null) Edge.SteamOtl.SettingsUserName = ((User) UserBox.SelectedItem).Name;
         }
 
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)

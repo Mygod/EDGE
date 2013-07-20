@@ -71,7 +71,7 @@ namespace Mygod.Edge.Tool
                             containXml = true;
                             break;
                         case "levels/mapping.xsl":
-                            Xsl = extractor.ExtractString(i);
+                            Xsl = XslCracked = extractor.ExtractString(i);
                             break;
                         default:
                             if (fileName.StartsWith("mods/", true, CultureInfo.InvariantCulture))
@@ -89,10 +89,11 @@ namespace Mygod.Edge.Tool
             if (mappings == null) return;
             if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！" +
                                                        "请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
-            var xslBuilder = new StringBuilder("<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n");
+            var xslBuilder = new StringBuilder();
             foreach (var item in mappings) xslBuilder.AppendLine("      " + item.GetXElement());
             xslBuilder.AppendLine("    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
-            Xsl = xslBuilder.ToString();
+            Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
+            XslCracked = XslHead + xslBuilder;
         }
 
         private static void Set(out HashSet<string> set, string value)
@@ -100,13 +101,15 @@ namespace Mygod.Edge.Tool
             set = string.IsNullOrWhiteSpace(value) ? new HashSet<string>() : new HashSet<string>(value.Split(','));
         }
 
+        private const string XslHead = "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n";
+
         private readonly Edge parent;
         public uint FilesCount;
         public string FilePath, ID, Description;
         public Version MinEngineVersion, MaxEngineVersion;
         public ModType Type;
         public HashSet<string> Conflicts, Dependency, InstallAfter, InstallBefore;
-        public string Xsl;
+        public string Xsl, XslCracked;
 
         public string Name { get; set; }
         public Version Version { get; set; }
@@ -134,6 +137,8 @@ namespace Mygod.Edge.Tool
             }
             conflicts.Add(ID, this);    // self conflict
             foreach (var conflict in Conflicts.Where(conflict => !conflicts.ContainsKey(conflict))) conflicts.Add(conflict, this);
+            var gameDirectory = parent.GameDirectory;
+            if (parent.IsDrmFree) gameDirectory = Path.Combine(gameDirectory, "win");
             using (var extractor = new SevenZipExtractor(FilePath))
             {
                 try
@@ -142,7 +147,7 @@ namespace Mygod.Edge.Tool
                     {
                         if (e.Reason == ExtractFileCallbackReason.Start && callback != null)
                             callback(ID + '\\' + e.ArchiveFileInfo.FileName);
-                        var path = Path.Combine(parent.GameDirectory, e.ArchiveFileInfo.FileName);
+                        var path = Path.Combine(gameDirectory, e.ArchiveFileInfo.FileName);
                         try
                         {
                             if (e.ArchiveFileInfo.IsDirectory) return;          // ignore directories
@@ -188,10 +193,11 @@ namespace Mygod.Edge.Tool
             try
             {
                 if (Xsl == null) return;
-                var mappingPath = Path.Combine(parent.GameDirectory, "levels\\mapping.xml");
+                var mappingPath = Path.Combine(gameDirectory, "levels\\mapping.xml");
                 CreateCopy(modifiedFiles, mappingPath);
                 var transform = new XslCompiledTransform(true);
-                transform.Load(XmlReader.Create(new StringReader(Xsl)), new XsltSettings(true, true), new XmlUrlResolver());
+                transform.Load(XmlReader.Create(new StringReader(parent.IsCracked ? XslCracked : Xsl)),
+                                                new XsltSettings(true, true), new XmlUrlResolver());
                 var writer = new StringWriter();
                 transform.Transform(XmlReader.Create(new StringReader(File.ReadAllText(File.Exists(mappingPath) ? mappingPath
                                                                                            : (mappingPath + ".bak")))), null,
@@ -227,21 +233,27 @@ namespace Mygod.Edge.Tool
             EngineVersion = Version.Parse(string.Join(".", new[] { versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, 
                 versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart }));
             GameDirectory = Path.GetDirectoryName(GamePath);
+            BaseDirectory = IsDrmFree ? Path.Combine(GameDirectory, "win") : GameDirectory;
             Directory.CreateDirectory(ModsDirectory = Path.Combine(GameDirectory, "mods"));
-            LevelsDirectory = Path.Combine(GameDirectory, "levels");
-            ModelsDirectory = Path.Combine(GameDirectory, "models");
-            TexturesDirectory = Path.Combine(GameDirectory, "textures");
+            LevelsDirectory = Path.Combine(BaseDirectory, "levels");
+            ModelsDirectory = Path.Combine(BaseDirectory, "models");
+            TexturesDirectory = Path.Combine(BaseDirectory, "textures");
             DisabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
-            SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
+            if (IsCracked) SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
             RefreshMods();
         }
 
-        public string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
+        private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086),
+                                        DrmFreeEngineVersion = new Version(1, 0, 2322, 6631);
+
+        public string GamePath, GameDirectory, BaseDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
         public StringSetFile DisabledMods, ModifiedFiles;
         public Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
+        public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
+        public bool IsDrmFree { get { return EngineVersion == DrmFreeEngineVersion; } }
 
         public bool GetIsDisabled(EdgeMod mod)
         {
