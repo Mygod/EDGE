@@ -155,7 +155,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Disabled.png" />
     <Resource Include="Resources\Images\Unlocked.png" />
   </ItemGroup>
   <ItemGroup>

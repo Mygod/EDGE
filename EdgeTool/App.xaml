@@ -1,2 +1,3 @@
 ﻿<Application x:Class="Mygod.Edge.Tool.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" StartupUri="MainWindow.xaml" Startup="OnStartup" />
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" StartupUri="MainWindow.xaml"
+             Startup="OnStartup" DispatcherUnhandledException="OnError" />

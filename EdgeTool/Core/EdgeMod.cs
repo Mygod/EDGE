@@ -137,8 +137,6 @@ namespace Mygod.Edge.Tool
             }
             conflicts.Add(ID, this);    // self conflict
             foreach (var conflict in Conflicts.Where(conflict => !conflicts.ContainsKey(conflict))) conflicts.Add(conflict, this);
-            var gameDirectory = parent.GameDirectory;
-            if (parent.IsDrmFree) gameDirectory = Path.Combine(gameDirectory, "win");
             using (var extractor = new SevenZipExtractor(FilePath))
             {
                 try
@@ -147,7 +145,7 @@ namespace Mygod.Edge.Tool
                     {
                         if (e.Reason == ExtractFileCallbackReason.Start && callback != null)
                             callback(ID + '\\' + e.ArchiveFileInfo.FileName);
-                        var path = Path.Combine(gameDirectory, e.ArchiveFileInfo.FileName);
+                        var path = Path.Combine(parent.GameDirectory, e.ArchiveFileInfo.FileName);
                         try
                         {
                             if (e.ArchiveFileInfo.IsDirectory) return;          // ignore directories
@@ -193,7 +191,7 @@ namespace Mygod.Edge.Tool
             try
             {
                 if (Xsl == null) return;
-                var mappingPath = Path.Combine(gameDirectory, "levels\\mapping.xml");
+                var mappingPath = Path.Combine(parent.GameDirectory, "levels\\mapping.xml");
                 CreateCopy(modifiedFiles, mappingPath);
                 var transform = new XslCompiledTransform(true);
                 transform.Load(XmlReader.Create(new StringReader(parent.IsCracked ? XslCracked : Xsl)),
@@ -233,27 +231,24 @@ namespace Mygod.Edge.Tool
             EngineVersion = Version.Parse(string.Join(".", new[] { versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, 
                 versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart }));
             GameDirectory = Path.GetDirectoryName(GamePath);
-            BaseDirectory = IsDrmFree ? Path.Combine(GameDirectory, "win") : GameDirectory;
             Directory.CreateDirectory(ModsDirectory = Path.Combine(GameDirectory, "mods"));
-            LevelsDirectory = Path.Combine(BaseDirectory, "levels");
-            ModelsDirectory = Path.Combine(BaseDirectory, "models");
-            TexturesDirectory = Path.Combine(BaseDirectory, "textures");
+            LevelsDirectory = Path.Combine(GameDirectory, "levels");
+            ModelsDirectory = Path.Combine(GameDirectory, "models");
+            TexturesDirectory = Path.Combine(GameDirectory, "textures");
             DisabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
             if (IsCracked) SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
             RefreshMods();
         }
 
-        private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086),
-                                        DrmFreeEngineVersion = new Version(1, 0, 2322, 6631);
+        private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086);
 
-        public string GamePath, GameDirectory, BaseDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
+        public string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
         public StringSetFile DisabledMods, ModifiedFiles;
         public Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
         public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
-        public bool IsDrmFree { get { return EngineVersion == DrmFreeEngineVersion; } }
 
         public bool GetIsDisabled(EdgeMod mod)
         {

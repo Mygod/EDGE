@@ -61,6 +61,7 @@ namespace Mygod.Edge.Tool
             }
             if (files.Count > 0) ProcessCore(files);
             Load(null, null);
+            if (!Directory.Exists(User.UsersPath)) return;
             watcher = new FileSystemWatcher(User.UsersPath) { IncludeSubdirectories = true };
             watcher.Created += RefreshAchievements;
             watcher.Changed += RefreshAchievements;
