@@ -272,21 +272,19 @@ namespace Mygod.Edge.Tool
             Size = new Size3D(reader);
             #region Boring verifying
             var temp = reader.ReadUInt16();
-            if (Temp1 != temp) Warning.WriteLine(string.Format("unknown_ushort_1 数值错误！将被自动纠正：{0} => {1}", temp, Temp1));
+            if (Temp1 != temp)
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_1 数值错误！将被自动纠正：{0} => {1}", temp, Temp1));
             temp = reader.ReadUInt16();
-            if (Temp2 != temp) Warning.WriteLine(string.Format("unknown_ushort_2 数值错误！将被自动纠正：{0} => {1}", temp, Temp2));
+            if (Temp2 != temp)
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_2 数值错误！将被自动纠正：{0} => {1}", temp, Temp2));
             ushort width = reader.ReadUInt16(), length = reader.ReadUInt16();
-            int temp3 = (Temp1 + 9) / 10, temp4 = (Temp2 + 9) / 10;
-            if (width != temp3 || length != temp4) Warning.WriteLine(string.Format(
-                "缩略图不是默认大小，可能很老的游戏无法支持这玩意儿，其大小将不会被自动纠正：{0}x{1} => {2}x{3}",
-                width, length, temp3, temp4));
             var tempByte = reader.ReadByte();
-            if (tempByte != 10) Warning.WriteLine(string.Format("unknown_byte_1 数值错误！将被自动纠正：{0} => 10", tempByte));
+            if (tempByte != 10) Warning.WriteLine(string.Format("Level 元素：unknown_byte_1 数值错误！将被自动纠正：{0} => 10", tempByte));
             temp = reader.ReadUInt16();
             if (Size.Length - 1 != temp)
-                Warning.WriteLine(string.Format("unknown_ushort_5 数值错误！将被自动纠正：{0} => {1}", temp, Size.Length - 1));
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_5 数值错误！将被自动纠正：{0} => {1}", temp, Size.Length - 1));
             temp = reader.ReadUInt16();
-            if (0 != temp) Warning.WriteLine(string.Format("unknown_ushort_6 数值错误！将被自动纠正：{0} => 0", temp));
+            if (0 != temp) Warning.WriteLine(string.Format("Level 元素：unknown_ushort_6 数值错误！将被自动纠正：{0} => 0", temp));
             #endregion
             LegacyMinimap = new Flat(reader, new Size2D(width, length));
             CollisionMap = new Cube(reader, Size);
@@ -294,8 +292,8 @@ namespace Mygod.Edge.Tool
             Zoom = reader.ReadInt16();
             if (Zoom < 0)
             {
-                Angle = reader.ReadInt16();
-                AutoAdjustZoom = reader.ReadBoolean();
+                Value = reader.ReadInt16();
+                ValueIsAngle = reader.ReadBoolean();
             }
             ExitPoint = new Point3D16(reader);
             var count = reader.ReadUInt16();
@@ -303,7 +301,7 @@ namespace Mygod.Edge.Tool
             count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Bumpers.Add(new Bumper(Bumpers, reader));
             count = reader.ReadUInt16();
-            for (var i = 0; i < count; i++) FallingPlatforms.Add(new FallingPlatform(reader));
+            for (var i = 0; i < count; i++) FallingPlatforms.Add(new FallingPlatform(this, reader));
             count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Checkpoints.Add(new Checkpoint(reader));
             count = reader.ReadUInt16();
@@ -311,15 +309,15 @@ namespace Mygod.Edge.Tool
             count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Prisms.Add(new Prism(reader));
             if (count != prismsCount)
-                Warning.WriteLine(string.Format("prisms_count 数值错误！将被自动纠正：{0} => {1}", prismsCount, count));
-            if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("Fan 元素已过时，请勿使用。");
+                Warning.WriteLine(string.Format("Level 元素：prisms_count 数值错误！将被自动纠正：{0} => {1}", prismsCount, count));
+            if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("Fan 元素：已过时，请勿使用。");
             for (var i = 0; i < count; i++) Fans.Add(new Fan(reader));
             Buttons = new Buttons(this, reader);
             count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) OtherCubes.Add(new OtherCube(this, reader));
             count = reader.ReadUInt16();
-            for (var i = 0; i < count; i++) Resizers.Add(new Resizer(reader));
-            if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("MiniBlock 元素已过时，请勿使用。");
+            for (var i = 0; i < count; i++) Resizers.Add(new Resizer(this, reader));
+            if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("MiniBlock 元素：已过时，请勿使用。");
             for (var i = 0; i < count; i++) MiniBlocks.Add(new MiniBlock(reader));
             Theme = reader.ReadByte();
             MusicJava = reader.ReadByte();
@@ -348,14 +346,22 @@ namespace Mygod.Edge.Tool
             Size = element.GetAttributeValue<Size3D>("Size");
             SpawnPoint = element.GetAttributeValue<Point3D16>("SpawnPoint");
             ExitPoint = element.GetAttributeValue<Point3D16>("ExitPoint");
-            element.GetAttributeValueWithDefault(out Theme, "Theme");
-            element.GetAttributeValueWithDefault(out MusicJava, "MusicJava");
-            element.GetAttributeValueWithDefault(out Music, "Music");
-            element.GetAttributeValueWithDefault(out Zoom, "Zoom", (short)-1);
-            element.GetAttributeValueWithDefault(out Angle, "Angle");
-            element.GetAttributeValueWithDefault(out AutoAdjustZoom, "AutoAdjustZoom");
-            if (Zoom >= 0 && (Angle != 0 || AutoAdjustZoom)) Warning.WriteLine("Level 元素：高级缩放模式被禁用！" +
-                "@Angle 与 @AutoAdjustZoom 将被忽略。要启用请将 @Zoom 删去或设为负值。");
+            Theme = element.GetAttributeValueWithDefault<byte>("Theme");
+            MusicJava = element.GetAttributeValueWithDefault<byte>("MusicJava");
+            Music = element.GetAttributeValueWithDefault("Music", (byte)6);
+            Zoom = element.GetAttributeValueWithDefault("Zoom", (short)-1);
+            var advanced = true;
+            if (ValueIsAngle = element.AttributeCaseInsensitive("Angle") != null)
+            {
+                Value = element.GetAttributeValueWithDefault<short>("Angle");
+                if (element.AttributeCaseInsensitive("FieldOfView") != null)
+                    Warning.WriteLine("Level 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。");
+            }
+            else if (element.AttributeCaseInsensitive("FieldOfView") != null)
+                Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
+            else advanced = false;
+            if (Zoom > 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被忽略。" +
+                                                        "要启用请将 @Zoom 删去或设为负值。");
             Buttons = new Buttons(this);
             foreach (var e in element.Elements())
                 switch (e.Name.LocalName.ToLower())
@@ -367,13 +373,12 @@ namespace Mygod.Edge.Tool
                         Bumpers.Add(new Bumper(Bumpers, e));
                         break;
                     case "fallingplatform":
-                        FallingPlatforms.Add(new FallingPlatform(e));
+                        FallingPlatforms.Add(new FallingPlatform(this, e));
                         break;
                     case "checkpoint":
                         Checkpoints.Add(new Checkpoint(e));
                         break;
                     case "cameratrigger":
-                    case "advancedcameratrigger":
                         CameraTriggers.Add(new CameraTrigger(e));
                         break;
                     case "prism":
@@ -381,7 +386,7 @@ namespace Mygod.Edge.Tool
                         break;
                     case "fan":
                         Fans.Add(new Fan(e));
-                        Warning.WriteLine("Fan 元素已过时，请勿使用。");
+                        Warning.WriteLine("Fan 元素：已过时，请勿使用。");
                         break;
                     case "button":
                     case "buttonsequence":
@@ -397,10 +402,10 @@ namespace Mygod.Edge.Tool
                         break;
                     case "miniblock":
                         MiniBlocks.Add(new MiniBlock(e));
-                        Warning.WriteLine("MiniBlock 元素已过时，请勿使用。");
+                        Warning.WriteLine("MiniBlock 元素：已过时，请勿使用。");
                         break;
                     default:
-                        Warning.WriteLine("Level 元素有无法识别的子元素，它将被忽略：" + e.Name);
+                        Warning.WriteLine(e.Name + " 元素：无法识别在 Level 元素下的该子元素，它将被忽略。");
                         break;
                 }
         }
@@ -436,9 +441,67 @@ namespace Mygod.Edge.Tool
         public ushort Temp1 { get { return (ushort) (Size.Width + Size.Length); } }
         public ushort Temp2 { get { return (ushort) (Temp1 + Size.Height + Size.Height); } }
         public Point3D16 SpawnPoint { get; set; }
-        public Point3D16 ExitPoint { get; set; }
-        public short Zoom, Angle;
-        public bool AutoAdjustZoom;
+        public Point3D16 ExitPoint
+        {
+            get { return exitPoint; }
+            set
+            {
+                exitPoint = value;
+                if (value.X < 0 || value.X >= Size.Width || value.Y < 0 || value.Y >= Size.Length || value.Z <= 0 || value.Z > Size.Height)
+                    Warning.WriteLine("Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！");
+            }
+        }
+        public short Zoom
+        {
+            get { return zoom; }
+            set
+            {
+                zoom = value;
+                if (value == 0 || value > 5) Warning.WriteLine("Level 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
+            }
+        }
+        public short Value
+        {
+            get { return value; }
+            set
+            {
+                this.value = value;
+                if (value > 184) Warning.WriteLine("Level 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
+            }
+        }
+        public byte Theme
+        {
+            get { return theme; }
+            set
+            {
+                theme = value;
+                if (theme > 3) Warning.WriteLine("Level 元素：@Theme 超出范围！在实际游戏中的显示效果将使用白色主题（0）。");
+            }
+        }
+        public byte MusicJava
+        {
+            get { return musicJava; }
+            set
+            {
+                musicJava = value;
+                if (value > 11) Warning.WriteLine("Level 元素：@MusicJava 超出范围！在实际游戏中将播放 00_menus。");
+            }
+        }
+        public byte Music
+        {
+            get { return music; }
+            set
+            {
+                music = value;
+                if (value > 24) Warning.WriteLine("Level 元素：@Music 超出范围！在实际游戏中将播放 06_Kakkoi。");
+            }
+        }
+
+        private Point3D16 exitPoint;
+        private short zoom, value;
+        private byte theme, musicJava, music;
+
+        public bool ValueIsAngle;
         public Flat LegacyMinimap;
         public Cube CollisionMap;
         public MovingPlatforms MovingPlatforms = new MovingPlatforms();
@@ -454,7 +517,6 @@ namespace Mygod.Edge.Tool
         public XElementObjectList<Resizer> Resizers = new XElementObjectList<Resizer>();
         [Obsolete]
         public XElementObjectList<MiniBlock> MiniBlocks = new XElementObjectList<MiniBlock>();
-        public byte Theme, MusicJava, Music;
 
         private static readonly string[] Musics = {"00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", 
                                                    "07_Dark", "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", 
@@ -506,8 +568,8 @@ namespace Mygod.Edge.Tool
             writer.Write(Zoom);
             if (Zoom < 0)
             {
-                writer.Write(Angle);
-                writer.Write(AutoAdjustZoom);
+                writer.Write(Value);
+                writer.Write(ValueIsAngle);
             }
             ExitPoint.Write(writer);
             MovingPlatforms.Write(writer);
@@ -534,11 +596,7 @@ namespace Mygod.Edge.Tool
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
             element.SetAttributeValueWithDefault("Music", Music);
-            if (Zoom < 0)
-            {
-                element.SetAttributeValueWithDefault("Angle", Angle);
-                element.SetAttributeValueWithDefault("AutoAdjustZoom", AutoAdjustZoom);
-            }
+            if (Zoom < 0) element.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
             else element.SetAttributeValueWithDefault("Zoom", Zoom, (short) -1);
             foreach (var e in MovingPlatforms.GetXElements()) element.Add(e);
             foreach (var e in Bumpers.GetXElements()) element.Add(e);
@@ -952,6 +1010,11 @@ namespace Mygod.Edge.Tool
 
         public Size3D Size;
 
+        public bool this[Point3D16 point]
+        {
+            get { return this[point.X, point.Y, point.Y]; }
+            set { this[point.X, point.Y, point.Y] = value; }
+        }
         public bool this[int x, int y, int z]
         {
             get { return this[z][x, y]; }
@@ -987,7 +1050,7 @@ namespace Mygod.Edge.Tool
             AutoStart = reader.ReadByte() != 0;
             LoopStartIndex = reader.ReadByte();
             Clones = reader.ReadInt16();
-            if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
+            if (Clones != -1) Warning.WriteLine("MovingPlatform 元素：@Clones 已过时，请勿使用。");
             FullBlock = reader.ReadBoolean();
             var count = reader.ReadByte();
             for (var i = 0; i < count; i++) Waypoints.Add(new Waypoint(reader));
@@ -1002,7 +1065,7 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", true);
                 element.GetAttributeValueWithDefault(out LoopStartIndex, "LoopStartIndex", (byte) 1);
                 element.GetAttributeValueWithDefault(out Clones, "Clones", (short)-1);
-                if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
+                if (Clones != -1) Warning.WriteLine("MovingPlatform 元素：@Clones 已过时，请勿使用。");
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", true);
                 foreach (var e in element.ElementsCaseInsensitive("Waypoint")) Waypoints.Add(new Waypoint(e));
             }
@@ -1012,7 +1075,7 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", relative.AutoStart);
                 element.GetAttributeValueWithDefault(out LoopStartIndex, "LoopStartIndex", relative.LoopStartIndex);
                 element.GetAttributeValueWithDefault(out Clones, "Clones", relative.Clones);
-                if (Clones != -1) Warning.WriteLine("@Clones 已过时，请勿使用。");
+                if (Clones != -1) Warning.WriteLine("MovingPlatform 元素：@Clones 已过时，请勿使用。");
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", relative.FullBlock);
                 var offset = element.GetAttributeValueWithDefault<Point3D16>("Offset");
                 foreach (var waypoint in relative.Waypoints) Waypoints.Add(new Waypoint
@@ -1115,7 +1178,7 @@ namespace Mygod.Edge.Tool
         }
         public Bumper(Bumpers parent, BinaryReader reader) : this(parent)
         {
-            AutoStart = reader.ReadBoolean();
+            Enabled = reader.ReadBoolean();
             Position = new Point3D16(reader);
             North = new BumperSide(reader);
             East = new BumperSide(reader);
@@ -1126,7 +1189,7 @@ namespace Mygod.Edge.Tool
         {
             id = element.GetAttributeValue("ID");
             if (id != null) id = id.Trim();
-            element.GetAttributeValueWithDefault(out AutoStart, "AutoStart", true);
+            element.GetAttributeValueWithDefault(out Enabled, "Enabled", true);
             element.GetAttributeValue(out Position, "Position");
             North = new BumperSide(element.ElementCaseInsensitive("North"));
             East = new BumperSide(element.ElementCaseInsensitive("East"));
@@ -1134,7 +1197,7 @@ namespace Mygod.Edge.Tool
             West = new BumperSide(element.ElementCaseInsensitive("West"));
         }
 
-        public bool AutoStart = true;
+        public bool Enabled = true;
         public Point3D16 Position;
         public BumperSide North, East, South, West; // assuming north as -Y in blockspace, top-right in screenspace
 
@@ -1145,7 +1208,7 @@ namespace Mygod.Edge.Tool
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(AutoStart);
+            writer.Write(Enabled);
             Position.Write(writer);
             North.Write(writer);
             East.Write(writer);
@@ -1157,7 +1220,7 @@ namespace Mygod.Edge.Tool
         {
             var result = new XElement("Bumper");
             if (IDGenerated) result.SetAttributeValue("ID", ID);
-            result.SetAttributeValueWithDefault("AutoStart", AutoStart, true);
+            result.SetAttributeValueWithDefault("Enabled", Enabled, true);
             result.SetAttributeValue("Position", Position);
             result.SetElementWithDefault("North", North);
             result.SetElementWithDefault("East", East);
@@ -1217,23 +1280,43 @@ namespace Mygod.Edge.Tool
 
     public sealed class FallingPlatform : IXElement
     {
-        public FallingPlatform()
+        public FallingPlatform(Level parent)
         {
+            this.parent = parent;
         }
-        public FallingPlatform(BinaryReader reader)
+        public FallingPlatform(Level parent, BinaryReader reader) : this(parent)
         {
             Position = new Point3D16(reader);
-            if (Position.Z <= 0) Warning.WriteLine("FallingPlatform/@Position 的 Z 坐标小于等于 0！在破解版游戏中运行该关会导致崩溃。");
             FloatTime = reader.ReadUInt16();
         }
-        public FallingPlatform(XElement element)
+        public FallingPlatform(Level parent, XElement element) : this(parent)
         {
-            element.GetAttributeValue(out Position, "Position");
+            Position = element.GetAttributeValue<Point3D16>("Position");
             element.GetAttributeValueWithDefault(out FloatTime, "FloatTime", (ushort) 20);
         }
 
-        public Point3D16 Position;
+        private readonly Level parent;
+        private Point3D16 position;
         public ushort FloatTime = 20;
+
+        public Point3D16 Position
+        {
+            get { return position; }
+            set
+            {
+                position = value;
+                if (value.Equals(parent.ExitPoint)) Warning.WriteLine("FallingPlatform 元素：@Position 与 /Level/@ExitPoint 相同！" +
+                                                                      "终点将被腐蚀，关卡将无法过关！");
+                if (parent.CollisionMap[value]) Warning.WriteLine("FallingPlatform 元素：" + value + " 处已经有静态方块！" +
+                                                                  "该静态方块将被腐蚀。");
+                if (value.Z <= 0) Warning.WriteLine("FallingPlatform 元素：Z 坐标小于等于 0！" +
+                                                    "玩家方块在此可掉落平台上将无法向上翻滚/EDGE！");
+                else if (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
+                      || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length)
+                    Warning.WriteLine("FallingPlatform 元素：将可掉落平台放在 " + value + " 将使其可见但可被穿透！" +
+                                      "请移动该平台位置或扩大关卡大小。");
+            }
+        }
 
         public void Write(BinaryWriter writer)
         {
@@ -1258,24 +1341,24 @@ namespace Mygod.Edge.Tool
         public Checkpoint(BinaryReader reader)
         {
             Position = new Point3D16(reader);
-            RespawnOffsetZ = reader.ReadUInt16();
+            RespawnZ = reader.ReadUInt16();
             Radius = new Point2D8(reader);
         }
         public Checkpoint(XElement element)
         {
             element.GetAttributeValue(out Position, "Position");
-            element.GetAttributeValueWithDefault(out RespawnOffsetZ, "RespawnOffsetZ");
+            element.GetAttributeValueWithDefault(out RespawnZ, "RespawnZ");
             element.GetAttributeValueWithDefault(out Radius, "Radius");
         }
 
         public Point3D16 Position;
-        public ushort RespawnOffsetZ;
+        public ushort RespawnZ;
         public Point2D8 Radius;
 
         public void Write(BinaryWriter writer)
         {
             Position.Write(writer);
-            writer.Write(RespawnOffsetZ);
+            writer.Write(RespawnZ);
             Radius.Write(writer);
         }
 
@@ -1283,7 +1366,7 @@ namespace Mygod.Edge.Tool
         {
             var result = new XElement("Checkpoint");
             result.SetAttributeValue("Position", Position);
-            result.SetAttributeValueWithDefault("RespawnOffsetZ", RespawnOffsetZ);
+            result.SetAttributeValueWithDefault("RespawnZ", RespawnZ);
             result.SetAttributeValueWithDefault("Radius", Radius);
             return result;
         }
@@ -1311,21 +1394,66 @@ namespace Mygod.Edge.Tool
         {
             element.GetAttributeValue(out Position, "Position");
             element.GetAttributeValueWithDefault(out Radius, "Radius");
-            if (element.Name == "CameraTrigger") element.GetAttributeValueWithDefault(out Zoom, "Zoom");
-            else
+            var advanced = true;
+            if (Reset = element.GetAttributeValueWithDefault<bool>("Reset"))
+            {
+                if (element.AttributeCaseInsensitive("FieldOfView") != null)
+                    Warning.WriteLine("CameraTrigger 元素：@Reset 被设为 True！@FieldOfView 将会被忽略。");
+                if (element.AttributeCaseInsensitive("Angle") != null)
+                    Warning.WriteLine("CameraTrigger 元素：@Reset 被设为 True！@Angle 将会被忽略。");
+            }
+            else if (ValueIsAngle = element.AttributeCaseInsensitive("Angle") != null)
+            {
+                Value = element.GetAttributeValueWithDefault<short>("Angle");
+                if (element.AttributeCaseInsensitive("FieldOfView") != null)
+                    Warning.WriteLine("CameraTrigger 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。");
+            }
+            else if (element.AttributeCaseInsensitive("FieldOfView") != null)
+                Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
+            else advanced = false;
+            Zoom = element.GetAttributeValueWithDefault("Zoom", (short)-1);
+            if (Zoom < 0)
             {
                 Zoom = -1;
-                element.GetAttributeValueWithDefault(out Reset, "Reset");
                 element.GetAttributeValueWithDefault(out StartDelay, "StartDelay");
                 element.GetAttributeValueWithDefault(out Duration, "Duration");
                 element.GetAttributeValueWithDefault(out SingleUse, "SingleUse");
-                element.GetAttributeValueWithDefault(out Value,
-                    (ValueIsAngle = element.GetAttributeValue("Angle") != null) ? "Angle" : "FieldOfView");
+                if (Duration == 0) Warning.WriteLine("CameraTrigger 元素：由于 @Duration 当前为 0，该元素将在实际游戏中被禁用。");
+            }
+            else
+            {
+                if (advanced) Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Reset、@Angle 或 @FieldOfView 将会被忽略。" +
+                                                "要启用请将 @Zoom 删去或设为负值。");
+                if (element.AttributeCaseInsensitive("StartDelay") != null)
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@StartDelay 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+                if (element.AttributeCaseInsensitive("Duration") != null)
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Duration 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+                if (element.AttributeCaseInsensitive("SingleUse") != null)
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@SingleUse 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+            }
+        }
+
+        private short zoom, value;
+        public short Zoom
+        {
+            get { return zoom; }
+            set
+            {
+                zoom = value;
+                if (value == 0 || value > 6) Warning.WriteLine("CameraTrigger 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
+            }
+        }
+        public short Value
+        {
+            get { return value; } 
+            set
+            {
+                this.value = value;
+                if (value > 184) Warning.WriteLine("CameraTrigger 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
             }
         }
 
         public Point3D16 Position;
-        public short Zoom, Value;
         public Point2D8 Radius;
         public bool Reset;
         public ushort StartDelay, Duration;
@@ -1347,16 +1475,16 @@ namespace Mygod.Edge.Tool
 
         public XElement GetXElement()
         {
-            var result = new XElement(Zoom == -1 ? "AdvancedCameraTrigger" : "CameraTrigger");
+            var result = new XElement("CameraTrigger");
             result.SetAttributeValue("Position", Position);
             result.SetAttributeValueWithDefault("Radius", Radius);
             if (Zoom == -1)
             {
                 result.SetAttributeValueWithDefault("Reset", Reset);
+                result.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
                 result.SetAttributeValueWithDefault("StartDelay", StartDelay);
                 result.SetAttributeValueWithDefault("Duration", Duration);
                 result.SetAttributeValueWithDefault("SingleUse", SingleUse);
-                result.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
             }
             else result.SetAttributeValueWithDefault("Zoom", Zoom);
             return result;
@@ -1372,13 +1500,13 @@ namespace Mygod.Edge.Tool
         {
             Position = new Point3D16(reader);
             Energy = reader.ReadByte();
-            if (Energy != 1) Warning.WriteLine("@Energy 已过时，请勿使用。");
+            if (Energy != 1) Warning.WriteLine("Prism 元素：@Energy 已过时，请勿使用。");
         }
         public Prism(XElement element)
         {
             element.GetAttributeValue(out Position, "Position");
             element.GetAttributeValueWithDefault(out Energy, "Energy", (byte)1);
-            if (Energy != 1) Warning.WriteLine("@Energy 已过时，请勿使用。");
+            if (Energy != 1) Warning.WriteLine("Prism 元素：@Energy 已过时，请勿使用。");
         }
 
         public Point3D16 Position;
@@ -1504,7 +1632,7 @@ namespace Mygod.Edge.Tool
         public Button(Buttons parent, BinaryReader reader) : this(parent)
         {
             Visible = (NullableBoolean)reader.ReadByte();
-            PressCount = reader.ReadByte();
+            DisableCount = reader.ReadByte();
             Mode = (ButtonMode) reader.ReadByte();
             ParentID = reader.ReadInt16();
             SequenceInOrder = reader.ReadBoolean();
@@ -1514,6 +1642,7 @@ namespace Mygod.Edge.Tool
             else Position = new Point3D16(reader);
             var count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Events.Add(reader.ReadUInt16());
+            CheckChild();
         }
         public Button(Buttons parent, XElement element) : this(parent)
         {
@@ -1525,7 +1654,15 @@ namespace Mygod.Edge.Tool
                 {
                     Initialize(e);
                     Events = new List<ushort>(parent.AddEvents(element));
-                    Mode = ButtonMode.StayDown; // force set this again
+                    if (Mode != ButtonMode.StayDown)
+                    {
+                        Warning.WriteLine("Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。");
+                        Mode = ButtonMode.StayDown;
+                    }
+                    if (e.AttributeCaseInsensitive("AffectMovingPlatforms") != null ||
+                        e.AttributeCaseInsensitive("AffectBumpers") != null || e.AttributeCaseInsensitive("TriggerAchievements") != null ||
+                        e.AttributeCaseInsensitive("AffectButtons") != null)
+                        Warning.WriteLine("Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。");
                     element.GetAttributeValueWithDefault(out SequenceInOrder, "SequenceInOrder");
                 }
             if (initialized) return;
@@ -1538,12 +1675,18 @@ namespace Mygod.Edge.Tool
             id = element.GetAttributeValue("ID");
             if (id != null) id = id.Trim();
             element.GetAttributeValueWithDefault(out Visible, "Visible", NullableBoolean.True);
-            element.GetAttributeValueWithDefault(out PressCount, "PressCount");
+            element.GetAttributeValueWithDefault(out DisableCount, "DisableCount");
             element.GetAttributeValueWithDefault(out Mode, "Mode", ButtonMode.StayDown);
             if (IsMoving = element.GetAttributeValue("MovingPlatformID") != null)
                 MovingPlatformID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingPlatformID"));
             else element.GetAttributeValueWithDefault(out Position, "Position");
             parent.Add(this);
+        }
+        private void CheckChild()
+        {
+            if (ParentID <= 0) return;
+            if (Mode != ButtonMode.StayDown) Warning.WriteLine("Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。");
+            if (Events.Count > 0) Warning.WriteLine("Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。");
         }
 
         private bool initialized;
@@ -1554,7 +1697,7 @@ namespace Mygod.Edge.Tool
         public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
 
         public NullableBoolean Visible = NullableBoolean.True;
-        public byte PressCount;
+        public byte DisableCount;
         public ButtonMode Mode = ButtonMode.StayDown;
         public short ParentID = -1;
         public bool SequenceInOrder;
@@ -1580,7 +1723,7 @@ namespace Mygod.Edge.Tool
         public void Write(BinaryWriter writer)
         {
             writer.Write((byte)Visible);
-            writer.Write(PressCount);
+            writer.Write(DisableCount);
             writer.Write((byte) Mode);
             writer.Write(ParentID);
             writer.Write(SequenceInOrder);
@@ -1598,7 +1741,7 @@ namespace Mygod.Edge.Tool
             var result = new XElement("Button");
             if (IDGenerated) result.SetAttributeValue("ID", ID);
             result.SetAttributeValueWithDefault("Visible", Visible, NullableBoolean.True);
-            result.SetAttributeValueWithDefault("PressCount", PressCount);
+            result.SetAttributeValueWithDefault("DisableCount", DisableCount);
             if (type == ButtonType.Standalone) result.SetAttributeValueWithDefault("Mode", Mode, ButtonMode.StayDown);
             if (IsMoving) result.SetAttributeValueWithDefault("MovingPlatformID", MovingPlatformID.Name);
             else result.SetAttributeValue("Position", Position);
@@ -1738,7 +1881,8 @@ namespace Mygod.Edge.Tool
                 {
                     if (!e.Name.LocalName.Equals("MovingPlatform", StringComparison.InvariantCultureIgnoreCase)
                         && !e.Name.LocalName.Equals("Button", StringComparison.InvariantCultureIgnoreCase))
-                        Warning.WriteLine(element.Name + " 有无法识别的子元素：" + e.Name);
+                        Warning.WriteLine(e.Name + " 元素：无法识别在 " + element.Name + " 元素下的该子元素，它将被忽略。");
+                    
                 }
             if (element.Name == "OtherCube")
             {
@@ -1898,28 +2042,43 @@ namespace Mygod.Edge.Tool
 
     public sealed class Resizer : IXElement
     {
-        public Resizer()
+        public Resizer(Level parent)
         {
+            this.parent = parent;
         }
-        public Resizer(BinaryReader reader)
+        public Resizer(Level parent, BinaryReader reader) : this(parent)
         {
             Position = new Point3D16(reader);
             Visible = reader.ReadBoolean();
             Direction = (ResizeDirection) reader.ReadByte();
         }
-        public Resizer(Level parent, XElement element)
+        public Resizer(Level parent, XElement element) : this(parent)
         {
             Direction = (ResizeDirection)Enum.Parse(typeof(ResizeDirection), element.Name.LocalName.Remove(0, 7), true);
-            element.GetAttributeValue(out Position, "Position");
+            Position = element.GetAttributeValue<Point3D16>("Position");
             element.GetAttributeValueWithDefault(out Visible, "Visible", true);
             var radius = element.GetAttributeValueWithDefault<Point2D8>("Radius");
             if (radius.Equals(default(Point2D8))) return;
             for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++) if (x != 0 || y != 0)
-                parent.Resizers.Add(new Resizer { Position = Position + new Point3D16((short)x, (short)y, 0), 
-                                                  Visible = Visible, Direction = Direction });
+                parent.Resizers.Add(new Resizer(parent) { Position = Position + new Point3D16((short)x, (short)y, 0), 
+                                                          Visible = Visible, Direction = Direction });
         }
 
-        public Point3D16 Position;
+        private readonly Level parent;
+        private Point3D16 position;
+        public Point3D16 Position
+        {
+            get { return position; }
+            set
+            {
+                position = value;
+                if (value.Z > parent.Size.Height || value.Z <= 0)
+                    Warning.WriteLine("Resizer" + Direction + " 元素：Z 坐标超出范围！这会导致游戏崩溃。");
+                if (value.X >= parent.Size.Width || value.X < 0 || value.Y >= parent.Size.Height || value.Y < 0)
+                    Warning.WriteLine("Resizer" + Direction + " 元素：X 坐标 和/或 Y 坐标超出范围！该方块尺寸调整器将在关卡中可见，" +
+                                      "但没有任何实际作用，也不会添加任何静态方块，并有几率导致游戏崩溃！");
+            }
+        }
         public bool Visible = true;
         public ResizeDirection Direction;
 

@@ -57,7 +57,6 @@ namespace Mygod.Edge.Tool
         public Achievement(XElement element)
         {
             ID = element.GetAttributeValue("id");
-            picture = element.GetAttributeValue("picture");
             Title = element.GetAttributeValue("title");
             Description = element.GetAttributeValue("description");
             Help = element.GetAttributeValue("help");
@@ -67,20 +66,18 @@ namespace Mygod.Edge.Tool
         {
             this.section = new AchievementSection(section);
             ID = achievement.ID;
-            picture = achievement.picture;
             Title = achievement.Title;
             Description = achievement.Description;
             Help = achievement.Help;
             Points = achievement.Points;
         }
 
-        private readonly string picture;
         private readonly AchievementSection section;
 
         public string ID { get; private set; }
         public Uri PictureUri
         {
-            get { return new Uri(Path.Combine(CurrentApp.Directory, string.Format("Resources/{0}.jpg", picture)), UriKind.Absolute); }
+            get { return new Uri(Path.Combine(CurrentApp.Directory, string.Format("Resources/{0}.jpg", ID)), UriKind.Absolute); }
         }
         public string Title { get; private set; }
         public string Description { get; private set; }

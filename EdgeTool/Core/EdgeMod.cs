@@ -249,6 +249,7 @@ namespace Mygod.Edge.Tool
         public Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
         public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
+        public EventHandler DisabledModsChanged;
 
         public bool GetIsDisabled(EdgeMod mod)
         {
@@ -256,7 +257,9 @@ namespace Mygod.Edge.Tool
         }
         public void SetIsDisabled(EdgeMod mod, bool value)
         {
-            if (value ? DisabledMods.Add(mod.ID) : DisabledMods.Remove(mod.ID)) DisabledMods.Save();
+            if (value ? !DisabledMods.Add(mod.ID) : !DisabledMods.Remove(mod.ID)) return;
+            if (DisabledModsChanged != null) DisabledModsChanged(this, EventArgs.Empty);
+            DisabledMods.Save();
         }
 
         public string RefreshMods()

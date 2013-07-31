@@ -59,7 +59,11 @@ namespace Mygod.Edge.Tool
                     files.Add(arg);
                     break;
             }
-            if (files.Count > 0) ProcessCore(files);
+            if (files.Count > 0)
+            {
+                ProcessCore(files);
+                if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedItem = CompileTab;
+            }
             Load(null, null);
             if (!Directory.Exists(User.UsersPath)) return;
             watcher = new FileSystemWatcher(User.UsersPath) { IncludeSubdirectories = true };
@@ -131,6 +135,7 @@ namespace Mygod.Edge.Tool
             try
             {
                 Edge = new Edge(GamePath.Text);
+                Edge.DisabledModsChanged += (a, b) => isDirty = true;
                 ModGrid.ItemsSource = Edge.Mods;
                 if (searcher != null) searcher.Abort();
                 try
@@ -173,7 +178,10 @@ namespace Mygod.Edge.Tool
 
         private void RunGame(object sender, EventArgs e)
         {
-            if (Edge != null) Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
+            if (Edge == null || isDirty && TaskDialog.Show(this, "确定要继续吗？", "您对要安装的 edgemod 的修改还没有应用，启动游戏后你" +
+                "不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 edgemod 的修改。", TaskDialogType.OKCancelQuestion,
+                defaultButtonIndex: 2) != TaskDialogSimpleResult.Ok) return;
+            Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
         }
 
         private void OnDragOver(object sender, DragEventArgs e)
@@ -483,6 +491,7 @@ namespace Mygod.Edge.Tool
 
         private ProgressDialog dialog;
         private long filesCount, currentFileIndex;
+        private bool isDirty;
 
         private void InstallMods(object sender, EventArgs e)
         {
@@ -510,6 +519,7 @@ namespace Mygod.Edge.Tool
                     DescriptionBlock.Text = e.Result.ToString();
                     TaskDialog.Show(this, "安装完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
                 }
+                isDirty = false;
             });
         }
 
@@ -529,6 +539,7 @@ namespace Mygod.Edge.Tool
         {
             Edge.CleanUp();
             TaskDialog.Show(this, "清理完毕。", "所有 Mod 已被临时卸载。想要再次安装点击安装即可。", TaskDialogType.Information);
+            isDirty = true;
         }
 
         private void OnModDragEnter(object sender, DragEventArgs e)
@@ -566,6 +577,7 @@ namespace Mygod.Edge.Tool
             try
             {
                 File.Copy(file, target, true);
+                isDirty = true;
                 return true;
             }
             catch (Exception exc)
@@ -579,6 +591,7 @@ namespace Mygod.Edge.Tool
         {
             var mod = ModGrid.SelectedItem as EdgeMod;
             if (mod == null) return;
+            if (!Edge.GetIsDisabled(mod)) isDirty = true;
             File.Delete(mod.FilePath);
             RefreshMods();
         }
@@ -722,7 +735,7 @@ namespace Mygod.Edge.Tool
     {
         public int Compare(object x, object y)
         {
-            return MappingLevels.GetMapping((Level)x).CompareTo(MappingLevels.GetMapping((Level)y));
+            return ((Level)x).Mapping.CompareTo(((Level)y).Mapping);
         }
     }
 

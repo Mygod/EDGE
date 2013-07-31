@@ -184,148 +184,150 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\A-list.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\Achievements.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\An enemy of my enemy.jpg">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AllLevelsARank.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Backpack.jpg">
+    <None Include="Resources\AllLevelsSPlusRank.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Balance.jpg">
+    <None Include="Resources\AllPrisms.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Centimeter.jpg">
+    <None Include="Resources\AllPrismsOriginalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Chicken.jpg">
+    <None Include="Resources\CubeCrushed.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Colorblind.jpg">
+    <None Include="Resources\EdgeTimeBackpack.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Compact.jpg">
+    <None Include="Resources\EdgeTimeDroppedByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Daredevil.jpg">
+    <None Include="Resources\EdgeTimeGrabbedByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Decameter.jpg">
+    <None Include="Resources\EdgeTimeLong.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Decimeter.jpg">
+    <None Include="Resources\EdgeTimeMedium.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Double Rainbow.jpg">
+    <None Include="Resources\EdgeTimeMovingPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Dropoff.jpg">
+    <None Include="Resources\EdgeTimeOnAllClimbs.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Edgaholic.jpg">
+    <None Include="Resources\EdgeTimeOnBumper.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Flag.jpg">
+    <None Include="Resources\EdgeTimeOnFloor.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Hard wired.jpg">
+    <None Include="Resources\EdgeTimeRoundtripByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Hectometer.jpg">
+    <None Include="Resources\EdgeTimeShort.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Hitchhike.jpg">
+    <None Include="Resources\EdgeTimeShortSmall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Hitchup.jpg">
+    <None Include="Resources\Fall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Hour.jpg">
+    <None Include="Resources\FinishedAllOriginalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Invader.jpg">
+    <None Include="Resources\FinishedBonusLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Jumper.jpg">
+    <None Include="Resources\FinishedExtendedLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Kilometer.jpg">
+    <None Include="Resources\FinishedLevelsStep1.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Leap of faith.jpg">
+    <None Include="Resources\FinishedLevelsStep2.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Long Fall.jpg">
+    <None Include="Resources\FinishedLevelsStep3.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Meter.jpg">
+    <None Include="Resources\FinishedLevelWithNoPrisms.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Microsecond.jpg">
+    <None Include="Resources\FinishedLevelWithSmallCube.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Millimeter.jpg">
+    <None Include="Resources\FinishedNormalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Minimalist.jpg">
+    <None Include="Resources\id_Chicken.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Minute.jpg">
+    <None Include="Resources\id_EnemyOfMyEnemy.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Monkey.jpg">
+    <None Include="Resources\id_Flag.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Mythical bird.jpg">
+    <None Include="Resources\id_HardWired.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Nailed it.jpg">
+    <None Include="Resources\id_Hitchup.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Perfect landing.jpg">
+    <None Include="Resources\id_Invader.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Pickup.jpg">
+    <None Include="Resources\id_Jumper.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Pinhole.jpg">
+    <None Include="Resources\id_LeapOfFaith.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Quick response.jpg">
+    <None Include="Resources\id_Minimalist.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Rainbow.jpg">
+    <None Include="Resources\id_Monkey.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Roundtrip.jpg">
+    <None Include="Resources\id_MythicalBird.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Second.jpg">
+    <None Include="Resources\id_NailedIt.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Shuffled.jpg">
+    <None Include="Resources\id_PerfectLanding.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Snowblind.jpg">
+    <None Include="Resources\id_QuickResponse.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Stardom.jpg">
+    <None Include="Resources\id_Shuffle.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Stubborn.jpg">
+    <None Include="Resources\id_Stubborn.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Subway.jpg">
+    <None Include="Resources\id_Subway.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Tumbling travels.jpg">
+    <None Include="Resources\id_TumblingTravels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Turnstile jumper.jpg">
+    <None Include="Resources\id_TurnstileJumper.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Winter.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

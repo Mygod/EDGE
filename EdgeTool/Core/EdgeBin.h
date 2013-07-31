@@ -1,5 +1,5 @@
 ﻿// Downloaded from: http://will.kirk.by/labs/twotribes/edge-bin.html
-// Modified by: Mygod 2013.7.5
+// Modified by: Mygod 2013.7.29
 
 #define TIME_THRESHOLDS_LENGTH 5
 
@@ -20,8 +20,8 @@ struct edge_level {
         vector spawn_point;
         short zoom;
         // if zoom < 0
-                short angle;
-                bool auto_adjust_zoom_for_angle;
+                short value;
+                bool value_is_angle;    // value is field of view if false
         // endif
         vector exit_point;
         short moving_platform_count;
@@ -83,7 +83,7 @@ struct waypoint {
 };
 
 struct bumper {
-        bool auto_start;
+        bool enabled;
         vector position;
         bumper_side north;      // assuming north as -Y in blockspace, top-right in screenspace
         bumper_side east;
@@ -103,7 +103,7 @@ struct falling_platform {
 
 struct checkpoint {
         vector position;
-        short respawn_offset_z;
+        short respawn_z;
         char radius_x;
         char radius_y;
 };
@@ -164,7 +164,7 @@ struct button {
                 // visibility == 0: invisible
                 // visibility == 1: visible, solid
                 // visibility == 2: visible, ghosted
-        char press_count;   // after a button has been pressed `press_count` times, it cannot be re-enabled by an event.
+        char disable_count; // after a button has been pressed `disable_count` times, it cannot be re-enabled by an event.
                             // press_count = 0 can be re-enabled as many times as you like.
         char mode;
                 // mode == 0: reverses the event when the button is released
@@ -185,7 +185,7 @@ struct button {
                 this is a tricky one so I feel it needs to be explained.
                 a standalone button uses
                         visibility
-                        press_count
+                        disable_count
                         mode
                         is_moving (and related position system)
                         event_count
