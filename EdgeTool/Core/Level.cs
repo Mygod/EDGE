@@ -447,8 +447,7 @@ namespace Mygod.Edge.Tool
             set
             {
                 exitPoint = value;
-                if (value.X < 0 || value.X >= Size.Width || value.Y < 0 || value.Y >= Size.Length || value.Z <= 0 || value.Z > Size.Height)
-                    Warning.WriteLine("Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！");
+                if (!Size.IsCubeInArea(value)) Warning.WriteLine("Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！");
             }
         }
         public short Zoom
@@ -865,6 +864,23 @@ namespace Mygod.Edge.Tool
             return new Size3D(height, width, length);
         }
 
+        public bool IsBlockInArea(int x, int y, int z)
+        {
+            return x >= 0 && y >= 0 && z >= 0 && x < Width && y < Length && z < Height;
+        }
+        public bool IsBlockInArea(Point3D16 point)
+        {
+            return IsBlockInArea(point.X, point.Y, point.Z);
+        }
+        public bool IsCubeInArea(int x, int y, int z)
+        {
+            return x >= 0 && y >= 0 && z > 0 && x < Width && y < Length && z <= Height;
+        }
+        public bool IsCubeInArea(Point3D16 point)
+        {
+            return IsCubeInArea(point.X, point.Y, point.Z);
+        }
+
         public static bool operator ==(Size3D a, Size3D b)
         {
             return a.Equals(b);
@@ -1017,7 +1033,7 @@ namespace Mygod.Edge.Tool
         }
         public bool this[int x, int y, int z]
         {
-            get { return this[z][x, y]; }
+            get { return Size.IsBlockInArea(x, y, z) && this[z][x, y]; }
             set { this[z][x, y] = value; }
         }
 
@@ -1311,8 +1327,8 @@ namespace Mygod.Edge.Tool
                                                                   "该静态方块将被腐蚀。");
                 if (value.Z <= 0) Warning.WriteLine("FallingPlatform 元素：Z 坐标小于等于 0！" +
                                                     "玩家方块在此可掉落平台上将无法向上翻滚/EDGE！");
-                else if (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
-                      || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length)
+                else if (value.Z <= parent.Size.Height && (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
+                                                        || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length))
                     Warning.WriteLine("FallingPlatform 元素：将可掉落平台放在 " + value + " 将使其可见但可被穿透！" +
                                       "请移动该平台位置或扩大关卡大小。");
             }
@@ -2074,7 +2090,7 @@ namespace Mygod.Edge.Tool
                 position = value;
                 if (value.Z > parent.Size.Height || value.Z <= 0)
                     Warning.WriteLine("Resizer" + Direction + " 元素：Z 坐标超出范围！这会导致游戏崩溃。");
-                if (value.X >= parent.Size.Width || value.X < 0 || value.Y >= parent.Size.Height || value.Y < 0)
+                if (value.X >= parent.Size.Width || value.X < 0 || value.Y >= parent.Size.Length || value.Y < 0)
                     Warning.WriteLine("Resizer" + Direction + " 元素：X 坐标 和/或 Y 坐标超出范围！该方块尺寸调整器将在关卡中可见，" +
                                       "但没有任何实际作用，也不会添加任何静态方块，并有几率导致游戏崩溃！");
             }

@@ -51,7 +51,7 @@ namespace Mygod.Edge.Tool
 
         private void SetColor(IList<byte> array, Point3D16 point, ToggleButton box)
         {
-            if (box.IsChecked != true) return;
+            if (box.IsChecked != true || !level.Size.IsBlockInArea(point.X, point.Y, 0)) return;
             var color = ((SolidColorBrush) box.Foreground).Color;
             var pos = (point.Y * level.Size.Width + point.X) << 2;
             array[pos++] = color.B;

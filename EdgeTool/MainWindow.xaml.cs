@@ -46,14 +46,14 @@ namespace Mygod.Edge.Tool
             GamePath.ItemsSource = Settings.RecentPaths;
             GamePath.Text = Settings.CurrentPath;
             foreach (var name in ModelNames.Split(',')) ModelNameBox.Items.Add(name);
-            var files = new List<string>();
+            List<string> files = new List<string>(), edgemods = new List<string>();
             foreach (var arg in App.Args) switch (Path.GetExtension(arg).ToLower())
             {
                 case "exe":
                     GamePath.Text = arg;
                     break;
                 case "edgemod":
-                    InstallEdgeMod(arg);
+                    edgemods.Add(arg);
                     break;
                 default:
                     files.Add(arg);
@@ -65,6 +65,7 @@ namespace Mygod.Edge.Tool
                 if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedItem = CompileTab;
             }
             Load(null, null);
+            foreach (var edgemod in edgemods) InstallEdgeMod(edgemod);
             if (!Directory.Exists(User.UsersPath)) return;
             watcher = new FileSystemWatcher(User.UsersPath) { IncludeSubdirectories = true };
             watcher.Created += RefreshAchievements;
@@ -178,10 +179,10 @@ namespace Mygod.Edge.Tool
 
         private void RunGame(object sender, EventArgs e)
         {
-            if (Edge == null || isDirty && TaskDialog.Show(this, "确定要继续吗？", "您对要安装的 edgemod 的修改还没有应用，启动游戏后你" +
-                "不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 edgemod 的修改。", TaskDialogType.OKCancelQuestion,
-                defaultButtonIndex: 2) != TaskDialogSimpleResult.Ok) return;
-            Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
+            if (Edge != null && (!isDirty || TaskDialog.Show(this, "确定要继续吗？", "您对要安装的 edgemod 的修改还没有应用，启动游戏后" +
+                "你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 edgemod 的修改。",
+                TaskDialogType.OKCancelQuestion, defaultButtonIndex: 2) == TaskDialogSimpleResult.Ok))
+                Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
         }
 
         private void OnDragOver(object sender, DragEventArgs e)
