@@ -234,32 +234,6 @@ namespace Mygod.Edge.Tool
             LevelList.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath, ListSortDirection.Ascending));
         }
 
-        private void FloatingAutoFix(object sender, RoutedEventArgs e)
-        {
-            var result = TaskDialog.Show(this, "你想要启动史诗般的发光特效吗？", type: TaskDialogType.YesNoCancelQuestion, 
-                                         defaultButtonIndex: 7);
-            if (result == TaskDialogSimpleResult.Cancel) return;
-            foreach (var level in LevelList.SelectedItems.OfType<Level>().Select(level => Level.CreateFromCompiled(level.FilePath)))
-            {
-                for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
-                    {
-                        var platform = new MovingPlatform(level.MovingPlatforms);
-#pragma warning disable 665
-                        platform.LoopStartIndex = (byte) ((platform.AutoStart = result == TaskDialogSimpleResult.Yes) ? 1 : 0);
-#pragma warning restore 665
-                        platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
-                        if (z == 0) platform.FullBlock = false;
-                        level.MovingPlatforms.Add(platform);
-                    }
-                var fileName = Path.GetFileNameWithoutExtension(level.FilePath) + "_fixed.bin";
-                // ReSharper disable AssignNullToNotNullAttribute
-                level.Compile(Path.Combine(Path.GetDirectoryName(level.FilePath), fileName));
-                // ReSharper restore AssignNullToNotNullAttribute
-            }
-            TaskDialog.Show(this, "修复完毕。", "修复结果存放在levels的文件夹中，文件名以_fixed.bin结尾。", TaskDialogType.Information);
-        }
-
         private void DrawLevelModelTree(object sender, RoutedEventArgs e)
         {
             var level = LevelList.SelectedItem as Level;

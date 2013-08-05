@@ -172,7 +172,6 @@
                                 <MenuItem Header="显示小地图(_M)" Click="ShowMinimap" />
                                 <MenuItem Header="绘制模型树(_D)" Click="DrawLevelModelTree" />
                                 <MenuItem Header="在资源管理器中浏览关卡(_E)" Click="ShowLevelInExplorer" />
-                                <MenuItem Header="生成悬浮版自动修复关卡(_A)..." Click="FloatingAutoFix" />
                                 <MenuItem Header="反编译关卡(_C)..." Click="Decompile" />
                             </ContextMenu>
                         </DataGrid.ContextMenu>

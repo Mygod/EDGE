@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using LibTwoTribes;
+using LibTwoTribes.Util;
 using Mygod.Xml.Linq;
 
 #pragma warning disable 612,618
@@ -258,7 +260,7 @@ namespace Mygod.Edge.Tool
 
     public sealed class Level : IXElement
     {
-        public Level(BinaryReader reader)
+        private Level(BinaryReader reader)
         {
             ID = reader.ReadInt32();
             var nameLength = reader.ReadInt32();
@@ -333,8 +335,10 @@ namespace Mygod.Edge.Tool
                 if (cube.DarkCubeMovingBlockSync != null) cube.DarkCubeMovingBlockSync.Name.DoNothing();
             }
         }
-        private Level(XElement element)
+        private Level(string path)
         {
+            LegacyMinimap = Flat.LoadFromImage(path + ".png");
+            var element = XHelper.Load(path + ".xml").GetElement("Level");
             ID = element.GetAttributeValue<int>("ID");
             Name = element.GetAttributeValue("Name");
             var thresholds = element.GetAttributeValue("TimeThresholds").Split(',').Select(str => ushort.Parse(str.Trim())).ToArray();
@@ -344,6 +348,7 @@ namespace Mygod.Edge.Tool
             BTime = thresholds[3];
             CTime = thresholds[4];
             Size = element.GetAttributeValue<Size3D>("Size");
+            CollisionMap = new Cube(path + ".{0}.png", Size);
             SpawnPoint = element.GetAttributeValue<Point3D16>("SpawnPoint");
             ExitPoint = element.GetAttributeValue<Point3D16>("ExitPoint");
             Theme = element.GetAttributeValueWithDefault<byte>("Theme");
@@ -362,6 +367,7 @@ namespace Mygod.Edge.Tool
             else advanced = false;
             if (Zoom > 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被忽略。" +
                                                         "要启用请将 @Zoom 删去或设为负值。");
+            element.GetAttributeValueWithDefault(out StaticBlocks, "StaticBlocks");
             Buttons = new Buttons(this);
             foreach (var e in element.Elements())
                 switch (e.Name.LocalName.ToLower())
@@ -416,10 +422,7 @@ namespace Mygod.Edge.Tool
         }
         public static Level CreateFromDecompiled(string path)
         {
-            var result = new Level(XHelper.Load(path + ".xml").GetElement("Level"))
-                { LegacyMinimap = Flat.LoadFromImage(path + ".png") };
-            result.CollisionMap = new Cube(path + ".{0}.png", result.Size);
-            return result;
+            return new Level(path);
         }
 
         public string FilePath { get; private set; }
@@ -500,6 +503,7 @@ namespace Mygod.Edge.Tool
         private short zoom, value;
         private byte theme, musicJava, music;
 
+        public StaticBlocksOperation StaticBlocks;
         public bool ValueIsAngle;
         public Flat LegacyMinimap;
         public Cube CollisionMap;
@@ -529,11 +533,138 @@ namespace Mygod.Edge.Tool
         public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
         public string MusicJavaName { get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; } }
 
+        static Level()
+        {
+            Vec3 x = new Vec3(1, 0, 0), y = new Vec3(0, 1, 0), z = new Vec3(0, 0, 1);
+            XNormals = new[] { x, x, x, x, x, x };
+            YNormals = new[] { y, y, y, y, y, y };
+            ZNormals = new[] { z, z, z, z, z, z };
+        }
+        private const string ModelsNamespace = "050DB82A";
+        private static readonly string[] ChildModels = new[] { "4B2B74E0", "A261604B", "DCB465C9", "04166BFF" },
+                                         Materials = new[] { "F7501547", "1E1A01EC", "60CF046E", "B86D0A58" };
+        private static readonly Vec3[] XNormals, YNormals, ZNormals;    // normals for two triangles
+
         public void Compile(string path)
         {
             FilePath = path;
+            var level = this;
+            switch (StaticBlocks)
+            {
+                case StaticBlocksOperation.ToMovingPlatforms:
+                case StaticBlocksOperation.ToMovingPlatformsGlowing:
+                    level = (Level) MemberwiseClone();
+                    level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
+                    var glowing = StaticBlocks == StaticBlocksOperation.ToMovingPlatformsGlowing;
+                    for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
+                        for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
+                        {
+                            var platform = new MovingPlatform(level.MovingPlatforms);
+#pragma warning disable 665
+                            platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
+#pragma warning restore 665
+                            platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
+                            if (z == 0) platform.FullBlock = false;
+                            level.MovingPlatforms.Add(platform);
+                        }
+                    break;
+                case StaticBlocksOperation.ToModel:
+                    List<Vec3> vertices = new List<Vec3>(), normals = new List<Vec3>();
+                    var texCoords = new List<Vec2>();
+                    for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
+                        for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
+                        {
+                            int x1 = x + 1, y1 = y + 1, z1 = z + 1;
+                            float texY, texY1, zB;
+                            if (z > 3) texY = texY1 = 0;
+                            else
+                            {
+                                texY1 = 1 - (z > 3 ? 3 : z) * 0.25F;
+                                texY = texY1 - 0.25F;
+                            }
+                            if (!level.CollisionMap[x, y, z1] &&
+                                (Math.Abs(x - ExitPoint.X) > 1 || Math.Abs(y - ExitPoint.Y) > 1 || z != ExitPoint.Z - 1))
+                            {
+                                vertices.Add(new Vec3(x, z1, y));
+                                vertices.Add(new Vec3(x1, z1, y));
+                                vertices.Add(new Vec3(x, z1, y1));
+                                vertices.Add(new Vec3(x, z1, y1));
+                                vertices.Add(new Vec3(x1, z1, y));
+                                vertices.Add(new Vec3(x1, z1, y1));
+                                normals.AddRange(YNormals);
+                                float texX = ((x + y) & 1) == 0 ? 0.51F : 0.76F, texX1 = texX + 0.23F;
+                                texCoords.Add(new Vec2(texX, texY));
+                                texCoords.Add(new Vec2(texX1, texY));
+                                texCoords.Add(new Vec2(texX, texY1));
+                                texCoords.Add(new Vec2(texX, texY1));
+                                texCoords.Add(new Vec2(texX1, texY));
+                                texCoords.Add(new Vec2(texX1, texY1));
+                            }
+                            if (z == 0)
+                            {
+                                zB = 0.5F;
+                                texY1 -= 0.125F;
+                            }
+                            else zB = z;
+                            if (!level.CollisionMap[x1, y, z])
+                            {
+                                vertices.Add(new Vec3(x1, zB, y));
+                                vertices.Add(new Vec3(x1, zB, y1));
+                                vertices.Add(new Vec3(x1, z1, y));
+                                vertices.Add(new Vec3(x1, zB, y1));
+                                vertices.Add(new Vec3(x1, z1, y1));
+                                vertices.Add(new Vec3(x1, z1, y));
+                                normals.AddRange(XNormals);
+                                texCoords.Add(new Vec2(0.49F, texY1));
+                                texCoords.Add(new Vec2(0.26F, texY1));
+                                texCoords.Add(new Vec2(0.49F, texY));
+                                texCoords.Add(new Vec2(0.26F, texY1));
+                                texCoords.Add(new Vec2(0.26F, texY));
+                                texCoords.Add(new Vec2(0.49F, texY));
+                            }
+                            if (!level.CollisionMap[x, y1, z])
+                            {
+                                vertices.Add(new Vec3(x, zB, y1));
+                                vertices.Add(new Vec3(x, z1, y1));
+                                vertices.Add(new Vec3(x1, zB, y1));
+                                vertices.Add(new Vec3(x, z1, y1));
+                                vertices.Add(new Vec3(x1, z1, y1));
+                                vertices.Add(new Vec3(x1, zB, y1));
+                                normals.AddRange(ZNormals);
+                                texCoords.Add(new Vec2(0.01F, texY1));
+                                texCoords.Add(new Vec2(0.01F, texY));
+                                texCoords.Add(new Vec2(0.24F, texY1));
+                                texCoords.Add(new Vec2(0.01F, texY));
+                                texCoords.Add(new Vec2(0.24F, texY));
+                                texCoords.Add(new Vec2(0.24F, texY1));
+                            }
+                        }
+                    var currentTheme = level.Theme > 3 ? 0 : level.Theme;
+                    var fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl";
+                    new ESO
+                    {
+                        AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, fileName, "models"),
+                        Header = new ESOHeader
+                        {
+                            V01 = 1, V02 = 4096, V20 = 1, ScaleXYZ = 1, Scale = new Vec3(1, 1, 1), NumModels = 1,
+                            NodeChild = AssetHash.Parse(ChildModels[currentTheme] + ModelsNamespace),
+                            Translate = new Vec3(0, 0, -Size.Length),
+                            BoundingMax = new Vec3(Size.Width + 1, Size.Height + 1, Size.Length + 1)
+                        },
+                        Models = new[]
+                        {
+                            new ESOModel
+                            {
+                                TypeFlags = ESOModel.Flags.Normals | ESOModel.Flags.TexCoords, Vertices = vertices.ToArray(),
+                                Normals = normals.ToArray(), TexCoords = texCoords.ToArray(),
+                                MaterialAsset = AssetHash.Parse(Materials[currentTheme] + ModelsNamespace)
+                            }
+                        }
+                    }.Save(Path.Combine(Path.GetDirectoryName(path), AssetUtil.CRCFullName(fileName, "models") + ".eso"));
+                    break;
+            }
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
-                using (var writer = new BinaryWriter(stream)) Write(writer);
+            using (var writer = new BinaryWriter(stream)) level.Write(writer);
         }
         public void Decompile(string path)
         {
@@ -612,6 +743,10 @@ namespace Mygod.Edge.Tool
         }
     }
 
+    public enum StaticBlocksOperation
+    {
+        DoNothing, ToMovingPlatforms, ToMovingPlatformsGlowing, ToModel
+    }
     public enum LevelType
     {
         None, Standard, Bonus, Extended
@@ -1028,8 +1163,8 @@ namespace Mygod.Edge.Tool
 
         public bool this[Point3D16 point]
         {
-            get { return this[point.X, point.Y, point.Y]; }
-            set { this[point.X, point.Y, point.Y] = value; }
+            get { return this[point.X, point.Y, point.Z]; }
+            set { this[point.X, point.Y, point.Z] = value; }
         }
         public bool this[int x, int y, int z]
         {
@@ -1050,6 +1185,14 @@ namespace Mygod.Edge.Tool
 
     public sealed class MovingPlatforms : XElementObjectListWithID<MovingPlatform>
     {
+        public MovingPlatforms()
+        {
+        }
+        public MovingPlatforms(IEnumerable<MovingPlatform> collection)
+        {
+            foreach (var platform in collection) Add(platform);
+        }
+
         protected override string RequestIDCore()
         {
             return "Block" + base.RequestIDCore();
