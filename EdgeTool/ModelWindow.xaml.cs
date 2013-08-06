@@ -24,6 +24,7 @@ namespace Mygod.Edge.Tool
         public void Draw(string path, bool debug = false)
         {
             var eso = ESO.FromFile(path);
+            MessageBox.Show(ConvertVertex(eso, eso.Header.BoundingMin) + Environment.NewLine + ConvertVertex(eso, eso.Header.BoundingMax));
             foreach (var model in eso.Models)
             {
                 BitmapImage image;
@@ -72,10 +73,10 @@ namespace Mygod.Edge.Tool
             var matrix = new Matrix3D();
             matrix.Scale(new Vector3D(eso.Header.Scale.X, eso.Header.Scale.Y, eso.Header.Scale.Z));
             matrix.Scale(new Vector3D(eso.Header.ScaleXYZ, eso.Header.ScaleXYZ, eso.Header.ScaleXYZ));
-            matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
             matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
             matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
             matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
+            matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
             return matrix.Transform(new Point3D(vec.X, vec.Y, vec.Z));
         }
         private static Vector3D ConvertNormal(ESO eso, Vec3 vec)
@@ -88,7 +89,7 @@ namespace Mygod.Edge.Tool
         }
         private static Point ConvertTexCoord(Vec2 vec)
         {
-            return new Point((vec.X % 1 + 1) % 1, (vec.Y % 1 + 1) % 1);
+            return new Point(Math.Abs(vec.X - 1) > 1e-4 ? (vec.X % 1 + 1) % 1 : 1, Math.Abs(vec.Y - 1) > 1e-4 ? (vec.Y % 1 + 1) % 1 : 1);
         }
 
         private bool dragging;
