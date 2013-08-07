@@ -1,9 +1,9 @@
 Introduction
 ============
-EDGE Related Projects includes: EdgeTool!
+EDGE Related Projects includes: EdgeTool & a bunch of mods!
 
-Third party libraries
-=====================
+EdgeTool used third party libraries
+-----------------------------------
 MygodLibrary:   https://github.com/Mygod/MygodLibrary/
 LibTwoTribes:   https://github.com/WillKirkby/LibTwoTribes/ (modified)
 SevenZipSharp:  http://sevenzipsharp.codeplex.com/
