@@ -575,7 +575,9 @@ namespace Mygod.Edge.Tool
             var level = this;
             if (StaticMovingPlatforms != null)
             {
-                var glowing = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("IsGlowing");
+                bool glowing = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("IsGlowing"),
+                     clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("ClearStaticBlocks"),
+                     z0FullBlock = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("Z0FullBlock");
                 var excluded = GetExcluded(StaticMovingPlatforms);
                 level = (Level)MemberwiseClone();
                 level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
@@ -587,14 +589,16 @@ namespace Mygod.Edge.Tool
                         platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
 #pragma warning restore 665
                         platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
-                        if (z == 0) platform.FullBlock = false;
+                        if (!z0FullBlock && z == 0) platform.FullBlock = false;
                         level.MovingPlatforms.Add(platform);
+                        if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
                     }
             }
             if (GenerateModel != null)
             {
                 var currentTheme = GenerateModel.GetAttributeValueWithDefault("Theme", level.Theme);
                 if (currentTheme > 3) currentTheme = 0;
+                var z0FullBlock = GenerateModel.GetAttributeValueWithDefault<bool>("Z0FullBlock");
                 var excluded = GetExcluded(GenerateModel);
                 List<Vec3> vertices = new List<Vec3>(), normals = new List<Vec3>();
                 var texCoords = new List<Vec2>();
@@ -610,7 +614,7 @@ namespace Mygod.Edge.Tool
                             texY = texY1 - 0.25F;
                         }
                         if (!level.NeedOutput(excluded, x, y, z1) &&
-                            (Math.Abs(x - ExitPoint.X) > 1 || Math.Abs(y - ExitPoint.Y) > 1 || z1 == ExitPoint.Z))
+                            (Math.Abs(x - ExitPoint.X) > 1 || Math.Abs(y - ExitPoint.Y) > 1 || z1 != ExitPoint.Z))
                         {
                             vertices.Add(new Vec3(x, z1, y));
                             vertices.Add(new Vec3(x1, z1, y));
@@ -627,7 +631,7 @@ namespace Mygod.Edge.Tool
                             texCoords.Add(new Vec2(texX1, texY));
                             texCoords.Add(new Vec2(texX1, texY1));
                         }
-                        if (z == 0)
+                        if (!z0FullBlock && z == 0)
                         {
                             zB = 0.5F;
                             texY1 -= 0.125F;

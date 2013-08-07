@@ -24,7 +24,6 @@ namespace Mygod.Edge.Tool
         public void Draw(string path, bool debug = false)
         {
             var eso = ESO.FromFile(path);
-            MessageBox.Show(ConvertVertex(eso, eso.Header.BoundingMin) + Environment.NewLine + ConvertVertex(eso, eso.Header.BoundingMax));
             foreach (var model in eso.Models)
             {
                 BitmapImage image;
