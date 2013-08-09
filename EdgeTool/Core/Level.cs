@@ -10,8 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using LibTwoTribes;
-using LibTwoTribes.Util;
 using Mygod.Xml.Linq;
 
 #pragma warning disable 612,618
@@ -538,37 +536,6 @@ namespace Mygod.Edge.Tool
         public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
         public string MusicJavaName { get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; } }
 
-        static Level()
-        {
-            Vec3 x = new Vec3(1, 0, 0), y = new Vec3(0, 1, 0), z = new Vec3(0, 0, 1);
-            XNormals = new[] { x, x, x, x, x, x };
-            YNormals = new[] { y, y, y, y, y, y };
-            ZNormals = new[] { z, z, z, z, z, z };
-        }
-        private const string ModelsNamespace = "050DB82A";
-        private static readonly string[] ChildModels = new[] { "4B2B74E0", "A261604B", "DCB465C9", "04166BFF" },
-                                         Materials = new[] { "F7501547", "1E1A01EC", "60CF046E", "B86D0A58" };
-        private static readonly Vec3[] XNormals, YNormals, ZNormals;    // normals for two triangles
-
-        private static HashSet<Point3D16> GetExcluded(XContainer element)
-        {
-            var result = new HashSet<Point3D16>();
-            foreach (var e in element.Elements().Where(e => 
-                "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase) ||
-                "Include".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase)))
-            {
-                var exclude = "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase);
-                Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
-                for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
-                    if (exclude) result.Add(new Point3D16(x, y, z)); else result.Remove(new Point3D16(x, y, z));
-            }
-            return result;
-        }
-        private bool NeedOutput(ICollection<Point3D16> excluded, short x, short y, short z)
-        {
-            return CollisionMap[x, y, z] && !excluded.Contains(new Point3D16(x, y, z));
-        }
-
         public void Compile(string path)
         {
             FilePath = path;
@@ -578,119 +545,34 @@ namespace Mygod.Edge.Tool
                 bool glowing = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("IsGlowing"),
                      clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("ClearStaticBlocks"),
                      z0FullBlock = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("Z0FullBlock");
-                var excluded = GetExcluded(StaticMovingPlatforms);
+                var excluded = new HashSet<Point3D16>();
+                foreach (var e in StaticMovingPlatforms.Elements().Where(e =>
+                    "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase) ||
+                    "Include".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var exclude = "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase);
+                    Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
+                    for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
+                    {
+                        var point = new Point3D16(x, y, z);
+                        if (exclude) excluded.Add(point); else excluded.Remove(point);
+                    }
+                }
                 level = (Level)MemberwiseClone();
                 level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
                 for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    for (short z = 0; z < level.Size.Height; z++) if (level.NeedOutput(excluded, x, y, z))
-                    {
-                        var platform = new MovingPlatform(level.MovingPlatforms);
-#pragma warning disable 665
-                        platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
-#pragma warning restore 665
-                        platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
-                        if (!z0FullBlock && z == 0) platform.FullBlock = false;
-                        level.MovingPlatforms.Add(platform);
-                        if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
-                    }
+                    for (short z = 0; z < level.Size.Height; z++)
+                        if (level.CollisionMap[x, y, z] && !excluded.Contains(new Point3D16(x, y, z)))
+                        {
+                            var platform = new MovingPlatform(level.MovingPlatforms);
+                            platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
+                            platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
+                            if (!z0FullBlock && z == 0) platform.FullBlock = false;
+                            level.MovingPlatforms.Add(platform);
+                            if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
+                        }
             }
-            if (GenerateModel != null)
-            {
-                var currentTheme = GenerateModel.GetAttributeValueWithDefault("Theme", level.Theme);
-                if (currentTheme > 3) currentTheme = 0;
-                var z0FullBlock = GenerateModel.GetAttributeValueWithDefault<bool>("Z0FullBlock");
-                var excluded = GetExcluded(GenerateModel);
-                List<Vec3> vertices = new List<Vec3>(), normals = new List<Vec3>();
-                var texCoords = new List<Vec2>();
-                for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    for (short z = 0; z < level.Size.Height; z++) if (level.NeedOutput(excluded, x, y, z))
-                    {
-                        short x1 = (short)(x + 1), y1 = (short)(y + 1), z1 = (short)(z + 1);
-                        float texY, texY1, zB;
-                        if (z > 3) texY = texY1 = 0;
-                        else
-                        {
-                            texY1 = 1 - (z > 3 ? 3 : z) * 0.25F;
-                            texY = texY1 - 0.25F;
-                        }
-                        if (!level.NeedOutput(excluded, x, y, z1) &&
-                            (Math.Abs(x - ExitPoint.X) > 1 || Math.Abs(y - ExitPoint.Y) > 1 || z1 != ExitPoint.Z))
-                        {
-                            vertices.Add(new Vec3(x, z1, y));
-                            vertices.Add(new Vec3(x1, z1, y));
-                            vertices.Add(new Vec3(x, z1, y1));
-                            vertices.Add(new Vec3(x, z1, y1));
-                            vertices.Add(new Vec3(x1, z1, y));
-                            vertices.Add(new Vec3(x1, z1, y1));
-                            normals.AddRange(YNormals);
-                            float texX = ((x + y) & 1) == 0 ? 0.51F : 0.76F, texX1 = texX + 0.23F;
-                            texCoords.Add(new Vec2(texX, texY));
-                            texCoords.Add(new Vec2(texX1, texY));
-                            texCoords.Add(new Vec2(texX, texY1));
-                            texCoords.Add(new Vec2(texX, texY1));
-                            texCoords.Add(new Vec2(texX1, texY));
-                            texCoords.Add(new Vec2(texX1, texY1));
-                        }
-                        if (!z0FullBlock && z == 0)
-                        {
-                            zB = 0.5F;
-                            texY1 -= 0.125F;
-                        }
-                        else zB = z;
-                        if (!level.NeedOutput(excluded, x1, y, z))
-                        {
-                            vertices.Add(new Vec3(x1, zB, y));
-                            vertices.Add(new Vec3(x1, zB, y1));
-                            vertices.Add(new Vec3(x1, z1, y));
-                            vertices.Add(new Vec3(x1, zB, y1));
-                            vertices.Add(new Vec3(x1, z1, y1));
-                            vertices.Add(new Vec3(x1, z1, y));
-                            normals.AddRange(XNormals);
-                            texCoords.Add(new Vec2(0.49F, texY1));
-                            texCoords.Add(new Vec2(0.26F, texY1));
-                            texCoords.Add(new Vec2(0.49F, texY));
-                            texCoords.Add(new Vec2(0.26F, texY1));
-                            texCoords.Add(new Vec2(0.26F, texY));
-                            texCoords.Add(new Vec2(0.49F, texY));
-                        }
-                        if (!level.NeedOutput(excluded, x, y1, z))
-                        {
-                            vertices.Add(new Vec3(x, zB, y1));
-                            vertices.Add(new Vec3(x, z1, y1));
-                            vertices.Add(new Vec3(x1, zB, y1));
-                            vertices.Add(new Vec3(x, z1, y1));
-                            vertices.Add(new Vec3(x1, z1, y1));
-                            vertices.Add(new Vec3(x1, zB, y1));
-                            normals.AddRange(ZNormals);
-                            texCoords.Add(new Vec2(0.01F, texY1));
-                            texCoords.Add(new Vec2(0.01F, texY));
-                            texCoords.Add(new Vec2(0.24F, texY1));
-                            texCoords.Add(new Vec2(0.01F, texY));
-                            texCoords.Add(new Vec2(0.24F, texY));
-                            texCoords.Add(new Vec2(0.24F, texY1));
-                        }
-                    }
-                var fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl";
-                new ESO
-                {
-                    AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, fileName, "models"),
-                    Header = new ESOHeader
-                    {
-                        V01 = 1, V02 = 4096, V20 = 1, NumModels = 1, ScaleXYZ = 1, Scale = new Vec3(1, 1, 1),
-                        NodeChild = AssetHash.Parse(ChildModels[currentTheme] + ModelsNamespace),
-                        Translate = new Vec3(0, 0, -Size.Length), BoundingMax = new Vec3(Size.Width, Size.Height, Size.Length)
-                    },
-                    Models = new[]
-                    {
-                        new ESOModel
-                        {
-                            TypeFlags = ESOModel.Flags.Normals | ESOModel.Flags.TexCoords, Vertices = vertices.ToArray(),
-                            Normals = normals.ToArray(), TexCoords = texCoords.ToArray(),
-                            MaterialAsset = AssetHash.Parse(Materials[currentTheme] + ModelsNamespace)
-                        }
-                    }
-                }.Save(Path.Combine(Path.GetDirectoryName(path), AssetUtil.CRCFullName(fileName, "models") + ".eso"));
-            }
+            if (GenerateModel != null) new ModelGenerator(level, GenerateModel).Generate(path);
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
                 using (var writer = new BinaryWriter(stream)) level.Write(writer);
         }
@@ -773,7 +655,7 @@ namespace Mygod.Edge.Tool
 
     public enum LevelType
     {
-        None, Standard, Bonus, Extended
+        None, Standard, Extended, Bonus
     }
 
     public sealed class MappingLevel : IComparable, IComparable<MappingLevel>

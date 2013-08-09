@@ -206,36 +206,36 @@
       #0 Reset="True" => Angle="-1"
       #1 Angle="35"   => Reset="True"
   -->
-  <CameraTrigger Position="19,11,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="18,12,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="11,15,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="11,17,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="12,16,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="5,23,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="4,24,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="4,22,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="8,5,4" Angle="-1" Duration="15" />
-  <CameraTrigger Position="6,7,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="7,6,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="17,11,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="17,10,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="10,16,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="6,16,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="5,15,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="10,5,3" Angle="-1" Duration="15" />
-  <CameraTrigger Position="9,6,3" Angle="-1" Duration="15" />
-  <CameraTrigger Position="9,4,3" Angle="-1" Duration="15" />
-  <CameraTrigger Position="5,6,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="6,5,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="5,17,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="4,16,5" Angle="-1" Duration="15" />
-  <CameraTrigger Position="3,23,1" Angle="-1" Duration="15" />
-  <CameraTrigger Position="4,23,1" Reset="True" Duration="15" />
-  <CameraTrigger Position="11,16,1" Reset="True" Duration="15" />
-  <CameraTrigger Position="5,16,5" Reset="True" Duration="15" />
-  <CameraTrigger Position="18,11,1" Reset="True" Duration="15" />
-  <CameraTrigger Position="6,6,5" Reset="True" Duration="15" />
-  <CameraTrigger Position="9,5,3" Reset="True" Duration="15" />
+  <CameraTrigger Position="19,11,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="18,12,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="11,15,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="11,17,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="12,16,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="5,23,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="4,24,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="4,22,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="8,5,4" Angle="-1" Duration="30" />
+  <CameraTrigger Position="6,7,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="7,6,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="17,11,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="17,10,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="10,16,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="6,16,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="5,15,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="10,5,3" Angle="-1" Duration="30" />
+  <CameraTrigger Position="9,6,3" Angle="-1" Duration="30" />
+  <CameraTrigger Position="9,4,3" Angle="-1" Duration="30" />
+  <CameraTrigger Position="5,6,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="6,5,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="5,17,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="4,16,5" Angle="-1" Duration="30" />
+  <CameraTrigger Position="3,23,1" Angle="-1" Duration="30" />
+  <CameraTrigger Position="4,23,1" Reset="True" Duration="30" />
+  <CameraTrigger Position="11,16,1" Reset="True" Duration="30" />
+  <CameraTrigger Position="5,16,5" Reset="True" Duration="30" />
+  <CameraTrigger Position="18,11,1" Reset="True" Duration="30" />
+  <CameraTrigger Position="6,6,5" Reset="True" Duration="30" />
+  <CameraTrigger Position="9,5,3" Reset="True" Duration="30" />
   <Prism Position="7,18,1" />
   <Prism Position="18,12,1" />
   <Prism Position="5,13,5" />

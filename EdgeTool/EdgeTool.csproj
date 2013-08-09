@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
+    <Compile Include="Core\ModelGenerator.cs" />
     <Compile Include="[3DTools]\MathUtils.cs" />
     <Compile Include="[3DTools]\Matrix3DStack.cs" />
     <Compile Include="[3DTools]\ScreenSpaceLines3D.cs" />

@@ -45,7 +45,7 @@ namespace Mygod.Edge.Tool
     {
         static Achievement()
         {
-            ResourcesPath = Path.Combine(Path.GetDirectoryName(CurrentApp.Path), "Resources");
+            ResourcesPath = Path.Combine(CurrentApp.Directory, "Resources");
             AchievementsPath = Path.Combine(ResourcesPath, "Achievements.xml");
             Achievements = XDocument.Parse(File.ReadAllText(AchievementsPath)).ElementCaseInsensitive("achievements")
                 .ElementsCaseInsensitive("achievement").Select(a => new Achievement(a)).ToDictionary(a => a.ID);

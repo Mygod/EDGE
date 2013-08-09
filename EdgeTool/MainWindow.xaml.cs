@@ -677,8 +677,8 @@ namespace Mygod.Edge.Tool
             using (var stream = File.OpenRead(files[0]))
             {
                 var name = new AssetHeader(stream).Name;
-                if (name.EndsWith(".rmdl", true, CultureInfo.InvariantCulture)) name = name.Remove(name.Length - 5);
-                ModelNameBox.Text = name;
+                ModelNameBox.Text = name.EndsWith(".rmdl", true, CultureInfo.InvariantCulture)
+                    ? name.Remove(name.Length - 5) : Path.GetFileNameWithoutExtension(files[0]);
             }
             DrawModelTree(sender, e);
         }
