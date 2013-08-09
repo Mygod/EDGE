@@ -7,6 +7,9 @@
             <local:VisibleWhileNotNullConverter x:Key="VisibleWhileNotNull" />
             <local:SecondsConverter x:Key="Seconds" />
             <local:BinFilePathConverter x:Key="BinFilePath" />
+            <Style x:Key="AlignRight" TargetType="{x:Type TextBlock}">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -154,13 +157,18 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Binding="{Binding Mapping}" />
                             <DataGridTextColumn Header="关卡名" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                            <DataGridTextColumn Header="ID" Binding="{Binding ID}" ElementStyle="{StaticResource AlignRight}" />
                             <DataGridTextColumn Header="路径" Binding="{Binding FilePath, Converter={StaticResource BinFilePath}}" />
-                            <DataGridTextColumn Header="S+标准" Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="S标准" Binding="{Binding STime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="A标准" Binding="{Binding ATime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="B标准" Binding="{Binding BTime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="C标准" Binding="{Binding CTime, Converter={StaticResource Seconds}}" />
+                            <DataGridTextColumn Header="S+标准" Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}"
+                                                ElementStyle="{StaticResource AlignRight}" />
+                            <DataGridTextColumn Header="S标准" Binding="{Binding STime, Converter={StaticResource Seconds}}"
+                                                ElementStyle="{StaticResource AlignRight}" />
+                            <DataGridTextColumn Header="A标准" Binding="{Binding ATime, Converter={StaticResource Seconds}}"
+                                                ElementStyle="{StaticResource AlignRight}" />
+                            <DataGridTextColumn Header="B标准" Binding="{Binding BTime, Converter={StaticResource Seconds}}"
+                                                ElementStyle="{StaticResource AlignRight}" />
+                            <DataGridTextColumn Header="C标准" Binding="{Binding CTime, Converter={StaticResource Seconds}}"
+                                                ElementStyle="{StaticResource AlignRight}" />
                             <DataGridTextColumn Header="Java版音乐" Binding="{Binding MusicJavaName}" />
                             <DataGridTextColumn Header="音乐" Binding="{Binding MusicName}" />
                             <DataGridTextColumn Header="大小" Binding="{Binding Size}" />

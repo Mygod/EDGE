@@ -407,7 +407,7 @@ namespace Mygod.Edge.Tool
                         MiniBlocks.Add(new MiniBlock(e));
                         Warning.WriteLine("MiniBlock 元素：已过时，请勿使用。");
                         break;
-                    case "staticmovingplatform":
+                    case "staticmovingplatforms":
                         StaticMovingPlatforms = e;
                         break;
                     case "generatemodel":
@@ -543,34 +543,42 @@ namespace Mygod.Edge.Tool
             if (StaticMovingPlatforms != null)
             {
                 bool glowing = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("IsGlowing"),
-                     clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("ClearStaticBlocks"),
-                     z0FullBlock = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("Z0FullBlock");
-                var excluded = new HashSet<Point3D16>();
-                foreach (var e in StaticMovingPlatforms.Elements().Where(e =>
-                    "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase) ||
-                    "Include".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase)))
+                     clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("ClearStaticBlocks");
+                var blocks = new Dictionary<Point3D16, bool>(); // true: skip; false: half; null: full
+                for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
+                    blocks.Add(new Point3D16(x, y, 0), false);
+                foreach (var e in StaticMovingPlatforms.ElementsCaseInsensitive("SetBlocks"))
                 {
-                    var exclude = "Exclude".Equals(e.Name.LocalName, StringComparison.InvariantCultureIgnoreCase);
                     Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
+                    bool? type;
+                    switch (e.GetAttributeValue("Type"))
+                    {
+                        case "Excluded": type = true; break;
+                        case "HalfBlock": type = false; break;
+                        case "Included": type = null; break;
+                        default: throw new FormatException("SetBlocks 元素：@Type 未填写或无法识别！");
+                    }
                     for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
                     {
                         var point = new Point3D16(x, y, z);
-                        if (exclude) excluded.Add(point); else excluded.Remove(point);
+                        if (type.HasValue) blocks[point] = type.Value; else blocks.Remove(point);
                     }
                 }
                 level = (Level)MemberwiseClone();
                 level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
                 for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    for (short z = 0; z < level.Size.Height; z++)
-                        if (level.CollisionMap[x, y, z] && !excluded.Contains(new Point3D16(x, y, z)))
-                        {
-                            var platform = new MovingPlatform(level.MovingPlatforms);
-                            platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
-                            platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
-                            if (!z0FullBlock && z == 0) platform.FullBlock = false;
-                            level.MovingPlatforms.Add(platform);
-                            if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
-                        }
+                    for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
+                    {
+                        var point = new Point3D16(x, y, z);
+                        var type = blocks.ContainsKey(point) ? (bool?) blocks[point] : null;
+                        if (type == true) continue;
+                        var platform = new MovingPlatform(level.MovingPlatforms);
+                        platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
+                        platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
+                        if (type == false) platform.FullBlock = false;
+                        level.MovingPlatforms.Add(platform);
+                        if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
+                    }
             }
             if (GenerateModel != null) new ModelGenerator(level, GenerateModel).Generate(path);
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
