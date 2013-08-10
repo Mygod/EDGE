@@ -1,0 +1,64 @@
+<Models V01="1" V02="4096" V20="1" BoundingMin="-0.5,-0.5,-0.5" BoundingMax="0.5,0.5,0.5">
+  <Model MaterialAsset="9D9764D1050DB82A">
+    <Triangle>
+      <Vertex Position="-0.5,0.5,0.5" Normal="0,0,1" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,0.5" Normal="0,0,1" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,0.5" Normal="0,0,1" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,0.5,0.5" Normal="0,0,1" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,0.5" Normal="0,0,1" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,-0.5,0.5" Normal="0,0,1" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,0.5,-0.5" Normal="0,1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,-0.5" Normal="0,1,0" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,0.5" Normal="0,1,0" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,0.5,-0.5" Normal="0,1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,0.5" Normal="0,1,0" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,0.5,0.5" Normal="0,1,0" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,-0.5" Normal="0,0,-1" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,-0.5" Normal="0,0,-1" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,-0.5" Normal="0,0,-1" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,-0.5" Normal="0,0,-1" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,-0.5" Normal="0,0,-1" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,0.5,-0.5" Normal="0,0,-1" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0.5" Normal="0,-1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,0.5" Normal="0,-1,0" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,-0.5" Normal="0,-1,0" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0.5" Normal="0,-1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,-0.5" Normal="0,-1,0" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,-0.5,-0.5" Normal="0,-1,0" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0.5" Normal="1,0,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,0.5,-0.5" Normal="1,0,0" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,-0.5" Normal="1,0,0" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0.5" Normal="1,0,0" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,-0.5" Normal="1,0,0" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="0.5,-0.5,0.5" Normal="1,0,0" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,0.5,-0.5" Normal="-1,0,0" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,0.5,0.5" Normal="-1,0,0" TexCoord="1,0" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,-0.5,0.5" Normal="-1,0,0" TexCoord="1,1" Color="#80FFFFFF" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,0.5,-0.5" Normal="-1,0,0" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,-0.5,0.5" Normal="-1,0,0" TexCoord="1,1" Color="#80FFFFFF" />
+      <Vertex Position="-0.5,-0.5,-0.5" Normal="-1,0,0" TexCoord="0,1" Color="#80FFFFFF" />
+    </Triangle>
+  </Model>
+</Models>
