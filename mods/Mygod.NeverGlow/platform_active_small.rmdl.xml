@@ -1,0 +1,114 @@
+<Models V01="1" V02="4096" Rotate="-89.99999,0,0" V20="1" BoundingMin="-0.5,-0.5,0" BoundingMax="0.5,0.5,0.5">
+  <Model MaterialAsset="DC850D0E050DB82A">
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.301266,0.75" />
+      <Vertex Position="0.5,-0.475,0.475" Color="#FAFAFAFF" TexCoord="0.311266,0.76" />
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.301266,0.875041" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.301266,0.875041" />
+      <Vertex Position="0.5,-0.475,0.475" Color="#FAFAFAFF" TexCoord="0.311266,0.76" />
+      <Vertex Position="0.5,-0.475,0.025" Color="#FAFAFAFF" TexCoord="0.311266,0.865" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.301266,0.875041" />
+      <Vertex Position="0.5,-0.475,0.025" Color="#FAFAFAFF" TexCoord="0.311266,0.865" />
+      <Vertex Position="0.5,0.5,0" Color="#FAFAFAFF" TexCoord="0.448734,0.875041" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0" Color="#FAFAFAFF" TexCoord="0.448734,0.875041" />
+      <Vertex Position="0.5,-0.475,0.025" Color="#FAFAFAFF" TexCoord="0.311266,0.865" />
+      <Vertex Position="0.5,0.475,0.025" Color="#FAFAFAFF" TexCoord="0.438734,0.865" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0" Color="#FAFAFAFF" TexCoord="0.448734,0.875041" />
+      <Vertex Position="0.5,0.475,0.025" Color="#FAFAFAFF" TexCoord="0.438734,0.865" />
+      <Vertex Position="0.5,0.5,0.5" Color="#FAFAFAFF" TexCoord="0.448734,0.75" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0.5" Color="#FAFAFAFF" TexCoord="0.448734,0.75" />
+      <Vertex Position="0.5,0.475,0.025" Color="#FAFAFAFF" TexCoord="0.438734,0.865" />
+      <Vertex Position="0.5,0.475,0.475" Color="#FAFAFAFF" TexCoord="0.438734,0.76" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.5,0.5" Color="#FAFAFAFF" TexCoord="0.448734,0.75" />
+      <Vertex Position="0.5,0.475,0.475" Color="#FAFAFAFF" TexCoord="0.438734,0.76" />
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.301266,0.75" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.301266,0.75" />
+      <Vertex Position="0.5,0.475,0.475" Color="#FAFAFAFF" TexCoord="0.438734,0.76" />
+      <Vertex Position="0.5,-0.475,0.475" Color="#FAFAFAFF" TexCoord="0.311266,0.76" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.049653,0.75" />
+      <Vertex Position="-0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.059653,0.760393" />
+      <Vertex Position="-0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.049653,0.875162" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.049653,0.875162" />
+      <Vertex Position="-0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.059653,0.760393" />
+      <Vertex Position="-0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.059653,0.865" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.049653,0.875162" />
+      <Vertex Position="-0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.059653,0.865" />
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.19919,0.875034" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.19919,0.875034" />
+      <Vertex Position="-0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.059653,0.865" />
+      <Vertex Position="0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.18919,0.865" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0" Color="#FAFAFAFF" TexCoord="0.19919,0.875034" />
+      <Vertex Position="0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.18919,0.865" />
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.19919,0.75" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.19919,0.75" />
+      <Vertex Position="0.475,-0.5,0.025" Color="#FAFAFAFF" TexCoord="0.18919,0.865" />
+      <Vertex Position="0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.18919,0.760393" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.19919,0.75" />
+      <Vertex Position="0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.18919,0.760393" />
+      <Vertex Position="-0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.049653,0.75" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0.5" Color="#FAFAFAFF" TexCoord="0.049653,0.75" />
+      <Vertex Position="0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.18919,0.760393" />
+      <Vertex Position="-0.475,-0.5,0.475" Color="#FAFAFAFF" TexCoord="0.059653,0.760393" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.475,0.025" Color="#FFFFFF" TexCoord="0.438734,0.865" />
+      <Vertex Position="0.5,-0.475,0.025" Color="#FFFFFF" TexCoord="0.311266,0.865" />
+      <Vertex Position="0.5,0.475,0.475" Color="#FFFFFF" TexCoord="0.438734,0.76" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,0.475,0.475" Color="#FFFFFF" TexCoord="0.438734,0.76" />
+      <Vertex Position="0.5,-0.475,0.025" Color="#FFFFFF" TexCoord="0.311266,0.865" />
+      <Vertex Position="0.5,-0.475,0.475" Color="#FFFFFF" TexCoord="0.311266,0.76" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.475,-0.5,0.025" Color="#FFFFFF" TexCoord="0.18919,0.865" />
+      <Vertex Position="-0.475,-0.5,0.025" Color="#FFFFFF" TexCoord="0.059653,0.865" />
+      <Vertex Position="0.475,-0.5,0.475" Color="#FFFFFF" TexCoord="0.18919,0.760393" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.475,-0.5,0.475" Color="#FFFFFF" TexCoord="0.18919,0.760393" />
+      <Vertex Position="-0.475,-0.5,0.025" Color="#FFFFFF" TexCoord="0.059653,0.865" />
+      <Vertex Position="-0.475,-0.5,0.475" Color="#FFFFFF" TexCoord="0.059653,0.760393" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="-0.5,-0.5,0.5" Color="#FFFFFF" TexCoord="0.549617,0.933" />
+      <Vertex Position="-0.5,0.5,0.5" Color="#FFFFFF" TexCoord="0.549617,0.933" />
+      <Vertex Position="0.5,-0.5,0.5" Color="#FFFFFF" TexCoord="0.700501,0.933" />
+    </Triangle>
+    <Triangle>
+      <Vertex Position="0.5,-0.5,0.5" Color="#FFFFFF" TexCoord="0.700501,0.933" />
+      <Vertex Position="-0.5,0.5,0.5" Color="#FFFFFF" TexCoord="0.549617,0.933" />
+      <Vertex Position="0.5,0.5,0.5" Color="#FFFFFF" TexCoord="0.700501,0.933" />
+    </Triangle>
+  </Model>
+</Models>
