@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
@@ -55,10 +56,11 @@ namespace Mygod.Edge.Tool
             return value.Replace('\\', '/').Trim('/');
         }
 
+        private static readonly ILookup<int, Color> Lookup = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static)
+            .Select(f => (Color)f.GetValue(null, null)).Where(c => c.IsNamedColor).ToLookup(c => c.ToArgb());
         public static string GetString(this Color color)
         {
-            if (color.IsKnownColor) return color.ToKnownColor().ToString();
-            if (color.IsNamedColor) return color.Name;
+            foreach (var first in Lookup[color.ToArgb()]) return first.Name;    // it will only return the first if there is one or more
             var result = string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
             if (color.A == 255) return '#' + result;
             return string.Format("#{0:X2}{1}", color.A, result);
@@ -157,8 +159,8 @@ namespace Mygod.Edge.Tool
             result.SetAttributeValueWithDefault("Duration", ean.Header.Duration);
             if (ean.Header.Zero1 != 0) Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero1));
             if (ean.Header.Zero2 != 0) Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero2));
-            result.SetAttributeValueWithDefault("AssetChild1", ean.Header.AssetChild1);
-            result.SetAttributeValueWithDefault("AssetChild2", ean.Header.AssetChild2);
+            result.SetAttributeValueWithDefault("NodeChild", ean.Header.NodeChild);
+            result.SetAttributeValueWithDefault("NodeSibling", ean.Header.NodeSibling);
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockRotateX, "RotateX"));
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockRotateY, "RotateY"));
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockRotateZ, "RotateZ"));
@@ -170,7 +172,7 @@ namespace Mygod.Edge.Tool
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockTranslateZ, "TranslateZ"));
             return result;
         }
-
+        
         public static EAN ParseEan(XElement element, string name, string nameSpace = "models")
         {
             return new EAN
@@ -180,8 +182,8 @@ namespace Mygod.Edge.Tool
                 {
                     Unknown1 = element.GetAttributeValueWithDefault<float>("Unknown"),
                     Duration = element.GetAttributeValueWithDefault<float>("Duration"),
-                    AssetChild1 = element.GetAttributeValueWithDefault<AssetHash>("AssetChild1"),
-                    AssetChild2 = element.GetAttributeValueWithDefault<AssetHash>("AssetChild2")
+                    NodeChild = element.GetAttributeValueWithDefault<AssetHash>("NodeChild"),
+                    NodeSibling = element.GetAttributeValueWithDefault<AssetHash>("NodeSibling")
                 },
                 BlockRotateX = ParseKeyframeBlock(element.ElementCaseInsensitive("RotateX")),
                 BlockRotateY = ParseKeyframeBlock(element.ElementCaseInsensitive("RotateY")),
@@ -453,6 +455,119 @@ namespace Mygod.Edge.Tool
                 element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
             if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat)) element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
             return element;
+        }
+    }
+
+    public static class Compiler
+    {
+        public static Tuple<Exception, string> Compile(bool exFormat, string file, string directory = null)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(file);
+            if (string.IsNullOrWhiteSpace(directory)) directory =Path.GetDirectoryName(file);
+            string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName), outputPath = Path.Combine(directory, fileName);
+            Warning.Start();
+            try
+            {
+                switch (Path.GetExtension(file).ToLowerInvariant())
+                {
+                    case ".bin":
+                        if (fileName.Equals("cos", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            var array = new short[181];
+                            using (var stream = File.OpenRead(file))
+                            using (var reader = new BinaryReader(stream))
+                                for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
+                            File.WriteAllText(outputPath + ".txt",
+                                              string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                        }
+                        else Level.CreateFromCompiled(file).Decompile(outputPath);
+                        break;
+                    case ".xml":
+                        var root = XHelper.Load(file).Elements().First();
+                        switch (root.Name.LocalName.ToLowerInvariant())
+                        {
+                            case "level":
+                                Level.CreateFromDecompiled(inputPath).Compile(outputPath + ".bin");
+                                break;
+                            case "animation":
+                                AssetHelper.ParseEan(root, fileName)
+                                           .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models") + ".ean"));
+                                break;
+                            case "material":
+                            {
+                                string name, compiledFileName;
+                                Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                var ema = AssetHelper.ParseEma(root, name);
+                                ema.Save(Path.Combine(directory, compiledFileName + ".ema"));
+                                break;
+                            }
+                            case "models":
+                            {
+                                string name, compiledFileName;
+                                Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                var eso = AssetHelper.ParseEso(root, name);
+                                eso.Save(Path.Combine(directory, compiledFileName + ".eso"));
+                                break;
+                            }
+                        }
+                        break;
+                    case ".loc":
+                        LOC.FromFile(file).SaveXsl(outputPath + ".xls");
+                        break;
+                    case ".xls":
+                        LocHelper.FromXsl(file).Save(outputPath + ".loc");
+                        break;
+                    case ".etx":
+                        var etx = ETX.FromFile(file);
+                        etx.GetBitmap().Save(Path.Combine(directory, etx.AssetHeader.Name + ".png"));
+                        break;
+                    case ".png":
+                        using (var bitmap = new Bitmap(file))
+                        {
+                            var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
+                            (exFormat ? (ETX) ETX1804.CreateFromImage(bitmap, fileName) : ETX1803.CreateFromImage(bitmap, fileName))
+                                .Save(Path.Combine(directory, name));
+                        }
+                        break;
+                    case ".ean":
+                        var ean = EAN.FromFile(file);
+                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ean) + ".xml"),
+                                          AssetHelper.GetEanElement(ean).ToString());
+                        break;
+                    case ".ema":
+                    {
+                        var ema = EMA.FromFile(file);
+                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
+                                          AssetHelper.GetEmaElement(ema).ToString());
+                        break;
+                    }
+                    case ".eso":
+                    {
+                        var eso = ESO.FromFile(file);
+                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
+                                          AssetHelper.GetEsoElement(eso).ToString());
+                        break;
+                    }
+                    case ".txt":
+                        using (var stream = new FileStream(outputPath + ".bin", FileMode.Create, FileAccess.Write, FileShare.Read))
+                        using (var writer = new BinaryWriter(stream))
+                            foreach (var num in File.ReadAllText(file).Split(new[] { '\r', '\n' },
+                                                                             StringSplitOptions.RemoveEmptyEntries).Select(double.Parse))
+                                writer.Write((short) Math.Round(num * 256));
+                        break;
+                    default:
+                        throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
+                }
+                return new Tuple<Exception, string>(null, Warning.Fetch());
+            }
+            catch (Exception exc)
+            {
+                return new Tuple<Exception, string>(exc, Warning.Fetch());
+            }
+            finally
+            {
+                Warning.Clear();
+            }
         }
     }
 }

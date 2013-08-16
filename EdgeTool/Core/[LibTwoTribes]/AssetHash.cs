@@ -21,6 +21,10 @@ namespace LibTwoTribes
             m_Name = name;
             m_Namespace = name_space;
         }
+        public AssetHash(string name, string name_space, bool strip_extension = true)
+            : this(AssetUtil.CRCName(name, strip_extension), AssetUtil.CRCNamespace(name_space))
+        {
+        }
 
         public static AssetHash FromStream(Stream stream)
         {

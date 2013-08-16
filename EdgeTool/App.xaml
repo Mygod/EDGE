@@ -1,3 +1,14 @@
 ﻿<Application x:Class="Mygod.Edge.Tool.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" StartupUri="MainWindow.xaml"
-             Startup="OnStartup" DispatcherUnhandledException="OnError" />
+             Startup="OnStartup" DispatcherUnhandledException="OnError">
+    <Application.Resources>
+        <Image x:Key="Disabled" x:Shared="False" Source="/Resources/Images/Disabled.png" Stretch="None" Grid.Column="4"
+               ToolTip="对不起，由于你还没有玩过 V1.0.2483.7086 的破解版游戏，你现在无法浏览当前获得了哪些成就。" />
+        <Image x:Key="Achieved" x:Shared="False" Source="/Resources/Images/Achieved.png" Stretch="None" Grid.Column="4"
+               ToolTip="此成就已获得。" />
+        <Image x:Key="Help" x:Shared="False" Source="/Resources/Images/Help.png" Stretch="None" Grid.Column="4"
+               ToolTip="到底怎么获得此成就？！我要疯了！" Cursor="Hand" MouseLeftButtonUp="ShowHelp" />
+        <Image x:Key="HelpUnavailable" x:Shared="False" Source="/Resources/Images/HelpUnavailable.png" Stretch="None" Grid.Column="4"
+               ToolTip="暂时没有视频帮助，如果你有获得方法，欢迎通过 EDGE Fans 告诉我们。" />
+    </Application.Resources>
+</Application>

@@ -156,15 +156,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Unlocked.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Images\Help.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Images\HelpDisabled.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +322,12 @@
     <None Include="Resources\Winter.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Achieved.png" />
+    <Resource Include="Resources\Images\Disabled.png" />
+    <Resource Include="Resources\Images\Help.png" />
+    <Resource Include="Resources\Images\HelpUnavailable.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

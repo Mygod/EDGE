@@ -30,7 +30,7 @@ namespace Mygod.Edge.Tool
                 FilesCount = extractor.FilesCount;
                 foreach (var fileName in extractor.ArchiveFileNames)
                 {
-                    switch (fileName.ToLower())
+                    switch (fileName.ToLowerInvariant())
                     {
                         case "mod.xml":
                             var root = XDocument.Parse(extractor.ExtractString(i)).GetElement("Mod");
@@ -73,8 +73,13 @@ namespace Mygod.Edge.Tool
                         case "levels/mapping.xsl":
                             Xsl = XslCracked = extractor.ExtractString(i);
                             break;
+                        case "config/settings_readme.txt":
+                            throw new FormatException("EdgeMod 不允许修改 config/settings_readme.txt！");
+                        case "config/settings_template_do_not_modify.ini":
+                            throw new FormatException("EdgeMod 不允许修改 config/settings_template_do_not_modify.ini！");
                         default:
-                            if (fileName.StartsWith("mods/", true, CultureInfo.InvariantCulture))
+                            if (fileName.StartsWith("mods/", true, CultureInfo.InvariantCulture)
+                                || "mods".Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                                 throw new FormatException("EdgeMod 不允许修改 mods 文件夹内的内容！");
                             if (fileName.EndsWith(".bak", true, CultureInfo.InvariantCulture))
                                 throw new FormatException("EdgeMod 不允许有以 .bak 为扩展名的文件！");
@@ -104,12 +109,12 @@ namespace Mygod.Edge.Tool
         private const string XslHead = "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n";
 
         private readonly Edge parent;
-        public uint FilesCount;
-        public string FilePath, ID, Description;
-        public Version MinEngineVersion, MaxEngineVersion;
-        public ModType Type;
-        public HashSet<string> Conflicts, Dependency, InstallAfter, InstallBefore;
-        public string Xsl, XslCracked;
+        public readonly uint FilesCount;
+        public readonly string FilePath, ID, Description;
+        public readonly Version MinEngineVersion, MaxEngineVersion;
+        public readonly ModType Type;
+        public readonly HashSet<string> Conflicts, Dependency, InstallAfter, InstallBefore;
+        public readonly string Xsl, XslCracked;
 
         public string Name { get; set; }
         public Version Version { get; set; }
@@ -243,10 +248,10 @@ namespace Mygod.Edge.Tool
 
         private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086);
 
-        public string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
+        public readonly string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
-        public StringSetFile DisabledMods, ModifiedFiles;
-        public Version EngineVersion;
+        public readonly StringSetFile DisabledMods, ModifiedFiles;
+        public readonly Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
         public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
         public EventHandler DisabledModsChanged;
@@ -449,7 +454,7 @@ namespace Mygod.Edge.Tool
             Refresh();
         }
 
-        public string FilePath;
+        public readonly string FilePath;
 
         public void Refresh()
         {
@@ -470,13 +475,13 @@ namespace Mygod.Edge.Tool
         public SteamOtl(string filePath, uint stringLong = 1024)
             : base(filePath, stringLong)
         {
-            Settings = this["Settings"];
-            SettingsUserNameData = new StringData(Settings, "UserName");
+            settings = this["Settings"];
+            settingsUserNameData = new StringData(settings, "UserName");
         }
 
-        private readonly IniSection Settings;
-        private readonly StringData SettingsUserNameData;
+        private readonly IniSection settings;
+        private readonly StringData settingsUserNameData;
 
-        public string SettingsUserName { get { return SettingsUserNameData.Get(); } set { SettingsUserNameData.Set(value); } }
+        public string SettingsUserName { get { return settingsUserNameData.Get(); } set { settingsUserNameData.Set(value); } }
     }
 }

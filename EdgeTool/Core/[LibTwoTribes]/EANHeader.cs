@@ -14,15 +14,15 @@ namespace LibTwoTribes
         private float m_Duration;
         private uint m_Zero1;
         private uint m_Zero2;
-        private AssetHash m_AssetChild1;
-        private AssetHash m_AssetChild2;
+        private AssetHash m_NodeChild;
+        private AssetHash m_NodeSibling;
 
         public float Unknown1 { get { return m_Unknown1; } set { m_Unknown1 = value; } }
         public float Duration { get { return m_Duration; } set { m_Duration = value; } }
         public uint Zero1 { get { return m_Zero1; } set { m_Zero1 = value; } }
         public uint Zero2 { get { return m_Zero2; } set { m_Zero2 = value; } }
-        public AssetHash AssetChild1 { get { return m_AssetChild1; } set { m_AssetChild1 = value; } }
-        public AssetHash AssetChild2 { get { return m_AssetChild2; } set { m_AssetChild2 = value; } }
+        public AssetHash NodeChild { get { return m_NodeChild; } set { m_NodeChild = value; } }
+        public AssetHash NodeSibling { get { return m_NodeSibling; } set { m_NodeSibling = value; } }
 
         private EANHeader(Stream stream)
         {
@@ -32,8 +32,8 @@ namespace LibTwoTribes
                 m_Duration = br.ReadSingle();
                 m_Zero1 = br.ReadUInt32();
                 m_Zero2 = br.ReadUInt32();
-                m_AssetChild1 = AssetHash.FromStream(stream);
-                m_AssetChild2 = AssetHash.FromStream(stream);
+                m_NodeChild = AssetHash.FromStream(stream);
+                m_NodeSibling = AssetHash.FromStream(stream);
             }
         }
         public EANHeader()
@@ -53,8 +53,8 @@ namespace LibTwoTribes
                 bw.Write(m_Duration);
                 bw.Write(m_Zero1);
                 bw.Write(m_Zero2);
-                m_AssetChild1.Save(stream);
-                m_AssetChild2.Save(stream);
+                m_NodeChild.Save(stream);
+                m_NodeSibling.Save(stream);
             }
         }
     }

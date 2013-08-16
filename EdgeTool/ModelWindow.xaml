@@ -16,7 +16,8 @@
                 <ModelVisual3D x:Name="Model">
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="White" />
+                            <AmbientLight Color="Gray" />
+                            <DirectionalLight Direction="-1,-2,-1.1" Color="White" />
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>

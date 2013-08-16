@@ -17,8 +17,6 @@ using LibTwoTribes;
 using LibTwoTribes.Util;
 using Mygod.Windows;
 using Mygod.Windows.Dialogs;
-using Mygod.Xml.Linq;
-using Bitmap = System.Drawing.Bitmap;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using MenuItem = System.Windows.Forms.MenuItem;
 using MouseButtons = System.Windows.Forms.MouseButtons;
@@ -42,32 +40,15 @@ namespace Mygod.Edge.Tool
             notifyIcon.BalloonTipClosed += OnBalloonClosed;
             InitializeComponent();
             LevelList.ItemsSource = levels;
-            UserBox.ItemsSource = users;
             GamePath.ItemsSource = Settings.RecentPaths;
             GamePath.Text = Settings.CurrentPath;
-            foreach (var name in ModelNames.Split(',')) ModelNameBox.Items.Add(name);
-            List<string> files = new List<string>(), edgemods = new List<string>();
-            foreach (var arg in App.Args) switch (Path.GetExtension(arg).ToLower())
-            {
-                case "exe":
-                    GamePath.Text = arg;
-                    break;
-                case "edgemod":
-                    edgemods.Add(arg);
-                    break;
-                default:
-                    files.Add(arg);
-                    break;
-            }
-            if (files.Count > 0)
-            {
-                ProcessCore(files);
-                if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedItem = CompileTab;
-            }
+            foreach (var name in ModelNames.Split(',').OrderBy(name => name)) ModelNameBox.Items.Add(name);
+            foreach (var name in AnimationNames.Split(',').OrderBy(name => name)) AnimationNameBox.Items.Add(name);
+            if (!string.IsNullOrWhiteSpace(App.GamePath)) GamePath.Text = App.GamePath;
             Load(null, null);
-            foreach (var edgemod in edgemods) InstallEdgeMod(edgemod);
-            if (!Directory.Exists(User.UsersPath)) return;
-            watcher = new FileSystemWatcher(User.UsersPath) { IncludeSubdirectories = true };
+            foreach (var edgemod in App.EdgeMods) InstallEdgeMod(edgemod);
+            if (!Directory.Exists(Users.Root)) return;
+            watcher = new FileSystemWatcher(Users.Root) { IncludeSubdirectories = true };
             watcher.Created += RefreshAchievements;
             watcher.Changed += RefreshAchievements;
             watcher.Deleted += RefreshAchievements;
@@ -78,7 +59,7 @@ namespace Mygod.Edge.Tool
 
         private readonly FileSystemWatcher watcher;
 
-        private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done";
+        private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done", AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
 
         private static void ShowInExplorer(string path)
         {
@@ -115,7 +96,6 @@ namespace Mygod.Edge.Tool
         private int balloonShown;
         public static Edge Edge;
         private readonly ObservableCollection<Level> levels = new ObservableCollection<Level>();
-        private readonly ObservableCollection<User> users = new ObservableCollection<User>();
         private Thread searcher;
         private readonly OpenFileDialog exeSelector = new OpenFileDialog {Title = "请选择 edge.exe", Filter = "可执行文件 (*.exe)|*.exe"};
         private readonly FolderBrowserDialog outputSelector = new FolderBrowserDialog
@@ -148,8 +128,10 @@ namespace Mygod.Edge.Tool
                 searcher = new Thread(Load);
                 searcher.Start();
                 User current = null;
-                if (Edge.SteamOtl != null) current = users.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
-                if (current != null) UserBox.SelectedItem = users;
+                if (Edge.SteamOtl != null) current = Users.Current.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
+                else if (Users.Current.CurrentUser == null) current = Users.Current.FirstOrDefault();
+                if (current != null) Users.Current.CurrentUser = current;
+                AchievementsList.Items.Refresh();
                 RunGameButton.IsEnabled = true;
                 SwitchProfileButton.IsEnabled = Edge.SteamOtl != null;
                 Settings.CurrentPath = GamePath.Text;
@@ -162,10 +144,14 @@ namespace Mygod.Edge.Tool
             }
         }
 
+        private void RefreshAchievementsList(object sender, RoutedEventArgs e)
+        {
+            AchievementsList.Items.Refresh();
+        }
+
         private void Load()
         {
-            foreach (var file in Directory.EnumerateFiles(Edge.LevelsDirectory, "*.bin", SearchOption.AllDirectories)
-                .Where(file => Path.GetFileName(file) != "font.bin"))
+            foreach (var file in Directory.EnumerateFiles(Edge.LevelsDirectory, "*.bin", SearchOption.AllDirectories))
                 try
                 {
                     var level = Level.CreateFromCompiled(file);
@@ -247,52 +233,41 @@ namespace Mygod.Edge.Tool
 
         #region Browse achievements
 
-        private void ShowHelp(object sender, MouseButtonEventArgs e)
+        private void RefreshGlobalPercent(object sender, RoutedEventArgs e)
         {
-            var tag = (string)((Image)sender).Tag;
-            if (!string.IsNullOrWhiteSpace(tag)) Process.Start(tag);
+            Achievements.RefreshGlobalPercents();
         }
 
         private void SetDefaultProfile(object sender, RoutedEventArgs e)
         {
-            if (Edge.SteamOtl != null) Edge.SteamOtl.SettingsUserName = ((User) UserBox.SelectedItem).Name;
+            if (Edge.SteamOtl != null) Edge.SteamOtl.SettingsUserName = Users.Current.CurrentUser.Name;
         }
 
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null && TaskDialog.Show(this, "确定要(取消)解锁该成就吗？", type: TaskDialogType.YesNoQuestion)
-                == TaskDialogSimpleResult.Yes) item.Unlocked = !item.Unlocked;
+            if (item != null && TaskDialog.Show(this, "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion)
+                == TaskDialogSimpleResult.Yes) Users.Current.CurrentUser.SetAchieved(item, Users.Current.CurrentUser.GetAchieved(item));
         }
 
         private void RefreshAchievements(object sender = null, FileSystemEventArgs e = null)
         {
-            var skipBalloons = false;
-            User currentUser = null;
-            var unlockedAchievements = new HashSet<string>();
+            var achievedBefore = new HashSet<string>();
             Dispatcher.Invoke(() =>
             {
-                currentUser = UserBox.SelectedItem as User;
-                if (!(skipBalloons = currentUser == null))
-                    unlockedAchievements = new HashSet<string>(from a in currentUser.Achievements where a.Unlocked select a.ID);
-                users.Clear();
-                foreach (var user in User.GetUsers())
-                {
-                    users.Add(user);
-                    if (currentUser == null || user.Name == currentUser.Name) UserBox.SelectedItem = currentUser = user;
-                }
-                AchievementsTip.Text = users.Count == 0
-                    ? "对不起，你还没有玩过游戏或你使用了不支持的版本。该功能当前仅支持 V1.0.2483.7086 的破解版。"
-                    : "提示：右击可强制(取消)解锁。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。";
+                if (Users.Current.CurrentUser != null) achievedBefore = new HashSet<string>(
+                    from a in Achievements.Current where Users.Current.CurrentUser.GetAchieved(a) select a.ApiName);
+                Users.Current.Refresh();
+                AchievementsList.Items.Refresh();
+                AchievementsTip.Visibility = Visibility.Visible;
             });
-            if (skipBalloons || currentUser == null) return;
-            foreach (var achievement in currentUser.Achievements)
-                if (achievement.Unlocked && !unlockedAchievements.Contains(achievement.ID))
-                {
-                    while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
-                    notifyIcon.ShowBalloonTip(5000, "成就 " + achievement.Title + " 解锁！", "恭喜你解锁了一个成就！快去 EdgeTool 看看吧！"
-                        + Environment.NewLine + "说明：" + achievement.Description, ToolTipIcon.Info);
-                }
+            if (Users.Current.CurrentUser != null) foreach (var achievement in Achievements.Current)
+            {
+                if (achievedBefore.Contains(achievement.ApiName) || !Users.Current.CurrentUser.GetAchieved(achievement)) continue;
+                while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
+                notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！", "恭喜你获得了一个成就！快去 EdgeTool 看看吧！"
+                    + Environment.NewLine + "说明：" + achievement.Description, ToolTipIcon.Info);
+            }
         }
 
         #endregion
@@ -302,6 +277,10 @@ namespace Mygod.Edge.Tool
         private void ShowReferenceGuide(object sender, RoutedEventArgs e)
         {
             Process.Start("http://edgefans.tk/developers");
+        }
+        private void ShowCommandLineHelp(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://edgefans.tk/edgetool/command-line-arguments");
         }
 
         private void OnBinaryDragEnter(object sender, DragEventArgs e)
@@ -337,113 +316,15 @@ namespace Mygod.Edge.Tool
             WarningBox.Text = string.Empty;
             foreach (var file in files)
             {
-                var fileName = Path.GetFileNameWithoutExtension(file);
-                directory = directory ?? Path.GetDirectoryName(file);
-                string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName), outputPath = Path.Combine(directory, fileName);
-                Warning.Start();
-                try
-                {
-                    switch (Path.GetExtension(file).ToLowerInvariant())
-                    {
-                        case ".bin":
-                            if (fileName.Equals("cos", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                var array = new short[181];
-                                using (var stream = File.OpenRead(file)) using (var reader = new BinaryReader(stream))
-                                    for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
-                                File.WriteAllText(outputPath + ".txt", 
-                                    string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
-                            }
-                            else Level.CreateFromCompiled(file).Decompile(outputPath);
-                            break;
-                        case ".xml":
-                            var root = XHelper.Load(file).Elements().First();
-                            switch (root.Name.LocalName.ToLowerInvariant())
-                            {
-                                case "level":
-                                    Level.CreateFromDecompiled(inputPath).Compile(outputPath + ".bin");
-                                    break;
-                                case "animation":
-                                    AssetHelper.ParseEan(root, fileName)
-                                        .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models") + ".ean"));
-                                    break;
-                                case "material":
-                                {
-                                    string name, compiledFileName;
-                                    Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
-                                    var ema = AssetHelper.ParseEma(root, name);
-                                    ema.Save(Path.Combine(directory, compiledFileName + ".ema"));
-                                    break;
-                                }
-                                case "models":
-                                {
-                                    string name, compiledFileName;
-                                    Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
-                                    var eso = AssetHelper.ParseEso(root, name);
-                                    eso.Save(Path.Combine(directory, compiledFileName + ".eso"));
-                                    break;
-                                }
-                            }
-                            break;
-                        case ".loc":
-                            LOC.FromFile(file).SaveXsl(outputPath + ".xls");
-                            break;
-                        case ".xls":    
-                            LocHelper.FromXsl(file).Save(outputPath + ".loc");
-                            break;
-                        case ".etx":
-                            var etx = ETX.FromFile(file);
-                            etx.GetBitmap().Save(Path.Combine(directory, etx.AssetHeader.Name + ".png"));
-                            break;
-                        case ".png":
-                            if (!exFormat.HasValue) exFormat = TaskDialog.Show(this, "要使用新版 .etx 格式吗？", 
-                                "仅适用于 Steam 正版。（非 Demo）", TaskDialogType.YesNoQuestion) == TaskDialogSimpleResult.Yes;
-                            using (var bitmap = new Bitmap(file))
-                            {
-                                var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
-                                if (exFormat.Value) ETX1804.CreateFromImage(bitmap, fileName).Save(Path.Combine(directory, name));
-                                else ETX1803.CreateFromImage(bitmap, fileName).Save(Path.Combine(directory, name));
-                            }
-                            break;
-                        case ".ean":
-                            var ean = EAN.FromFile(file);
-                            File.WriteAllText(Path.Combine(directory, ean.AssetHeader.Name + ".xml"), 
-                                              AssetHelper.GetEanElement(ean).ToString());
-                            break;
-                        case ".ema":
-                        {
-                            var ema = EMA.FromFile(file);
-                            File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
-                                              AssetHelper.GetEmaElement(ema).ToString());
-                            break;
-                        }
-                        case ".eso":
-                        {
-                            var eso = ESO.FromFile(file);
-                            File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
-                                              AssetHelper.GetEsoElement(eso).ToString());
-                            break;
-                        }
-                        case ".txt":
-                            using (var stream = new FileStream(outputPath + ".bin", FileMode.Create, FileAccess.Write, FileShare.Read))
-                            using (var writer = new BinaryWriter(stream))
-                                foreach (var num in File.ReadAllText(file).Split(new[] { '\r', '\n' },
-                                    StringSplitOptions.RemoveEmptyEntries).Select(double.Parse))
-                                    writer.Write((short) Math.Round(num * 256));
-                            break;
-                        default:
-                            throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
-                    }
-                    count++;
-                }
-                catch (Exception exc)
-                {
-                    TaskDialog.Show(this, fileName + " (反)编译失败。",
-                        string.Format("错误信息：" + Environment.NewLine + exc.GetMessage()), TaskDialogType.Error);
-                }
-                if (!string.IsNullOrWhiteSpace(Warning.Fetch()))
-                    WarningBox.Text += string.Format("{0}{1}{2}{1}", file, Environment.NewLine, Warning.Fetch());
-                Warning.Clear();
+                if (file.EndsWith(".png", true, CultureInfo.InvariantCulture) && !exFormat.HasValue) exFormat = TaskDialog.Show(
+                    this, "要使用新版 .etx 格式吗？", "仅适用于 Steam 正版。（非 Demo）", TaskDialogType.YesNoQuestion)
+                    == TaskDialogSimpleResult.Yes;
+                var result = Compiler.Compile(exFormat ?? false, file, directory);
+                if (result.Item1 == null) count++;
+                else TaskDialog.Show(this, Path.GetFileNameWithoutExtension(file) + " (反)编译失败。",
+                                     string.Format("错误信息：" + Environment.NewLine + result.Item1.GetMessage()), TaskDialogType.Error);
+                if (!string.IsNullOrWhiteSpace(result.Item2))
+                    WarningBox.Text += string.Format("{0}{1}{2}{1}", file, Environment.NewLine, result.Item2);
             }
             return count;
         }
@@ -579,12 +460,36 @@ namespace Mygod.Edge.Tool
 
         #endregion
 
-        #region Model Tree
+        #region Draw Tree
+
+        private void DrawAnimationTree(object sender, RoutedEventArgs e)
+        {
+            AnimationTreeView.Items.Clear();
+            DrawEan(AnimationTreeView.Items, AssetUtil.CRCFullName(AnimationNameBox.Text, "models", false));
+        }
 
         private void DrawModelTree(object sender, RoutedEventArgs e)
         {
             ModelTreeView.Items.Clear();
             DrawEso(ModelTreeView.Items, AssetUtil.CRCFullName(ModelNameBox.Text, "models", false));
+        }
+
+        private static void DrawEan(IList parent, string fileName)
+        {
+            var item = new TreeViewItem { IsExpanded = true };
+            parent.Add(item);
+            var path = Path.Combine(Edge.ModelsDirectory, fileName + ".ean");
+            item.Tag = path;
+            if (!File.Exists(path))
+            {
+                item.Header = fileName + ".ean (不存在)";
+                item.Foreground = Brushes.Red;
+                return;
+            }
+            var ean = EAN.FromFile(path);
+            item.Header = string.Format("{0}.ean ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, ean));
+            if (!ean.Header.NodeChild.IsZero()) DrawEan(item.Items, ean.Header.NodeChild.ToString());
+            if (!ean.Header.NodeSibling.IsZero()) DrawEan(parent, ean.Header.NodeSibling.ToString());
         }
 
         private static void DrawEso(IList parent, string fileName)
@@ -645,9 +550,14 @@ namespace Mygod.Edge.Tool
             Process.Start("http://edgefans.tk/developers/file-formats/asset/drawing-model-tree");
         }
 
+        private void GetAnimationTreeHelp(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://edgefans.tk/developers/file-formats/asset/ean/drawing-animation-tree");
+        }
+
         private void ShowFileInExplorer(object sender, RoutedEventArgs e)
         {
-            var item = ModelTreeView.SelectedItem as TreeViewItem;
+            var item = (Equals(Tabs.SelectedItem, DrawModelTreeTab) ? ModelTreeView : AnimationTreeView).SelectedItem as TreeViewItem;
             if (item != null) ShowInExplorer(item.Tag.ToString());
         }
 
@@ -665,7 +575,7 @@ namespace Mygod.Edge.Tool
                 DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects);
             }
         }
-
+        
         private void OnModelDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
@@ -681,6 +591,38 @@ namespace Mygod.Edge.Tool
                     ? name.Remove(name.Length - 5) : Path.GetFileNameWithoutExtension(files[0]);
             }
             DrawModelTree(sender, e);
+        }
+
+        private void OnAnimationDragEnter(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+            {
+                e.Effects = e.AllowedEffects & DragDropEffects.Copy;
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "绘制动画树");
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects);
+            }
+        }
+
+        private void OnAnimationDrop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
+            if (e.Effects != DragDropEffects.Copy) return;
+            var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            if (files == null || files.Length == 0) return;
+            using (var stream = File.OpenRead(files[0]))
+            {
+                var name = new AssetHeader(stream).Name;
+                AnimationNameBox.Text = name.EndsWith(".rcha", true, CultureInfo.InvariantCulture)
+                    ? name.Remove(name.Length - 5) : Path.GetFileNameWithoutExtension(files[0]);
+            }
+            DrawAnimationTree(sender, e);
         }
 
         public static ModelWindow ModelWindow;
@@ -703,6 +645,25 @@ namespace Mygod.Edge.Tool
             ViewModel(true);
         }
 
+        private void ViewAnimation(bool loop = true)
+        {
+            var item = AnimationTreeView.SelectedItem as TreeViewItem;
+            if (item == null) return;
+            var path = item.Tag.ToString();
+            if (!path.EndsWith(".ean", false, CultureInfo.InvariantCulture)) return;
+            if (ModelWindow == null) (ModelWindow = new ModelWindow()).Show();
+            ModelWindow.ApplyAnimation(path, loop);
+            ModelWindow.Activate();
+        }
+        private void ViewAnimation(object sender, RoutedEventArgs e)
+        {
+            ViewAnimation();
+        }
+        private void ViewAnimationNonLoop(object sender, RoutedEventArgs e)
+        {
+            ViewAnimation(false);
+        }
+
         #endregion
     }
 
@@ -714,20 +675,23 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    [ValueConversion(typeof(bool), typeof(Visibility))]
-    public sealed class VisibleWhileTrueConverter : IValueConverter
+    [ValueConversion(typeof(string), typeof(Image))]
+    public sealed class AchievementStatusConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) value = false;
-            if (!(value is bool)) return null;
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            var achievement = value as Achievement;
+            if (achievement == null || Users.Current.CurrentUser == null) return Application.Current.Resources["Disabled"];
+            if (Users.Current.CurrentUser.GetAchieved(achievement)) return Application.Current.Resources["Achieved"];
+            if (achievement.Help == null) return Application.Current.Resources["HelpUnavailable"];
+            var result = (Image) Application.Current.Resources["Help"];
+            result.Tag = achievement.Help;
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is Visibility)) return null;
-            return ((Visibility)value) == Visibility.Visible;
+            throw new NotSupportedException();
         }
     }
 
@@ -773,6 +737,20 @@ namespace Mygod.Edge.Tool
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Path.Combine(MainWindow.Edge.LevelsDirectory, value + ".bin");
+        }
+    }
+
+    [ValueConversion(typeof(double), typeof(string))]
+    public sealed class GlobalPercentTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null ? value.ToString() + '%' : "未知";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }

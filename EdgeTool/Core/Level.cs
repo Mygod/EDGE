@@ -15,6 +15,7 @@ using Mygod.Xml.Linq;
 #pragma warning disable 612,618
 #pragma warning disable 665
 // ReSharper disable ObjectCreationAsStatement
+// ReSharper disable FieldCanBeMadeReadOnly.Global
 
 namespace Mygod.Edge.Tool
 {
@@ -268,7 +269,7 @@ namespace Mygod.Edge.Tool
             ATime = reader.ReadUInt16();
             BTime = reader.ReadUInt16();
             CTime = reader.ReadUInt16();
-            var prismsCount = reader.ReadUInt16();
+            var prismsCount = reader.ReadInt16();
             Size = new Size3D(reader);
             #region Boring verifying
             var temp = reader.ReadUInt16();
@@ -542,26 +543,27 @@ namespace Mygod.Edge.Tool
             var level = this;
             if (StaticMovingPlatforms != null)
             {
-                bool glowing = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("IsGlowing"),
-                     clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault<bool>("ClearStaticBlocks");
+                var clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault("ClearStaticBlocks", true);
                 var blocks = new Dictionary<Point3D16, bool>(); // true: skip; false: half; null: full
+                var glowingBlocks = new HashSet<Point3D16>();
                 for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
                     blocks.Add(new Point3D16(x, y, 0), false);
                 foreach (var e in StaticMovingPlatforms.ElementsCaseInsensitive("SetBlocks"))
                 {
                     Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
                     bool? type;
-                    switch (e.GetAttributeValue("Type"))
+                    switch (e.GetAttributeValue("Type").ToLowerInvariant())
                     {
-                        case "Excluded": type = true; break;
-                        case "HalfBlock": type = false; break;
-                        case "Included": type = null; break;
-                        default: throw new FormatException("SetBlocks 元素：@Type 未填写或无法识别！");
+                        case "excluded": type = true; break;
+                        case "halfblock": type = false; break;
+                        default: type = null; break;
                     }
+                    var glowing = e.GetAttributeValueWithDefault<bool>("Glowing");
                     for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
                     {
                         var point = new Point3D16(x, y, z);
                         if (type.HasValue) blocks[point] = type.Value; else blocks.Remove(point);
+                        if (glowing) glowingBlocks.Add(point);
                     }
                 }
                 level = (Level)MemberwiseClone();
@@ -573,7 +575,11 @@ namespace Mygod.Edge.Tool
                         var type = blocks.ContainsKey(point) ? (bool?) blocks[point] : null;
                         if (type == true) continue;
                         var platform = new MovingPlatform(level.MovingPlatforms);
-                        platform.LoopStartIndex = (byte)((platform.AutoStart = glowing) ? 1 : 0);
+                        if (!glowingBlocks.Contains(point))
+                        {
+                            platform.AutoStart = false;
+                            platform.LoopStartIndex = 0;
+                        }
                         platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
                         if (type == false) platform.FullBlock = false;
                         level.MovingPlatforms.Add(platform);
@@ -1118,7 +1124,7 @@ namespace Mygod.Edge.Tool
             foreach (var flat in this) flat.Write(writer);
         }
     }
-
+    
     public sealed class MovingPlatforms : XElementObjectListWithID<MovingPlatform>
     {
         public MovingPlatforms()
