@@ -139,6 +139,7 @@ namespace Mygod.Edge.Tool
         }
 
         public string ApiName { get; private set; }
+        public string Title { get; private set; }
         public string Description { get; private set; }
         public double GlobalPercent
         {
@@ -165,7 +166,8 @@ namespace Mygod.Edge.Tool
             }
         }
         public int Points { get; private set; }
-        public string Title { get; private set; }
+
+        public bool CurrentUserAchieved { get { return Users.Current.CurrentUser.GetAchieved(this); } }
     }
 
     public sealed class Users : ObservableKeyedCollection<string, User>

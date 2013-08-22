@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -229,6 +230,16 @@ namespace Mygod.Edge.Tool
             DrawModelTree(sender, e);
         }
 
+        private void ModifyMappingXml(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Path.Combine(Edge.LevelsDirectory, "mapping.xml"));
+        }
+
+        private void ShowMappingXmlHelp(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://edgefans.tk/developers/file-formats/mapping-xml");
+        }
+
         #endregion
 
         #region Browse achievements
@@ -268,6 +279,25 @@ namespace Mygod.Edge.Tool
                 notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！", "恭喜你获得了一个成就！快去 EdgeTool 看看吧！"
                     + Environment.NewLine + "说明：" + achievement.Description, ToolTipIcon.Info);
             }
+        }
+
+        private void PopContextMenu(object sender, RoutedEventArgs e)
+        {
+            var button = (FrameworkElement)sender;
+            button.ContextMenu.Placement = PlacementMode.Bottom;
+            button.ContextMenu.PlacementTarget = button;
+            button.ContextMenu.IsOpen = true;
+        }
+
+        private void SortAchievements(object sender, RoutedEventArgs e)
+        {
+            var tag = (((FrameworkElement)e.OriginalSource).Tag ?? string.Empty).ToString();
+            AchievementsList.Items.SortDescriptions.Clear();
+            if (string.IsNullOrWhiteSpace(tag)) return;
+            var descending = tag.EndsWith("_DESCENDING", true, CultureInfo.InvariantCulture);
+            if (descending) tag = tag.Substring(0, tag.Length - 11);
+            AchievementsList.Items.SortDescriptions.Add(new SortDescription(tag, 
+                descending ? ListSortDirection.Descending : ListSortDirection.Ascending));
         }
 
         #endregion
@@ -651,9 +681,14 @@ namespace Mygod.Edge.Tool
             if (item == null) return;
             var path = item.Tag.ToString();
             if (!path.EndsWith(".ean", false, CultureInfo.InvariantCulture)) return;
-            if (ModelWindow == null) (ModelWindow = new ModelWindow()).Show();
-            ModelWindow.ApplyAnimation(path, loop);
-            ModelWindow.Activate();
+            if (ModelWindow == null) TaskDialog.Show(this, "对不起，没有可应用动画的模型。",
+                "动画不能离开被应用动画的模型独自存在。应用动画之前必须先在绘制模型树中将要应用动画的模型添加到模型查看器中。",
+                TaskDialogType.Error);
+            else 
+            {
+                ModelWindow.ApplyAnimation(path, loop);
+                ModelWindow.Activate();
+            }
         }
         private void ViewAnimation(object sender, RoutedEventArgs e)
         {

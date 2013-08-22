@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -13,8 +14,10 @@ using System.Xml.Linq;
 using ExcelLibrary.SpreadSheet;
 using LibTwoTribes;
 using LibTwoTribes.Util;
+using Mygod.Windows;
 using Mygod.Xml.Linq;
 using SevenZip;
+using XACT.Interop;
 
 namespace Mygod.Edge.Tool
 {
@@ -28,7 +31,7 @@ namespace Mygod.Edge.Tool
                 return stream.GetString().TrimStart((char)65279);
             }
         }
-        public static string GetString(this Stream stream)
+        private static string GetString(this Stream stream)
         {
             stream.Position = 0;
             var buffer = new byte[stream.Length];
@@ -463,12 +466,12 @@ namespace Mygod.Edge.Tool
         public static Tuple<Exception, string> Compile(bool exFormat, string file, string directory = null)
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
-            if (string.IsNullOrWhiteSpace(directory)) directory =Path.GetDirectoryName(file);
+            if (string.IsNullOrWhiteSpace(directory)) directory = Path.GetDirectoryName(file);
             string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName), outputPath = Path.Combine(directory, fileName);
             Warning.Start();
             try
             {
-                switch (Path.GetExtension(file).ToLowerInvariant())
+                switch ((Path.GetExtension(file) ?? string.Empty).ToLowerInvariant())
                 {
                     case ".bin":
                         if (fileName.Equals("cos", StringComparison.InvariantCultureIgnoreCase))
@@ -556,7 +559,40 @@ namespace Mygod.Edge.Tool
                                 writer.Write((short) Math.Round(num * 256));
                         break;
                     default:
-                        throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
+                        switch (fileName)
+                        {
+                            case "audio":
+                                outputPath = Path.Combine(directory, "sfx");
+                                if (Directory.Exists(outputPath)) Directory.Delete(outputPath, true);
+                                Directory.CreateDirectory(outputPath);
+                                string xsb = Path.Combine(file, "sfx.xsb"), xwb = Path.Combine(file, "sfx.xwb");
+                                int offset;
+                                using (var stream = new FileStream(xsb, FileMode.Open))
+                                {
+                                    stream.Position = 0x2A;
+                                    using (var reader = new BinaryReader(stream)) offset = reader.ReadInt32();
+                                }
+                                var unxwb = new Process { StartInfo = new ProcessStartInfo(Path.Combine(CurrentApp.Directory, "unxwb.exe"),
+                                    string.Format("-d \"{0}\" -b \"{1}\" {2} \"{3}\"", outputPath, xsb, offset, xwb))
+                                    { UseShellExecute = false, CreateNoWindow = true } };
+                                unxwb.Start();
+                                unxwb.WaitForExit();
+                                break;
+                            case "sfx":
+                                outputPath = Path.Combine(directory, "audio");
+                                Directory.CreateDirectory(outputPath);
+                                var projectPath = GenerateXactProject(file);
+                                var project = new CXACTMasterProject();
+                                project.Create();
+                                project.Load(projectPath, new CXACTMasterProjectCallback(), 0);
+                                project.Build(new CXACTMasterProjectCallback(), outputPath, false, false);
+                                project.Dispose();
+                                File.Delete(projectPath);
+                                break;
+                            default:
+                                throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
+                        }
+                        break;
                 }
                 return new Tuple<Exception, string>(null, Warning.Fetch());
             }
@@ -569,5 +605,345 @@ namespace Mygod.Edge.Tool
                 Warning.Clear();
             }
         }
+
+        #region GenerateXactProject
+        private static string GenerateXactProject(string outputPath)
+        {
+            StringBuilder waves = new StringBuilder(), sounds = new StringBuilder(), cues = new StringBuilder();
+            var i = 0;
+            foreach (var info in new DirectoryInfo(outputPath).EnumerateFiles("*.wav"))
+            {
+                var id = Path.GetFileNameWithoutExtension(info.Name);
+                waves.AppendFormat(Wave, id, info.Name);
+                sounds.AppendFormat(Sound, id, i);
+                cues.AppendFormat(Cue, id, i++);
+            }
+            var path = Path.Combine(outputPath, "edge.xap");
+            File.WriteAllText(path, string.Format(Template, waves, sounds, cues));
+            return path;
+        }
+
+        private static readonly string Template = @"Signature = XACT3;
+Version = 18;
+Content Version = 46;
+Release = February 2010;
+
+Options
+{{
+    Verbose Report = 0;
+    Generate C/C++ Headers = 1;
+}}
+
+Global Settings
+{{
+    Xbox File = edge.xgs;
+    Windows File = edge.xgs;
+    Exclude Category Names = 0;
+    Exclude Variable Names = 0;
+    Last Modified Low = 2341759291;
+    Last Modified High = 30318330;
+
+    Category
+    {{
+        Name = Global;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {{
+        }}
+
+        Instance Limit
+        {{
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {{
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }}
+        }}
+    }}
+
+    Category
+    {{
+        Name = Default;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {{
+            Name = Global;
+        }}
+
+        Instance Limit
+        {{
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {{
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }}
+        }}
+    }}
+
+    Category
+    {{
+        Name = Music;
+        Public = 1;
+        Background Music = 1;
+        Volume = 0;
+
+        Category Entry
+        {{
+            Name = Global;
+        }}
+
+        Instance Limit
+        {{
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {{
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }}
+        }}
+    }}
+
+    Variable
+    {{
+        Name = OrientationAngle;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = -180.000000;
+        Max = 180.000000;
+    }}
+
+    Variable
+    {{
+        Name = DopplerPitchScalar;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 1.000000;
+        Initial Value = 1.000000;
+        Min = 0.000000;
+        Max = 4.000000;
+    }}
+
+    Variable
+    {{
+        Name = SpeedOfSound;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 343.500000;
+        Initial Value = 343.500000;
+        Min = 0.000000;
+        Max = 1000000.000000;
+    }}
+
+    Variable
+    {{
+        Name = ReleaseTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15000.000000;
+    }}
+
+    Variable
+    {{
+        Name = AttackTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15000.000000;
+    }}
+
+    Variable
+    {{
+        Name = NumCueInstances;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1024.000000;
+    }}
+
+    Variable
+    {{
+        Name = Distance;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1000000.000000;
+    }}
+}}
+
+Wave Bank
+{{
+    Name = sfx;
+    Xbox File = sfx.xwb;
+    Windows File = sfx.xwb;
+    Xbox Bank Path Edited = 0;
+    Windows Bank Path Edited = 0;
+    Seek Tables = 1;
+    Compression Preset Name = <none>;
+    Xbox Bank Last Modified Low = 0;
+    Xbox Bank Last Modified High = 0;
+    PC Bank Last Modified Low = 3627906690;
+    PC Bank Last Modified High = 30318334;
+    Bank Last Revised Low = 3533221792;
+    Bank Last Revised High = 30318334;
+
+{0}}}
+
+Sound Bank
+{{
+    Name = sfx;
+    Xbox File = sfx.xsb;
+    Windows File = sfx.xsb;
+    Xbox Bank Path Edited = 0;
+    Windows Bank Path Edited = 0;
+    Bank Last Modified Low = 3631559941;
+    Bank Last Modified High = 30318334;
+    Header Last Modified High = 0;
+    Header Last Modified Low = 0;
+
+{1}{2}}}", Wave = @"    Wave
+    {{
+        Name = {0};
+        File = {1};
+    }}
+
+", Sound = @"    Sound
+    {{
+        Name = {0};
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {{
+            Name = Default;
+        }}
+
+        Track
+        {{
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {{
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0;
+                Speaker Position Arc = 0;
+
+                Event Header
+                {{
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }}
+
+                Wave Entry
+                {{
+                    Bank Name = sfx;
+                    Bank Index = 0;
+                    Entry Name = {0};
+                    Entry Index = {1};
+                    Weight = 255;
+                    Weight Min = 0;
+                }}
+            }}
+        }}
+    }}
+
+", Cue = @"    Cue
+    {{
+        Name = {0};
+
+        Variation
+        {{
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }}
+
+        Sound Entry
+        {{
+            Name = {0};
+            Index = {1};
+            Weight Min = 0;
+            Weight Max = 255;
+        }}
+    }}
+
+";
+        #endregion
     }
 }

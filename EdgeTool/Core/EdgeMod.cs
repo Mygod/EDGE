@@ -22,7 +22,7 @@ namespace Mygod.Edge.Tool
         {
             this.parent = parent;
             FilePath = path;
-            bool initialized = false, containXml = false;
+            bool initialized = false, containXml = false, containAudio = false, containSfx = false;
             IEnumerable<MappingLevel> mappings = null;
             var i = 0;
             using (var extractor = new SevenZipExtractor(path))
@@ -67,30 +67,43 @@ namespace Mygod.Edge.Tool
                         case "description.txt":
                             Description = extractor.ExtractString(i);
                             break;
-                        case "levels/mapping.xml":
+                        case "levels\\mapping.xml":
                             containXml = true;
                             break;
-                        case "levels/mapping.xsl":
+                        case "levels\\mapping.xsl":
                             Xsl = XslCracked = extractor.ExtractString(i);
                             break;
-                        case "config/settings_readme.txt":
-                            throw new FormatException("EdgeMod 不允许修改 config/settings_readme.txt！");
-                        case "config/settings_template_do_not_modify.ini":
-                            throw new FormatException("EdgeMod 不允许修改 config/settings_template_do_not_modify.ini！");
+                        case "audio":
+                            containAudio = true;
+                            break;
+                        case "sfx":
+                            containSfx = true;
+                            break;
+                        case "config\\settings_readme.txt":
+                            throw new FormatException("EdgeMod 不允许修改 config\\settings_readme.txt！");
+                        case "config\\settings_template_do_not_modify.ini":
+                            throw new FormatException("EdgeMod 不允许修改 config\\settings_template_do_not_modify.ini！");
                         default:
-                            if (fileName.StartsWith("mods/", true, CultureInfo.InvariantCulture)
+                            if (fileName.StartsWith("mods\\", true, CultureInfo.InvariantCulture)
                                 || "mods".Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                                 throw new FormatException("EdgeMod 不允许修改 mods 文件夹内的内容！");
                             if (fileName.EndsWith(".bak", true, CultureInfo.InvariantCulture))
                                 throw new FormatException("EdgeMod 不允许有以 .bak 为扩展名的文件！");
+                            if (fileName.StartsWith("audio\\", true, CultureInfo.InvariantCulture)) containAudio = true;
+                            if (fileName.StartsWith("sfx\\", true, CultureInfo.InvariantCulture)) containSfx = true;
                             break;
                     }
                     i++;
                 }
             }
             if (!initialized) throw new FormatException("mod.xml 未找到！");
-            if (Type != ModType.Game && containXml)
-                throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 mapping.xml。请改用 mod.xml 或 mapping.xsl");
+            if (Type != ModType.Game)
+            {
+                if (containXml) throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 mapping.xml。请改用 mod.xml 或 mapping.xsl。");
+                if (containAudio)
+                    throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 audio 文件夹以及之下的内容。请改用 sfx 文件夹。");
+            }
+            if (containAudio && containSfx) throw new FormatException("不允许在写入 audio 文件夹的同时使用 sfx 文件夹！请选择其中一个。");
             if (mappings == null) return;
             if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！" +
                                                        "请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
@@ -121,7 +134,7 @@ namespace Mygod.Edge.Tool
         public string Author { get; set; }
         public bool Enabled { get { return !parent.GetIsDisabled(this); } set { parent.SetIsDisabled(this, !value); } }
 
-        public void Install(HashSet<string> modifiedFiles, StringBuilder error, Dictionary<string, EdgeMod> conflicts,
+        public void Install(HashSet<string> allModifiedFiles, StringBuilder error, Dictionary<string, EdgeMod> conflicts,
                             ProgressCallback callback = null)
         {
             if (MinEngineVersion != null && parent.EngineVersion < MinEngineVersion
@@ -155,25 +168,30 @@ namespace Mygod.Edge.Tool
                         {
                             if (e.ArchiveFileInfo.IsDirectory) return;          // ignore directories
                             var lowered = e.ArchiveFileInfo.FileName.ToLower(); // ignore files that has been processed
-                            if (lowered == "mod.xml" || lowered == "description.txt" || lowered == "levels/mapping.xsl") return;
+                            if (lowered == "mod.xml" || lowered == "description.txt" || lowered == "levels\\mapping.xsl") return;
+                            var isSfx = lowered.StartsWith("sfx\\", true, CultureInfo.InvariantCulture);
+                            if (isSfx) path = Path.Combine(parent.BeginSfx(), e.ArchiveFileInfo.FileName);
                             Directory.CreateDirectory(Path.GetDirectoryName(path));
                             var fileInfo = new FileInfo(path);
                             switch (e.Reason)
                             {
                                 case ExtractFileCallbackReason.Start:
                                     if (Type == ModType.Level && fileInfo.Exists
-                                        && !modifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower()))
+                                        && !allModifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower()))
                                         throw new IOException("不允许 Level 类的 EdgeMod 修改游戏自带的文件！请改用 Theme 或 Game 类。");
                                     if (!fileInfo.Exists || (ulong) fileInfo.Length != e.ArchiveFileInfo.Size
                                         || Math.Abs(fileInfo.LastWriteTime.Ticks - e.ArchiveFileInfo.LastWriteTime.Ticks)
                                         > new TimeSpan(0, 0, 1).Ticks)  // 快速检测
                                     {
-                                        CreateCopy(modifiedFiles, path);
+                                        parent.CreateCopy(allModifiedFiles, lowered);
                                         File.Delete(path);
                                         e.ExtractToFile = path;
                                     }
-                                    parent.ModifiedFiles.Add(lowered);
-                                    modifiedFiles.Add(lowered);
+                                    if (!isSfx)
+                                    {
+                                        parent.ModifiedFiles.Add(lowered);
+                                        allModifiedFiles.Add(lowered);
+                                    }
                                     break;
                                 case ExtractFileCallbackReason.Done:
                                     if (e.ExtractToFile != null) fileInfo.LastWriteTime = e.ArchiveFileInfo.LastWriteTime;
@@ -197,7 +215,7 @@ namespace Mygod.Edge.Tool
             {
                 if (Xsl == null) return;
                 var mappingPath = Path.Combine(parent.GameDirectory, "levels\\mapping.xml");
-                CreateCopy(modifiedFiles, mappingPath);
+                parent.CreateCopy(allModifiedFiles, "levels\\mapping.xml");
                 var transform = new XslCompiledTransform(true);
                 transform.Load(XmlReader.Create(new StringReader(parent.IsCracked ? XslCracked : Xsl)),
                                                 new XsltSettings(true, true), new XmlUrlResolver());
@@ -207,19 +225,12 @@ namespace Mygod.Edge.Tool
                                     XmlWriter.Create(writer, new XmlWriterSettings { Indent = true }), new XmlUrlResolver());
                 File.WriteAllText(mappingPath, writer.ToString());
                 parent.ModifiedFiles.Add("levels\\mapping.xml");
-                modifiedFiles.Add("levels\\mapping.xml");
+                allModifiedFiles.Add("levels\\mapping.xml");
             }
             catch (Exception exc)
             {
                 error.AppendFormat("更新关卡列表时发生了错误：{0}{1}", exc.Message, Environment.NewLine);
             }
-        }
-
-        private static void CreateCopy(HashSet<string> modifiedFiles, string path)
-        {
-            if (!File.Exists(path) || modifiedFiles.Contains(path)) return; // does not exists or new file overrided
-            var bakPath = path + ".bak";
-            if (!File.Exists(bakPath)) File.Move(path, path + ".bak");
         }
     }
 
@@ -233,14 +244,15 @@ namespace Mygod.Edge.Tool
         public Edge(string gamePath)
         {
             var versionInfo = FileVersionInfo.GetVersionInfo(GamePath = gamePath);
-            EngineVersion = Version.Parse(string.Join(".", new[] { versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, 
+            EngineVersion = Version.Parse(String.Join(".", new[] { versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, 
                 versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart }));
             GameDirectory = Path.GetDirectoryName(GamePath);
             Directory.CreateDirectory(ModsDirectory = Path.Combine(GameDirectory, "mods"));
+            AudioDirectory = Path.Combine(GameDirectory, "audio");
             LevelsDirectory = Path.Combine(GameDirectory, "levels");
             ModelsDirectory = Path.Combine(GameDirectory, "models");
             TexturesDirectory = Path.Combine(GameDirectory, "textures");
-            DisabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
+            disabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
             if (IsCracked) SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
             RefreshMods();
@@ -248,9 +260,10 @@ namespace Mygod.Edge.Tool
 
         private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086);
 
-        public readonly string GamePath, GameDirectory, ModsDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
+        public readonly string GamePath, GameDirectory, ModsDirectory, AudioDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
         public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
-        public readonly StringSetFile DisabledMods, ModifiedFiles;
+        private readonly StringSetFile disabledMods;
+        public readonly StringSetFile ModifiedFiles;
         public readonly Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
         public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
@@ -258,18 +271,18 @@ namespace Mygod.Edge.Tool
 
         public bool GetIsDisabled(EdgeMod mod)
         {
-            return DisabledMods.Contains(mod.ID);
+            return disabledMods.Contains(mod.ID);
         }
         public void SetIsDisabled(EdgeMod mod, bool value)
         {
-            if (value ? !DisabledMods.Add(mod.ID) : !DisabledMods.Remove(mod.ID)) return;
+            if (value ? !disabledMods.Add(mod.ID) : !disabledMods.Remove(mod.ID)) return;
             if (DisabledModsChanged != null) DisabledModsChanged(this, EventArgs.Empty);
-            DisabledMods.Save();
+            disabledMods.Save();
         }
 
         public string RefreshMods()
         {
-            DisabledMods.Refresh();
+            disabledMods.Refresh();
             Mods.Clear();
             var errors = new StringBuilder();
             foreach (var mod in Directory.EnumerateFiles(ModsDirectory, "*.edgemod"))
@@ -284,7 +297,17 @@ namespace Mygod.Edge.Tool
             return errors.ToString();
         }
 
-        public void RestoreCopy(string filePath)
+        private static readonly string[] SpecialFiles = new[]
+            { "audio\\edge.xgs", "audio\\sfx.xsb", "audio\\sfx.xwb", "levels\\mapping.xml" };
+
+        public void CreateCopy(ICollection<string> allModifiedFiles, string relativePath)
+        {
+            var path = Path.Combine(GameDirectory, relativePath);
+            if (!File.Exists(path) || allModifiedFiles.Contains(relativePath)) return;  // does not exists or new file overrided
+            var bakPath = path + ".bak";
+            if (!File.Exists(bakPath)) File.Move(path, path + ".bak");
+        }
+        private void RestoreCopy(string filePath)
         {
             string path = Path.Combine(GameDirectory, filePath), bakPath = path + ".bak";
             if (File.Exists(path)) File.Delete(path);
@@ -299,15 +322,15 @@ namespace Mygod.Edge.Tool
         }
         public string Install(ProgressCallback callback = null, DoWorkEventArgs e = null)
         {
-            var oldModifiedFiles = new HashSet<string>(ModifiedFiles);
+            var allModifiedFiles = new HashSet<string>(ModifiedFiles);
             ModifiedFiles.Clear();
             var error = new StringBuilder();
             var conflicts = new Dictionary<string, EdgeMod>();
             var cancelled = false;
-            if (oldModifiedFiles.Contains("levels/mapping.xml"))
+            foreach (var file in SpecialFiles.Where(allModifiedFiles.Contains))
             {
-                oldModifiedFiles.Remove("levels/mapping.xml");
-                RestoreCopy("levels/mapping.xml");
+                allModifiedFiles.Remove(file);
+                RestoreCopy(file);
             }
             foreach (var group in Mods.Where(mod => mod.Enabled).GroupBy(mod => mod.Type).OrderByDescending(group => group.Key)
                                       .Select(group => group.ToList()))
@@ -332,21 +355,48 @@ namespace Mygod.Edge.Tool
                         cancelled = true;
                         break;
                     }
-                    if (result[i] < 0) error.AppendLine(string.Format("{0} 的安装链中含有环！该 Mod 将不会被安装。", group[i].ID));
-                    else group[i].Install(oldModifiedFiles, error, conflicts, callback);
+                    if (result[i] < 0) error.AppendLine(String.Format("{0} 的安装链中含有环！该 Mod 将不会被安装。", group[i].ID));
+                    else group[i].Install(allModifiedFiles, error, conflicts, callback);
                 }
                 if (cancelled) break;
             }
-            oldModifiedFiles.ExceptWith(ModifiedFiles);
-            foreach (var oldFile in oldModifiedFiles) RestoreCopy(oldFile);
+            if (callback != null) callback("即将完成……");
+            EndSfx(allModifiedFiles);
+            allModifiedFiles.ExceptWith(ModifiedFiles);
+            foreach (var oldFile in allModifiedFiles) RestoreCopy(oldFile);
             ModifiedFiles.Save();
             return error.ToString();
+        }
+
+        private string sfxPath;
+        public string BeginSfx()
+        {
+            if (sfxPath != null) return sfxPath;
+            Directory.CreateDirectory(sfxPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+            Compiler.Compile(false, AudioDirectory, sfxPath);
+            return sfxPath;
+        }
+        private void EndSfx(ICollection<string> allModifiedFiles)
+        {
+            if (sfxPath == null) return;
+            for (var i = 0; i < 3; i++)
+            {
+                CreateCopy(allModifiedFiles, SpecialFiles[i]);
+                ModifiedFiles.Add(SpecialFiles[i]);
+                allModifiedFiles.Add(SpecialFiles[i]);
+            }
+            Compiler.Compile(false, Path.Combine(sfxPath, "sfx"), GameDirectory);
+            try
+            {
+                Directory.Delete(sfxPath, true);
+            }
+            catch { }   // ignore if failed
         }
     }
 
     public delegate void ProgressCallback(string additionalMessage);
 
-    public class TopologicalSorter
+    public sealed class TopologicalSorter
     {
         #region - Private Members -
 
@@ -446,7 +496,7 @@ namespace Mygod.Edge.Tool
         #endregion
     }
 
-    public class StringSetFile : HashSet<string>
+    public sealed class StringSetFile : HashSet<string>
     {
         public StringSetFile(string path)
         {
@@ -470,7 +520,7 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    public class SteamOtl : IniFile
+    public sealed class SteamOtl : IniFile
     {
         public SteamOtl(string filePath, uint stringLong = 1024)
             : base(filePath, stringLong)

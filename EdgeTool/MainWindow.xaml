@@ -53,6 +53,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Content="请选择你的用户：(_U)" />
                     <ComboBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{x:Static local:Users.Current}"
@@ -72,9 +74,24 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <Button Name="SwitchProfileButton" x:FieldModifier="private" Content="切换到当前存档(_D)"
-                            Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center" />
-                    <Button Content="刷新全球玩家进度(_G)" Click="RefreshGlobalPercent" Grid.Column="5" VerticalAlignment="Center" />
-                    <ListBox Name="AchievementsList" x:FieldModifier="private"  Grid.Row="2" Grid.ColumnSpan="6"
+                            Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center" IsEnabled="False" />
+                    <Button Content="刷新全球玩家进度(_G)" Click="RefreshGlobalPercent" Grid.Column="5" VerticalAlignment="Center"
+                            ToolTip="此功能需要联网。" />
+                    <Button Content="排序(_S)...." ContextMenuService.Placement="Bottom" Click="PopContextMenu"
+                            Grid.Column="7" VerticalAlignment="Center">
+                        <Button.ContextMenu>
+                            <ContextMenu MenuItem.Click="SortAchievements">
+                                <MenuItem Header="默认顺序(_S)" />
+                                <MenuItem Header="按是否获得(_A)" Tag="CurrentUserAchieved" />
+                                <MenuItem Header="按 AP_I 名称" Tag="ApiName" />
+                                <MenuItem Header="按标题(_T)" Tag="Title" />
+                                <MenuItem Header="按描述(_D)" Tag="Description" />
+                                <MenuItem Header="按点数(_P)" Tag="Points_DESCENDING" />
+                                <MenuItem Header="按全球玩家进度(_G)" Tag="GlobalPercent_DESCENDING" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                    <ListBox Name="AchievementsList" x:FieldModifier="private"  Grid.Row="2" Grid.ColumnSpan="8"
                              ItemsSource="{x:Static local:Achievements.Current}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              HorizontalContentAlignment="Stretch" MouseRightButtonUp="ForceUnlockAchievement">
                         <ListBox.ItemTemplate>
@@ -182,7 +199,10 @@
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                     </DataGrid>
-                    <TextBlock Grid.Row="2" Text="提示：更多精彩内容只需右击。" />
+                    <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                        提示：右击选中关卡即可显示更多操作。<Hyperlink Click="ModifyMappingXml">你可以点击这里手动修改关卡索引</Hyperlink>。
+                        <Hyperlink Click="ShowMappingXmlHelp">如何修改关卡索引？</Hyperlink>
+                    </TextBlock>
                 </Grid>
             </TabItem>
             <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True" PreviewDrop="OnBinaryDrop"
@@ -197,7 +217,7 @@
                         <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
                         <Hyperlink Click="ShowCommandLineHelp">使用命令行(反)编译帮助</Hyperlink>
                         <LineBreak />
-                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；cos.bin；其对应的反编译产物。
+                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；cos.bin；audio 文件夹；其对应的反编译产物。
                     </TextBlock>
                     <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
                              TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
@@ -215,21 +235,17 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Content="请输入模型名：（无需 .r_mdl 扩展名）" Target="{Binding ElementName=ModelNameBox}" />
                     <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center" IsEditable="True" />
-                    <Button Content="绘制(_D)" Click="DrawModelTree" Grid.Column="3" VerticalAlignment="Center" IsDefault="True" />
-                    <Button Content="帮助(_H)" Click="GetModelTreeHelp" Grid.Column="5" VerticalAlignment="Center" />
-                    <StackPanel Grid.Row="1" Grid.ColumnSpan="6" Orientation="Horizontal">
+                    <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="绘制(_D)" Click="DrawModelTree" Margin="2" IsDefault="True" />
                         <Button Content="将 .e_so 文件添加到模型查看器，右击启动调试" Margin="2"
                                 Click="ViewModel" MouseRightButtonUp="ViewModelDebug" />
                         <Button Content="在资源管理器中找到选中项(_X)" Margin="2" Click="ShowFileInExplorer" />
-                    </StackPanel>
-                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="6" />
+                        <Button Content="帮助(_H)" Click="GetModelTreeHelp" Margin="2" />
+                    </WrapPanel>
+                    <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
             <TabItem Header="绘制动画树" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}" PreviewDragEnter="OnAnimationDragEnter"
@@ -243,22 +259,18 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Content="请输入动画名：（无需 .r_cha 扩展名）" Target="{Binding ElementName=AnimationNameBox}" />
                     <ComboBox Name="AnimationNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center"
                               IsEditable="True" />
-                    <Button Content="绘制(_D)" Click="DrawAnimationTree" Grid.Column="3" VerticalAlignment="Center" IsDefault="True" />
-                    <Button Content="帮助(_H)" Click="GetAnimationTreeHelp" Grid.Column="7" VerticalAlignment="Center" />
-                    <StackPanel Grid.Row="1" Grid.ColumnSpan="6" Orientation="Horizontal">
+                    <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="绘制(_D)" Click="DrawAnimationTree" Margin="2" IsDefault="True" />
                         <Button Content="对模型查看器中的全部模型应用选中动画，右击不循环(_A)" Margin="2"
                                 Click="ViewAnimation" MouseRightButtonUp="ViewAnimationNonLoop" />
                         <Button Content="在资源管理器中找到选中项(_X)" Margin="2" Click="ShowFileInExplorer" />
-                    </StackPanel>
-                    <TreeView Name="AnimationTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="8" />
+                        <Button Content="帮助(_H)" Click="GetAnimationTreeHelp" Margin="2" />
+                    </WrapPanel>
+                    <TreeView Name="AnimationTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
         </TabControl>

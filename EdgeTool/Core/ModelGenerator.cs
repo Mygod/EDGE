@@ -8,7 +8,7 @@ using Mygod.Xml.Linq;
 
 namespace Mygod.Edge.Tool
 {
-    public class ModelGenerator
+    public sealed class ModelGenerator
     {
         static ModelGenerator()
         {
@@ -18,8 +18,10 @@ namespace Mygod.Edge.Tool
             ZNormals = new[] { z, z, z, z, z, z };
         }
         private const string ModelsNamespace = "050DB82A";
-        private static readonly string[] ChildModels = new[] { "4B2B74E0", "A261604B", "DCB465C9", "04166BFF" },
-                                         Materials = new[] { "F7501547", "1E1A01EC", "60CF046E", "B86D0A58" };
+        private static readonly string[] ChildModels = new[] { "073A8F44", "1DE2AE87", "936DA964", "451F8839" },
+                                         Materials = new[] { "4F34C26E", "55ECE3AD", "DB63E44E", "0D11C513" };
+        private static readonly Vec3[] Translates = new[]
+            { new Vec3(102.5F, 2.25F, -54.5F), new Vec3(89.5F, 2.25F, -90), new Vec3(70.5F, 2.25F, -22.5F), new Vec3(30, 2.25F, -74.5F) };
         private static readonly Vec3[] XNormals, YNormals, ZNormals;    // normals for two triangles
 
         public ModelGenerator(Level level, XElement element)
@@ -54,6 +56,10 @@ namespace Mygod.Edge.Tool
             var result = heights[point];
             return result > 1 ? 1 : result;
         }
+        private Vec3 Transform(Vec3 value)
+        {
+            return (value - Translates[currentTheme] - new Vec3(0, 0, level.Size.Length)) * 10;
+        }
 
         public void Generate(string path)
         {
@@ -75,12 +81,12 @@ namespace Mygod.Edge.Tool
                     if (GetHeight(x, y, z1) < 1F
                         && (Math.Abs(x - level.ExitPoint.X) > 1 || Math.Abs(y - level.ExitPoint.Y) > 1 || z1 != level.ExitPoint.Z))
                     {
-                        vertices.Add(new Vec3(x, z1, y));
-                        vertices.Add(new Vec3(x1, z1, y));
-                        vertices.Add(new Vec3(x, z1, y1));
-                        vertices.Add(new Vec3(x, z1, y1));
-                        vertices.Add(new Vec3(x1, z1, y));
-                        vertices.Add(new Vec3(x1, z1, y1));
+                        vertices.Add(Transform(new Vec3(x, z1, y)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
                         normals.AddRange(YNormals);
                         float texX = ((x + y) & 1) == 0 ? 0.51F : 0.76F, texX1 = texX + 0.23F;
                         texCoords.Add(new Vec2(texX, texY));
@@ -95,12 +101,12 @@ namespace Mygod.Edge.Tool
                     if (z <= 3) texY1 -= 0.25F * (1 - height);
                     if (GetHeight(x1, y, z) < height)
                     {
-                        vertices.Add(new Vec3(x1, zB, y));
-                        vertices.Add(new Vec3(x1, zB, y1));
-                        vertices.Add(new Vec3(x1, z1, y));
-                        vertices.Add(new Vec3(x1, zB, y1));
-                        vertices.Add(new Vec3(x1, z1, y1));
-                        vertices.Add(new Vec3(x1, z1, y));
+                        vertices.Add(Transform(new Vec3(x1, zB, y)));
+                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y)));
                         normals.AddRange(XNormals);
                         texCoords.Add(new Vec2(0.49F, texY1));
                         texCoords.Add(new Vec2(0.26F, texY1));
@@ -111,12 +117,12 @@ namespace Mygod.Edge.Tool
                     }
                     if (GetHeight(x, y1, z) < height)
                     {
-                        vertices.Add(new Vec3(x, zB, y1));
-                        vertices.Add(new Vec3(x, z1, y1));
-                        vertices.Add(new Vec3(x1, zB, y1));
-                        vertices.Add(new Vec3(x, z1, y1));
-                        vertices.Add(new Vec3(x1, z1, y1));
-                        vertices.Add(new Vec3(x1, zB, y1));
+                        vertices.Add(Transform(new Vec3(x, zB, y1)));
+                        vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
+                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
                         normals.AddRange(ZNormals);
                         texCoords.Add(new Vec2(0.01F, texY1));
                         texCoords.Add(new Vec2(0.01F, texY));
@@ -132,10 +138,10 @@ namespace Mygod.Edge.Tool
                 AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, fileName, "models"),
                 Header = new ESOHeader
                 {
-                    V01 = 1, V02 = 4096, V20 = 1, NumModels = 1, ScaleXYZ = 1, Scale = new Vec3(1, 1, 1),
+                    V01 = 1, V02 = 4096, V20 = 1, NumModels = 1, ScaleXYZ = 1, Scale = new Vec3(0.1F, 0.1F, 0.1F),
                     NodeChild = AssetHash.Parse(ChildModels[currentTheme] + ModelsNamespace),
-                    Translate = new Vec3(0, 0, -level.Size.Length),
-                    BoundingMax = new Vec3(level.Size.Width, level.Size.Height, level.Size.Length)
+                    Translate = Translates[currentTheme], BoundingMin = Transform(new Vec3()), 
+                    BoundingMax = Transform(new Vec3(level.Size.Width, level.Size.Height, level.Size.Length))
                 },
                 Models = new[]
                 {

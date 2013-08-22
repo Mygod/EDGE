@@ -812,7 +812,7 @@ namespace Mygod.Edge.Tool
             return new Point2D8(x, y);
         }
     }
-    public struct Point3D16 : IXSerializable, IEquatable<Point3D16>
+    public struct Point3D16 : IXSerializable, IEquatable<Point3D16>, IComparable, IComparable<Point3D16>
     {
         public Point3D16(short x, short y, short z)
         {
@@ -848,6 +848,20 @@ namespace Mygod.Edge.Tool
                 return hashCode;
             }
         }
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is Point3D16)) throw new NotSupportedException();
+            return CompareTo((Point3D16) obj);
+        }
+        public int CompareTo(Point3D16 other)
+        {
+            var result = X.CompareTo(other.X);
+            if (result != 0) return result;
+            result = Y.CompareTo(other.Y);
+            return result != 0 ? result : Z.CompareTo(other.Z);
+        }
+
         public static bool operator ==(Point3D16 left, Point3D16 right)
         {
             return left.Equals(right);
@@ -856,6 +870,7 @@ namespace Mygod.Edge.Tool
         {
             return !left.Equals(right);
         }
+        
         public override string ToString()
         {
             return string.Format("{0},{1},{2}", X, Y, Z);
@@ -909,7 +924,7 @@ namespace Mygod.Edge.Tool
             return string.Format("{0}x{1}", Width, Length);
         }
     }
-    public struct Size3D : IXSerializable
+    public struct Size3D : IXSerializable, IComparable, IComparable<Size3D>
     {
         public Size3D(byte height, ushort width, ushort length)
         {
@@ -926,6 +941,16 @@ namespace Mygod.Edge.Tool
 
         public readonly ushort Width, Length;
         public readonly byte Height;
+
+        public int CompareTo(Size3D other)
+        {
+            return (Width * Length * Height).CompareTo(other.Width * other.Length * other.Height);
+        }
+        public int CompareTo(object obj)
+        {
+            if (!(obj is Size3D)) throw new NotSupportedException();
+            return CompareTo((Size3D) obj);
+        }
 
         public override string ToString()
         {
