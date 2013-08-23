@@ -104,14 +104,18 @@ namespace Mygod.Edge.Tool
                     throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 audio 文件夹以及之下的内容。请改用 sfx 文件夹。");
             }
             if (containAudio && containSfx) throw new FormatException("不允许在写入 audio 文件夹的同时使用 sfx 文件夹！请选择其中一个。");
-            if (mappings == null) return;
-            if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！" +
-                                                       "请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
-            var xslBuilder = new StringBuilder();
-            foreach (var item in mappings) xslBuilder.AppendLine("      " + item.GetXElement());
-            xslBuilder.AppendLine("    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
-            Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
-            XslCracked = XslHead + xslBuilder;
+            if (mappings != null)
+            {
+                if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！" +
+                                                           "请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
+                var xslBuilder = new StringBuilder();
+                foreach (var item in mappings) xslBuilder.AppendLine("      " + item.GetXElement());
+                xslBuilder.AppendLine("    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
+                Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
+                XslCracked = XslHead + xslBuilder;
+            }
+            if (Xsl != null && containXml) throw new FormatException("不允许在使用 mapping.xml 的情况下再使用 mapping.xsl 和/或 mod.xml " +
+                                                                     "进行修改。请将修改合并到 mapping.xml 中。");
         }
 
         private static void Set(out HashSet<string> set, string value)
@@ -176,19 +180,24 @@ namespace Mygod.Edge.Tool
                             switch (e.Reason)
                             {
                                 case ExtractFileCallbackReason.Start:
-                                    if (Type == ModType.Level && fileInfo.Exists
-                                        && !allModifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower()))
-                                        throw new IOException("不允许 Level 类的 EdgeMod 修改游戏自带的文件！请改用 Theme 或 Game 类。");
-                                    if (!fileInfo.Exists || (ulong) fileInfo.Length != e.ArchiveFileInfo.Size
-                                        || Math.Abs(fileInfo.LastWriteTime.Ticks - e.ArchiveFileInfo.LastWriteTime.Ticks)
-                                        > new TimeSpan(0, 0, 1).Ticks)  // 快速检测
+                                    if (isSfx)
                                     {
-                                        parent.CreateCopy(allModifiedFiles, lowered);
                                         File.Delete(path);
                                         e.ExtractToFile = path;
                                     }
-                                    if (!isSfx)
+                                    else
                                     {
+                                        if (Type == ModType.Level && fileInfo.Exists
+                                        && !allModifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower())) throw new IOException(
+                                            "不允许 Level 类的 EdgeMod 修改游戏自带的文件！请改用 Theme 或 Game 类。");
+                                        if (!fileInfo.Exists || (ulong)fileInfo.Length != e.ArchiveFileInfo.Size
+                                            || Math.Abs(fileInfo.LastWriteTime.Ticks - e.ArchiveFileInfo.LastWriteTime.Ticks)
+                                            > new TimeSpan(0, 0, 1).Ticks)  // 快速检测
+                                        {
+                                            parent.CreateCopy(allModifiedFiles, lowered);
+                                            File.Delete(path);
+                                            e.ExtractToFile = path;
+                                        }
                                         parent.ModifiedFiles.Add(lowered);
                                         allModifiedFiles.Add(lowered);
                                     }
@@ -390,7 +399,13 @@ namespace Mygod.Edge.Tool
             {
                 Directory.Delete(sfxPath, true);
             }
-            catch { }   // ignore if failed
+            catch   // ignore if failed
+            {
+            }
+            finally
+            {
+                sfxPath = null;
+            }
         }
     }
 
