@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="545" Name="deadly race" TimeThresholds="136,168,200,232,264" Size="60x149x4" SpawnPoint="1,147,16" ExitPoint="13,4,1" Theme="3" MusicJava="11" Music="7" Zoom="1">
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="4,138,5" />
+    <Waypoint Position="5,138,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="6,136,5" />
+    <Waypoint Position="7,136,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,106,5" />
+    <Waypoint Position="8,106,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="5,102,5" />
+    <Waypoint Position="6,102,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,101,5" />
+    <Waypoint Position="8,101,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,55,5" />
+    <Waypoint Position="8,55,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,97,5" />
+    <Waypoint Position="8,97,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="5,91,5" />
+    <Waypoint Position="6,91,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,74,5" />
+    <Waypoint Position="8,74,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="5,70,5" />
+    <Waypoint Position="6,70,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="6,46,5" />
+    <Waypoint Position="7,46,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,44,5" />
+    <Waypoint Position="8,44,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="5,36,5" />
+    <Waypoint Position="6,36,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,37,5" />
+    <Waypoint Position="8,37,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="6,31,5" />
+    <Waypoint Position="7,31,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,24,5" />
+    <Waypoint Position="8,24,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="5,27,5" />
+    <Waypoint Position="6,27,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,63,5" />
+    <Waypoint Position="8,63,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="6,58,5" />
+    <Waypoint Position="7,58,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="33,2,5" />
+    <Waypoint Position="34,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="44,2,5" />
+    <Waypoint Position="45,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="41,0,5" />
+    <Waypoint Position="42,0,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="56,2,5" />
+    <Waypoint Position="57,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="58,1,5" />
+    <Waypoint Position="59,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="52,0,5" />
+    <Waypoint Position="53,0,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="49,2,5" />
+    <Waypoint Position="50,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="31,1,5" />
+    <Waypoint Position="32,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="27,2,5" />
+    <Waypoint Position="28,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="21,0,5" />
+    <Waypoint Position="22,0,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="10,6,5" />
+    <Waypoint Position="11,6,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="8,3,5" />
+    <Waypoint Position="9,3,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="12,2,5" />
+    <Waypoint Position="13,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="9,0,5" />
+    <Waypoint Position="10,0,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="16,1,5" />
+    <Waypoint Position="17,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="19,2,5" />
+    <Waypoint Position="20,2,5" TravelTime="3" />
+  </MovingPlatform>
+  <Bumper ID="Bumper1" AutoStart="False" Position="9,131,1">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper2" AutoStart="False" Position="13,90,1">
+    <West />
+  </Bumper>
+  <FallingPlatform Position="12,131,1" FloatTime="5" />
+  <FallingPlatform Position="13,131,1" FloatTime="7" />
+  <FallingPlatform Position="14,131,1" FloatTime="9" />
+  <FallingPlatform Position="11,131,1" FloatTime="10" />
+  <FallingPlatform Position="8,140,1" FloatTime="10" />
+  <FallingPlatform Position="7,140,1" FloatTime="10" />
+  <FallingPlatform Position="7,139,1" FloatTime="10" />
+  <FallingPlatform Position="5,143,1" FloatTime="10" />
+  <FallingPlatform Position="4,143,1" FloatTime="10" />
+  <FallingPlatform Position="3,143,1" FloatTime="10" />
+  <FallingPlatform Position="10,90,1" FloatTime="10" />
+  <FallingPlatform Position="9,90,1" FloatTime="10" />
+  <FallingPlatform Position="11,64,1" FloatTime="10" />
+  <FallingPlatform Position="10,64,1" FloatTime="10" />
+  <FallingPlatform Position="9,64,1" FloatTime="10" />
+  <FallingPlatform Position="10,23,1" FloatTime="10" />
+  <FallingPlatform Position="10,22,1" FloatTime="30" />
+  <FallingPlatform Position="10,21,1" FloatTime="10" />
+  <FallingPlatform Position="9,22,1" FloatTime="30" />
+  <FallingPlatform Position="11,23,1" FloatTime="10" />
+  <FallingPlatform Position="3,147,1" FloatTime="10" />
+  <FallingPlatform Position="3,146,1" FloatTime="10" />
+  <FallingPlatform Position="39,7,1" FloatTime="10" />
+  <FallingPlatform Position="38,7,1" FloatTime="10" />
+  <FallingPlatform Position="40,7,1" FloatTime="10" />
+  <FallingPlatform Position="40,9,1" FloatTime="30" />
+  <FallingPlatform Position="39,9,1" FloatTime="10" />
+  <FallingPlatform Position="4,146,1" FloatTime="10" />
+  <FallingPlatform Position="38,9,1" FloatTime="10" />
+  <FallingPlatform Position="38,8,1" FloatTime="10" />
+  <FallingPlatform Position="40,8,1" FloatTime="30" />
+  <FallingPlatform Position="39,8,1" FloatTime="10" />
+  <FallingPlatform Position="26,7,1" FloatTime="10" />
+  <FallingPlatform Position="5,144,1" FloatTime="10" />
+  <FallingPlatform Position="26,8,1" FloatTime="10" />
+  <FallingPlatform Position="27,9,1" FloatTime="10" />
+  <FallingPlatform Position="25,7,1" FloatTime="10" />
+  <FallingPlatform Position="25,9,1" FloatTime="10" />
+  <FallingPlatform Position="25,8,1" FloatTime="5" />
+  <FallingPlatform Position="27,8,1" FloatTime="10" />
+  <FallingPlatform Position="26,9,1" FloatTime="10" />
+  <FallingPlatform Position="27,7,1" FloatTime="5" />
+  <FallingPlatform Position="28,7,1" FloatTime="10" />
+  <FallingPlatform Position="4,148,1" FloatTime="10" />
+  <FallingPlatform Position="28,9,1" FloatTime="10" />
+  <FallingPlatform Position="19,4,1" FloatTime="0" />
+  <FallingPlatform Position="18,4,1" FloatTime="0" />
+  <FallingPlatform Position="17,4,1" FloatTime="0" />
+  <FallingPlatform Position="44,9,1" FloatTime="10" />
+  <FallingPlatform Position="44,8,1" FloatTime="10" />
+  <FallingPlatform Position="44,7,1" FloatTime="10" />
+  <FallingPlatform Position="43,9,1" FloatTime="30" />
+  <FallingPlatform Position="42,9,1" FloatTime="30" />
+  <FallingPlatform Position="42,8,1" FloatTime="30" />
+  <FallingPlatform Position="16,131,1" FloatTime="10" />
+  <FallingPlatform Position="42,7,1" FloatTime="10" />
+  <FallingPlatform Position="43,7,1" FloatTime="10" />
+  <FallingPlatform Position="43,8,1" FloatTime="30" />
+  <FallingPlatform Position="41,7,1" FloatTime="10" />
+  <FallingPlatform Position="41,8,1" FloatTime="10" />
+  <FallingPlatform Position="45,9,1" FloatTime="10" />
+  <FallingPlatform Position="45,8,1" FloatTime="10" />
+  <FallingPlatform Position="45,7,1" FloatTime="10" />
+  <FallingPlatform Position="46,8,1" FloatTime="10" />
+  <FallingPlatform Position="15,131,1" FloatTime="10" />
+  <FallingPlatform Position="46,9,1" FloatTime="10" />
+  <FallingPlatform Position="58,8,1" FloatTime="10" />
+  <FallingPlatform Position="58,7,1" FloatTime="10" />
+  <FallingPlatform Position="57,7,1" FloatTime="10" />
+  <FallingPlatform Position="57,8,1" FloatTime="10" />
+  <FallingPlatform Position="56,8,1" FloatTime="10" />
+  <FallingPlatform Position="55,8,1" FloatTime="10" />
+  <FallingPlatform Position="56,7,1" FloatTime="10" />
+  <FallingPlatform Position="55,7,1" FloatTime="10" />
+  <FallingPlatform Position="59,9,1" FloatTime="30" />
+  <FallingPlatform Position="17,132,1" FloatTime="10" />
+  <FallingPlatform Position="58,9,1" FloatTime="10" />
+  <FallingPlatform Position="57,9,1" FloatTime="10" />
+  <FallingPlatform Position="56,9,1" FloatTime="10" />
+  <FallingPlatform Position="55,9,1" FloatTime="10" />
+  <FallingPlatform Position="57,6,1" FloatTime="10" />
+  <FallingPlatform Position="57,5,1" FloatTime="10" />
+  <FallingPlatform Position="57,4,1" FloatTime="10" />
+  <FallingPlatform Position="55,3,1" FloatTime="10" />
+  <FallingPlatform Position="54,3,1" FloatTime="10" />
+  <FallingPlatform Position="55,4,1" FloatTime="10" />
+  <FallingPlatform Position="16,132,1" FloatTime="10" />
+  <FallingPlatform Position="54,4,1" FloatTime="10" />
+  <FallingPlatform Position="56,5,1" FloatTime="30" />
+  <FallingPlatform Position="55,5,1" FloatTime="10" />
+  <FallingPlatform Position="54,5,1" FloatTime="10" />
+  <FallingPlatform Position="56,4,1" FloatTime="10" />
+  <FallingPlatform Position="58,3,1" FloatTime="30" />
+  <FallingPlatform Position="59,4,1" FloatTime="10" />
+  <FallingPlatform Position="58,4,1" FloatTime="10" />
+  <FallingPlatform Position="59,5,1" FloatTime="10" />
+  <FallingPlatform Position="58,5,1" FloatTime="10" />
+  <FallingPlatform Position="19,128,1" FloatTime="10" />
+  <FallingPlatform Position="59,3,1" FloatTime="30" />
+  <FallingPlatform Position="59,8,1" FloatTime="10" />
+  <FallingPlatform Position="59,7,1" FloatTime="10" />
+  <FallingPlatform Position="53,4,1" FloatTime="10" />
+  <FallingPlatform Position="53,5,1" FloatTime="10" />
+  <FallingPlatform Position="53,3,1" FloatTime="10" />
+  <FallingPlatform Position="14,118,1" FloatTime="10" />
+  <FallingPlatform Position="14,117,1" FloatTime="10" />
+  <FallingPlatform Position="18,128,1" FloatTime="10" />
+  <FallingPlatform Position="13,117,1" FloatTime="10" />
+  <FallingPlatform Position="14,115,1" FloatTime="10" />
+  <FallingPlatform Position="12,116,1" FloatTime="10" />
+  <FallingPlatform Position="18,3,1" FloatTime="10" />
+  <FallingPlatform Position="17,3,1" FloatTime="10" />
+  <FallingPlatform Position="19,3,1" FloatTime="10" />
+  <FallingPlatform Position="18,5,1" FloatTime="10" />
+  <FallingPlatform Position="17,5,1" FloatTime="10" />
+  <FallingPlatform Position="19,5,1" FloatTime="10" />
+  <FallingPlatform Position="11,4,1" FloatTime="10" />
+  <FallingPlatform Position="15,134,1" FloatTime="10" />
+  <FallingPlatform Position="15,133,1" FloatTime="10" />
+  <FallingPlatform Position="18,134,1" FloatTime="10" />
+  <FallingPlatform Position="20,130,1" FloatTime="10" />
+  <FallingPlatform Position="20,127,1" FloatTime="10" />
+  <FallingPlatform Position="20,126,1" FloatTime="10" />
+  <FallingPlatform Position="10,106,1" FloatTime="10" />
+  <FallingPlatform Position="10,105,1" FloatTime="10" />
+  <FallingPlatform Position="10,108,1" FloatTime="10" />
+  <FallingPlatform Position="10,107,1" FloatTime="10" />
+  <FallingPlatform Position="9,108,1" FloatTime="10" />
+  <FallingPlatform Position="11,109,1" FloatTime="10" />
+  <FallingPlatform Position="11,108,1" FloatTime="10" />
+  <FallingPlatform Position="13,132,1" FloatTime="10" />
+  <FallingPlatform Position="12,132,1" FloatTime="10" />
+  <FallingPlatform Position="14,130,1" FloatTime="10" />
+  <FallingPlatform Position="12,125,1" FloatTime="10" />
+  <FallingPlatform Position="11,106,1" FloatTime="10" />
+  <FallingPlatform Position="9,105,1" FloatTime="10" />
+  <FallingPlatform Position="9,106,1" FloatTime="10" />
+  <FallingPlatform Position="9,104,1" FloatTime="10" />
+  <FallingPlatform Position="14,111,1" FloatTime="10" />
+  <FallingPlatform Position="14,110,1" FloatTime="10" />
+  <FallingPlatform Position="13,110,1" FloatTime="10" />
+  <FallingPlatform Position="8,108,1" FloatTime="10" />
+  <FallingPlatform Position="13,122,1" FloatTime="10" />
+  <FallingPlatform Position="13,121,1" FloatTime="10" />
+  <FallingPlatform Position="12,121,1" FloatTime="10" />
+  <FallingPlatform Position="11,105,1" FloatTime="10" />
+  <FallingPlatform Position="12,105,1" FloatTime="10" />
+  <FallingPlatform Position="14,105,1" FloatTime="10" />
+  <FallingPlatform Position="13,104,1" FloatTime="10" />
+  <FallingPlatform Position="13,102,1" FloatTime="10" />
+  <FallingPlatform Position="12,103,1" FloatTime="10" />
+  <FallingPlatform Position="11,104,1" FloatTime="10" />
+  <FallingPlatform Position="12,104,1" FloatTime="10" />
+  <FallingPlatform Position="11,102,1" FloatTime="10" />
+  <FallingPlatform Position="10,102,1" FloatTime="10" />
+  <FallingPlatform Position="10,101,1" FloatTime="10" />
+  <FallingPlatform Position="14,104,1" FloatTime="10" />
+  <FallingPlatform Position="13,105,1" FloatTime="10" />
+  <FallingPlatform Position="12,123,1" FloatTime="10" />
+  <FallingPlatform Position="12,122,1" FloatTime="10" />
+  <FallingPlatform Position="9,50,1" FloatTime="10" />
+  <FallingPlatform Position="10,50,1" FloatTime="10" />
+  <FallingPlatform Position="11,49,1" FloatTime="10" />
+  <FallingPlatform Position="10,49,1" FloatTime="10" />
+  <FallingPlatform Position="11,44,1" FloatTime="10" />
+  <FallingPlatform Position="10,45,1" FloatTime="10" />
+  <FallingPlatform Position="10,44,1" FloatTime="10" />
+  <FallingPlatform Position="9,45,1" FloatTime="10" />
+  <FallingPlatform Position="9,44,1" FloatTime="10" />
+  <FallingPlatform Position="9,43,1" FloatTime="10" />
+  <FallingPlatform Position="11,28,1" FloatTime="10" />
+  <FallingPlatform Position="10,28,1" FloatTime="10" />
+  <FallingPlatform Position="9,28,1" FloatTime="10" />
+  <FallingPlatform Position="9,27,1" FloatTime="10" />
+  <FallingPlatform Position="10,29,1" FloatTime="10" />
+  <FallingPlatform Position="9,29,1" FloatTime="10" />
+  <FallingPlatform Position="11,29,1" FloatTime="10" />
+  <FallingPlatform Position="10,31,1" FloatTime="10" />
+  <FallingPlatform Position="11,31,1" FloatTime="10" />
+  <FallingPlatform Position="9,30,1" FloatTime="10" />
+  <FallingPlatform Position="9,31,1" FloatTime="10" />
+  <FallingPlatform Position="10,30,1" FloatTime="10" />
+  <FallingPlatform Position="11,30,1" FloatTime="10" />
+  <FallingPlatform Position="9,32,1" FloatTime="10" />
+  <FallingPlatform Position="9,33,1" FloatTime="10" />
+  <FallingPlatform Position="10,33,1" FloatTime="10" />
+  <FallingPlatform Position="10,32,1" FloatTime="10" />
+  <FallingPlatform Position="11,34,1" FloatTime="30" />
+  <FallingPlatform Position="11,35,1" FloatTime="10" />
+  <FallingPlatform Position="10,35,1" FloatTime="10" />
+  <FallingPlatform Position="11,90,1" FloatTime="10" />
+  <Checkpoint Position="4,142,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="13,140,1" RespawnOffsetZ="1" Radius="1,1" />
+  <Checkpoint Position="13,124,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="15,103,1" RespawnOffsetZ="1" Radius="0,1" />
+  <Checkpoint Position="10,100,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="9,89,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="10,81,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="13,22,1" RespawnOffsetZ="1" Radius="1,1" />
+  <CameraTrigger Position="13,17,1" Radius="1,0" Zoom="2" />
+  <CameraTrigger Position="13,120,1" Radius="1,0" Zoom="2" />
+  <CameraTrigger Position="13,108,1" Radius="1,1" Zoom="1" />
+<!--
+  <AdvancedCameraTrigger Position="15,134,1" Reset="True" StartDelay="25" Duration="25" />
+  <AdvancedCameraTrigger Position="14,8,1" Radius="0,1" Duration="36" FieldOfView="60" />
+  <AdvancedCameraTrigger Position="10,25,1" Radius="1,0" Reset="True" Duration="80" />
+  <AdvancedCameraTrigger Position="13,133,1" Radius="1,0" Reset="True" StartDelay="25" Duration="25" />
+  <AdvancedCameraTrigger Position="10,81,1" Radius="1,0" Duration="13" Zoom="29" />
+  <AdvancedCameraTrigger Position="13,134,1" Radius="1,0" Duration="25" Zoom="22" />
+-->
+  <Prism Position="13,130,1" />
+  <Prism Position="4,148,1" />
+  <Prism Position="11,104,1" />
+  <Prism Position="9,89,1" />
+  <Prism Position="51,9,1" />
+  <Prism Position="9,48,1" />
+  <Prism Position="24,9,1" />
+  <Prism Position="40,9,1" />
+  <Prism Position="9,34,1" />
+  <Prism Position="51,5,1" />
+  <Prism Position="13,22,1" />
+  <Button Visible="False" Mode="Toggle" Position="10,131,1" AffectBumpers="Bumper1 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="12,90,1" AffectBumpers="Bumper2 (1)" />
+<!--
+  <DarkCube PositionTrigger="13,137,1" Radius="1,0" PositionCube="10,132,1">
+    <NorthDown TimeOffset="2" />
+    <NorthUp TimeOffset="11" />
+    <EastDown TimeOffset="12" />
+    <NorthDown TimeOffset="30" />
+    <NorthUp TimeOffset="69" />
+    <WestDown TimeOffset="70" />
+    <WestUp TimeOffset="97" />
+    <NorthDown TimeOffset="98" />
+    <NorthUp TimeOffset="126" />
+    <WestDown TimeOffset="127" />
+    <WestUp TimeOffset="135" />
+    <NorthDown TimeOffset="136" />
+    <NorthUp TimeOffset="159" />
+    <WestDown TimeOffset="160" />
+    <WestUp TimeOffset="204" />
+    <NorthDown TimeOffset="206" />
+    <NorthUp TimeOffset="266" />
+    <WestDown TimeOffset="286" />
+  </DarkCube>
+  <DarkCube PositionTrigger="6,140,1" Radius="0,1" PositionCube="4,137,3">
+    <EastDown TimeOffset="6" />
+    <EastUp TimeOffset="61" />
+    <NorthDown TimeOffset="64" />
+    <NorthUp TimeOffset="108" />
+    <WestDown TimeOffset="144" />
+  </DarkCube>
+  <DarkCube PositionTrigger="13,120,1" Radius="1,0" PositionCube="7,108,1">
+    <EastDown TimeOffset="4" />
+    <EastUp TimeOffset="29" />
+    <NorthDown TimeOffset="30" />
+    <NorthUp TimeOffset="56" />
+    <EastDown TimeOffset="58" />
+    <NorthDown TimeOffset="94" />
+    <NorthUp TimeOffset="106" />
+    <WestDown TimeOffset="108" />
+    <NorthDown TimeOffset="118" />
+    <NorthUp TimeOffset="169" />
+    <EastDown TimeOffset="170" />
+    <EastUp TimeOffset="212" />
+    <NorthDown TimeOffset="213" />
+    <NorthUp TimeOffset="274" />
+    <WestDown TimeOffset="275" />
+    <WestUp TimeOffset="312" />
+    <WestDown TimeOffset="348" />
+  </DarkCube>
+  <DarkCube PositionTrigger="10,95,1" Radius="1,0" PositionCube="12,90,1">
+    <NorthDown TimeOffset="34" />
+    <NorthUp TimeOffset="83" />
+    <EastDown TimeOffset="84" />
+    <EastUp TimeOffset="116" />
+    <NorthDown TimeOffset="117" />
+    <NorthUp TimeOffset="208" />
+    <WestDown TimeOffset="32000" />
+  </DarkCube>
+  <DarkCube PositionTrigger="10,78,1" Radius="1,0" PositionCube="10,72,1">
+    <NorthDown TimeOffset="3" />
+    <NorthUp TimeOffset="65" />
+    <WestDown TimeOffset="66" />
+    <WestUp TimeOffset="76" />
+    <NorthDown TimeOffset="77" />
+    <NorthUp TimeOffset="190" />
+    <EastDown TimeOffset="191" />
+    <EastUp TimeOffset="201" />
+    <NorthDown TimeOffset="203" />
+    <NorthUp TimeOffset="252" />
+    <EastDown TimeOffset="253" />
+    <EastUp TimeOffset="263" />
+    <NorthDown TimeOffset="264" />
+    <NorthUp TimeOffset="298" />
+    <WestDown TimeOffset="301" />
+    <WestUp TimeOffset="313" />
+    <NorthDown TimeOffset="314" />
+    <NorthUp TimeOffset="398" />
+    <EastDown TimeOffset="399" />
+    <EastUp TimeOffset="410" />
+    <NorthDown TimeOffset="412" />
+    <NorthUp TimeOffset="476" />
+    <WestDown TimeOffset="477" />
+    <WestUp TimeOffset="486" />
+    <NorthDown TimeOffset="488" />
+    <NorthUp TimeOffset="587" />
+    <WestDown TimeOffset="620" />
+  </DarkCube>
+  <DarkCube PositionTrigger="13,15,1" Radius="1,0" PositionCube="13,8,1">
+    <EastDown TimeOffset="3" />
+    <EastUp TimeOffset="103" />
+    <NorthDown TimeOffset="105" />
+    <NorthUp TimeOffset="114" />
+    <EastDown TimeOffset="115" />
+    <EastUp TimeOffset="235" />
+    <SouthDown TimeOffset="239" />
+    <SouthUp TimeOffset="247" />
+    <EastDown TimeOffset="251" />
+    <EastUp TimeOffset="354" />
+    <NorthDown TimeOffset="359" />
+    <NorthUp TimeOffset="368" />
+    <WestDown TimeOffset="370" />
+    <WestUp TimeOffset="380" />
+    <NorthDown TimeOffset="383" />
+    <NorthUp TimeOffset="417" />
+    <WestDown TimeOffset="418" />
+    <WestUp TimeOffset="437" />
+    <SouthDown TimeOffset="439" />
+    <SouthUp TimeOffset="448" />
+    <WestDown TimeOffset="451" />
+    <WestUp TimeOffset="517" />
+    <NorthDown TimeOffset="518" />
+    <NorthUp TimeOffset="550" />
+    <WestDown TimeOffset="552" />
+    <WestUp TimeOffset="620" />
+    <SouthDown TimeOffset="622" />
+    <SouthUp TimeOffset="657" />
+    <WestDown TimeOffset="659" />
+    <WestUp TimeOffset="820" />
+    <NorthDown TimeOffset="824" />
+    <NorthUp TimeOffset="834" />
+    <WestDown TimeOffset="836" />
+    <WestUp TimeOffset="870" />
+    <SouthDown TimeOffset="879" />
+    <SouthUp TimeOffset="888" />
+    <WestDown TimeOffset="891" />
+    <WestUp TimeOffset="909" />
+    <NorthDown TimeOffset="910" />
+    <NorthUp TimeOffset="939" />
+    <WestDown TimeOffset="946" />
+    <WestUp TimeOffset="980" />
+    <WestDown TimeOffset="1190" />
+  </DarkCube>
+  <DarkCube PositionTrigger="9,89,1" PositionCube="10,72,1">
+    <NorthUp TimeOffset="1" />
+    <WestDown TimeOffset="32000" />
+  </DarkCube>
+  <DarkCube PositionTrigger="10,81,1" Radius="1,0" PositionCube="10,72,1">
+    <NorthUp TimeOffset="1" />
+    <WestDown TimeOffset="32000" />
+  </DarkCube>
+  <DarkCube PositionTrigger="13,22,1" Radius="1,1" PositionCube="13,8,1">
+    <NorthUp TimeOffset="1" />
+    <WestDown TimeOffset="32000" />
+  </DarkCube>
+-->
+</Level>

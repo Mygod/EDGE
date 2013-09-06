@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="544" Name="voodoo dance" TimeThresholds="202,257,311,366,420" Size="30x55x4" SpawnPoint="29,53,12" ExitPoint="25,2,3" Theme="1" MusicJava="11" Music="7" Zoom="1">
+  <MovingPlatform ID="Block1" AutoStart="False" Looped="False">
+    <Waypoint Position="19,14,3" />
+    <Waypoint Position="19,18,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block27" AutoStart="False" Looped="False">
+    <Waypoint Position="16,17,2" />
+    <Waypoint Position="20,17,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block28" AutoStart="False" Looped="False">
+    <Waypoint Position="16,16,2" />
+    <Waypoint Position="20,16,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block29" AutoStart="False" Looped="False">
+    <Waypoint Position="16,15,2" />
+    <Waypoint Position="20,15,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block26" AutoStart="False" Looped="False">
+    <Waypoint Position="16,17,3" />
+    <Waypoint Position="20,17,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block30" AutoStart="False" Looped="False">
+    <Waypoint Position="16,16,3" />
+    <Waypoint Position="20,16,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block31" AutoStart="False" Looped="False">
+    <Waypoint Position="16,15,3" />
+    <Waypoint Position="20,15,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block32" AutoStart="False" Looped="False">
+    <Waypoint Position="16,18,3" />
+    <Waypoint Position="20,18,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block2" AutoStart="False" Looped="False">
+    <Waypoint Position="17,14,3" />
+    <Waypoint Position="17,18,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block3" AutoStart="False" Looped="False">
+    <Waypoint Position="18,14,3" />
+    <Waypoint Position="18,18,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block4" AutoStart="False" Looped="False">
+    <Waypoint Position="20,14,3" />
+    <Waypoint Position="20,18,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block5" AutoStart="False" Looped="False">
+    <Waypoint Position="18,14,2" />
+    <Waypoint Position="18,18,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block6" AutoStart="False" Looped="False">
+    <Waypoint Position="19,14,2" />
+    <Waypoint Position="19,18,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block7" AutoStart="False" Looped="False">
+    <Waypoint Position="17,14,2" />
+    <Waypoint Position="17,18,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block8" AutoStart="False" Looped="False">
+    <Waypoint Position="17,14,4" />
+    <Waypoint Position="17,18,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block10" AutoStart="False" Looped="False">
+    <Waypoint Position="5,44,2" />
+    <Waypoint Position="8,44,2" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block11" AutoStart="False" Looped="False">
+    <Waypoint Position="5,45,2" />
+    <Waypoint Position="8,45,2" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block12" AutoStart="False" Looped="False">
+    <Waypoint Position="5,46,2" />
+    <Waypoint Position="8,46,2" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block13" AutoStart="False" Looped="False">
+    <Waypoint Position="5,47,2" />
+    <Waypoint Position="8,47,2" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block14" AutoStart="False" Looped="False">
+    <Waypoint Position="5,45,3" />
+    <Waypoint Position="8,45,3" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block15" AutoStart="False" Looped="False">
+    <Waypoint Position="5,46,3" />
+    <Waypoint Position="8,46,3" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block16" AutoStart="False" Looped="False">
+    <Waypoint Position="5,47,3" />
+    <Waypoint Position="8,47,3" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block9" AutoStart="False" Looped="False">
+    <Waypoint Position="5,44,3" />
+    <Waypoint Position="8,44,3" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block17" AutoStart="False" Looped="False">
+    <Waypoint Position="5,43,2" />
+    <Waypoint Position="8,43,2" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block18" AutoStart="False" Looped="False">
+    <Waypoint Position="5,43,3" />
+    <Waypoint Position="8,43,3" TravelTime="36" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block19" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="22,13,1" />
+    <Waypoint Position="22,15,1" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block20" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="21,13,1" />
+    <Waypoint Position="21,15,1" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block21" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="22,12,1" />
+    <Waypoint Position="22,14,1" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block33" AutoStart="False" Looped="False">
+    <Waypoint Position="16,16,4" />
+    <Waypoint Position="20,16,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block25" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="19,7,3" />
+    <Waypoint Position="19,9,3" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block24" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="19,8,3" />
+    <Waypoint Position="19,10,3" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block23" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="19,9,3" />
+    <Waypoint Position="19,11,3" TravelTime="24" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block22" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="22,11,1" />
+    <Waypoint Position="22,13,1" TravelTime="24" />
+  </MovingPlatform>
+  <FallingPlatform Position="25,43,1" FloatTime="40" />
+  <FallingPlatform Position="19,20,1" FloatTime="10" />
+  <FallingPlatform Position="24,5,1" FloatTime="40" />
+  <FallingPlatform Position="26,13,1" FloatTime="40" />
+  <FallingPlatform Position="26,11,1" FloatTime="40" />
+  <FallingPlatform Position="23,9,1" FloatTime="40" />
+  <FallingPlatform Position="25,11,1" FloatTime="40" />
+  <FallingPlatform Position="24,9,1" FloatTime="40" />
+  <FallingPlatform Position="27,7,1" FloatTime="40" />
+  <FallingPlatform Position="27,8,1" FloatTime="40" />
+  <FallingPlatform Position="23,7,1" FloatTime="40" />
+  <FallingPlatform Position="25,6,1" FloatTime="40" />
+  <FallingPlatform Position="22,5,1" FloatTime="40" />
+  <FallingPlatform Position="22,6,1" FloatTime="40" />
+  <FallingPlatform Position="22,4,1" FloatTime="40" />
+  <FallingPlatform Position="23,11,1" FloatTime="40" />
+  <FallingPlatform Position="23,12,1" FloatTime="40" />
+  <FallingPlatform Position="16,20,1" FloatTime="40" />
+  <FallingPlatform Position="18,20,1" FloatTime="40" />
+  <FallingPlatform Position="17,23,1" FloatTime="40" />
+  <FallingPlatform Position="19,24,1" FloatTime="40" />
+  <FallingPlatform Position="16,21,1" FloatTime="40" />
+  <FallingPlatform Position="19,21,1" FloatTime="40" />
+  <!-- FallingPlatform Position="6,42,3" FloatTime="40" -->
+  <FallingPlatform Position="14,47,1" FloatTime="40" />
+  <FallingPlatform Position="14,44,1" FloatTime="40" />
+  <FallingPlatform Position="13,44,1" FloatTime="40" />
+  <FallingPlatform Position="12,46,1" FloatTime="40" />
+  <FallingPlatform Position="11,45,1" FloatTime="10" />
+  <FallingPlatform Position="24,43,1" FloatTime="40" />
+  <FallingPlatform Position="11,43,1" FloatTime="40" />
+  <FallingPlatform Position="10,45,1" FloatTime="40" />
+  <FallingPlatform Position="9,43,1" FloatTime="40" />
+  <FallingPlatform Position="9,46,1" FloatTime="40" />
+  <FallingPlatform Position="9,47,1" FloatTime="40" />
+  <FallingPlatform Position="9,45,1" FloatTime="40" />
+  <FallingPlatform Position="9,44,1" FloatTime="40" />
+  <FallingPlatform Position="13,26,1" FloatTime="40" />
+  <FallingPlatform Position="12,28,1" FloatTime="40" />
+  <FallingPlatform Position="11,28,1" FloatTime="40" />
+  <FallingPlatform Position="13,31,1" FloatTime="40" />
+  <FallingPlatform Position="14,28,1" FloatTime="40" />
+  <FallingPlatform Position="27,41,1" FloatTime="40" />
+  <FallingPlatform Position="18,16,1" FloatTime="40" />
+  <FallingPlatform Position="19,19,1" FloatTime="40" />
+  <FallingPlatform Position="20,17,1" FloatTime="40" />
+  <FallingPlatform Position="20,16,1" FloatTime="40" />
+  <FallingPlatform Position="19,16,1" FloatTime="40" />
+  <FallingPlatform Position="18,18,1" FloatTime="40" />
+  <FallingPlatform Position="17,18,1" FloatTime="40" />
+  <FallingPlatform Position="20,18,1" FloatTime="40" />
+  <Checkpoint Position="21,46,2" RespawnOffsetZ="2" Radius="2,0" />
+  <Checkpoint Position="28,39,2" RespawnOffsetZ="2" Radius="1,1" />
+  <Checkpoint Position="11,42,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="12,45,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="6,42,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="3,44,3" RespawnOffsetZ="3" Radius="0,1" />
+  <Checkpoint Position="8,41,3" RespawnOffsetZ="3" />
+  <Checkpoint Position="8,33,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="10,27,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="13,25,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="15,21,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="19,22,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="22,13,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="23,4,1" RespawnOffsetZ="1" />
+<!--
+  <AdvancedCameraTrigger Position="23,16,2" Reset="True" StartDelay="10" Duration="80" />
+  <AdvancedCameraTrigger Position="9,45,1" StartDelay="10" Duration="40" FieldOfView="22" />
+  <AdvancedCameraTrigger Position="19,18,1" StartDelay="10" Duration="40" FieldOfView="22" />
+  <AdvancedCameraTrigger Position="6,41,2" Reset="True" StartDelay="10" Duration="30" />
+-->
+  <Prism Position="15,30,1" />
+  <Prism Position="15,27,1" />
+  <Prism Position="25,37,2" />
+  <Prism Position="12,29,1" />
+  <Prism Position="23,38,1" />
+  <Prism Position="19,18,1" />
+  <Prism Position="9,45,1" />
+  <Prism Position="13,25,2" />
+  <Prism Position="7,41,4" />
+  <Prism Position="23,13,1" />
+  <Prism Position="20,43,2" />
+  <Button Mode="Toggle" MovingBlockID="Block1" AffectMovingPlatforms="Block2,Block3,Block4,Block1,Block5,Block6,Block7,Block8" />
+  <Button Mode="Toggle" MovingBlockID="Block9" AffectMovingPlatforms="Block10,Block11,Block12,Block13,Block14,Block15,Block16,Block9,Block17,Block18" />
+  <Button OldPosition="19,12,3" Position="20,15,1" AffectMovingPlatforms="Block19,Block20,Block21,Block22,Block23,Block24,Block25" />
+  <Button Mode="Toggle" MovingBlockID="Block26" AffectMovingPlatforms="Block27,Block28,Block29,Block26,Block30,Block31,Block32,Block33" />
+<!--
+  <DarkCube PositionTrigger="22,42,2" PositionCube="25,38,1">
+    <EastDown TimeOffset="5" />
+    <EastUp TimeOffset="27" />
+    <SouthDown TimeOffset="29" />
+    <SouthUp TimeOffset="49" />
+    <WestDown TimeOffset="52" />
+    <WestUp TimeOffset="117" />
+    <SouthDown TimeOffset="121" />
+    <SouthUp TimeOffset="128" />
+    <WestDown TimeOffset="131" />
+    <WestUp TimeOffset="203" />
+    <WestDown TimeOffset="216" />
+  </DarkCube>
+  <DarkCube PositionTrigger="9,45,1" PositionCube="0,43,1">
+    <SouthDown TimeOffset="11" />
+    <SouthUp TimeOffset="27" />
+    <EastDown TimeOffset="33" />
+    <EastUp TimeOffset="72" />
+    <NorthDown TimeOffset="126" />
+    <NorthUp TimeOffset="133" />
+    <EastDown TimeOffset="139" />
+    <EastUp TimeOffset="149" />
+    <NorthDown TimeOffset="202" />
+    <NorthUp TimeOffset="210" />
+    <SouthDown TimeOffset="263" />
+    <SouthUp TimeOffset="271" />
+    <SouthDown TimeOffset="323" />
+    <SouthUp TimeOffset="331" />
+    <NorthDown TimeOffset="391" />
+    <NorthUp TimeOffset="396" />
+    <SouthDown TimeOffset="429" />
+    <SouthUp TimeOffset="446" />
+    <NorthDown TimeOffset="454" />
+    <NorthUp TimeOffset="472" />
+    <NorthDown TimeOffset="492" />
+    <NorthUp TimeOffset="502" />
+    <SouthDown TimeOffset="578" />
+    <SouthUp TimeOffset="587" />
+    <WestDown TimeOffset="633" />
+    <WestUp TimeOffset="641" />
+    <NorthDown TimeOffset="646" />
+    <NorthUp TimeOffset="671" />
+    <EastDown TimeOffset="675" />
+    <EastUp TimeOffset="707" />
+    <NorthDown TimeOffset="711" />
+    <NorthUp TimeOffset="832" />
+    <WestDown TimeOffset="851" />
+  </DarkCube>
+  <DarkCube PositionTrigger="19,18,1" PositionCube="6,16,1">
+    <EastDown TimeOffset="6" />
+    <EastUp TimeOffset="91" />
+    <NorthDown TimeOffset="126" />
+    <NorthUp TimeOffset="157" />
+    <EastDown TimeOffset="161" />
+    <EastUp TimeOffset="187" />
+    <SouthDown TimeOffset="191" />
+    <SouthUp TimeOffset="202" />
+    <WestDown TimeOffset="256" />
+    <WestUp TimeOffset="264" />
+    <NorthDown TimeOffset="312" />
+    <NorthUp TimeOffset="319" />
+    <WestDown TimeOffset="324" />
+    <WestUp TimeOffset="351" />
+    <SouthDown TimeOffset="354" />
+    <SouthUp TimeOffset="388" />
+    <EastDown TimeOffset="391" />
+    <EastUp TimeOffset="400" />
+    <SouthDown TimeOffset="456" />
+    <SouthUp TimeOffset="465" />
+    <WestDown TimeOffset="508" />
+    <WestUp TimeOffset="515" />
+    <NorthDown TimeOffset="519" />
+    <NorthUp TimeOffset="560" />
+    <EastDown TimeOffset="564" />
+    <EastUp TimeOffset="604" />
+    <SouthDown TimeOffset="608" />
+    <SouthUp TimeOffset="618" />
+    <WestDown TimeOffset="674" />
+    <WestUp TimeOffset="683" />
+    <NorthDown TimeOffset="728" />
+    <NorthUp TimeOffset="737" />
+    <WestDown TimeOffset="740" />
+    <WestUp TimeOffset="766" />
+    <SouthDown TimeOffset="770" />
+    <SouthUp TimeOffset="805" />
+    <EastDown TimeOffset="813" />
+    <EastUp TimeOffset="822" />
+    <SouthDown TimeOffset="875" />
+    <SouthUp TimeOffset="883" />
+    <WestDown TimeOffset="926" />
+    <WestUp TimeOffset="934" />
+    <NorthDown TimeOffset="938" />
+    <NorthUp TimeOffset="955" />
+    <SouthDown TimeOffset="961" />
+    <SouthUp TimeOffset="970" />
+    <EastDown TimeOffset="976" />
+    <EastUp TimeOffset="985" />
+    <NorthDown TimeOffset="1040" />
+    <NorthUp TimeOffset="1055" />
+    <NorthDown TimeOffset="1089" />
+    <NorthUp TimeOffset="1113" />
+    <EastDown TimeOffset="1116" />
+    <EastUp TimeOffset="1151" />
+    <WestDown TimeOffset="1207" />
+    <WestUp TimeOffset="1229" />
+    <WestDown TimeOffset="1263" />
+    <WestUp TimeOffset="1273" />
+    <SouthDown TimeOffset="1277" />
+    <SouthUp TimeOffset="1309" />
+    <SouthDown TimeOffset="1369" />
+    <SouthUp TimeOffset="1378" />
+    <WestDown TimeOffset="1426" />
+    <WestUp TimeOffset="1433" />
+    <NorthDown TimeOffset="1436" />
+    <NorthUp TimeOffset="1480" />
+    <EastDown TimeOffset="1484" />
+    <EastUp TimeOffset="1516" />
+    <NorthDown TimeOffset="1522" />
+    <NorthUp TimeOffset="1530" />
+    <NorthDown TimeOffset="1556" />
+    <NorthUp TimeOffset="1622" />
+    <WestDown TimeOffset="1627" />
+    <WestUp TimeOffset="1739" />
+    <WestDown TimeOffset="1758" />
+  </DarkCube>
+-->
+</Level>

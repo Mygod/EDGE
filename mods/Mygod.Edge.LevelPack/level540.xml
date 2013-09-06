@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="540" Name="lying bridge" TimeThresholds="51,84,116,149,181" Size="46x39x4" SpawnPoint="1,32,15" ExitPoint="44,1,2" Theme="1" MusicJava="11" Music="18" Zoom="1" FieldOfViewA="21" AutoAdjustZoomA="True">
+  <FallingPlatform Position="34,15,2" FloatTime="30" />
+  <FallingPlatform Position="33,15,2" FloatTime="30" />
+  <FallingPlatform Position="33,16,2" FloatTime="30" />
+  <FallingPlatform Position="34,16,2" FloatTime="30" />
+  <FallingPlatform Position="31,15,2" FloatTime="30" />
+  <FallingPlatform Position="13,32,4" FloatTime="30" />
+  <FallingPlatform Position="13,31,4" FloatTime="30" />
+  <FallingPlatform Position="13,30,4" FloatTime="30" />
+  <FallingPlatform Position="5,33,4" FloatTime="30" />
+  <FallingPlatform Position="4,33,4" FloatTime="30" />
+  <FallingPlatform Position="3,33,4" FloatTime="30" />
+  <FallingPlatform Position="34,10,2" FloatTime="30" />
+  <FallingPlatform Position="36,11,2" FloatTime="30" />
+  <FallingPlatform Position="36,10,2" FloatTime="30" />
+  <FallingPlatform Position="35,12,2" FloatTime="30" />
+  <FallingPlatform Position="34,13,2" FloatTime="30" />
+  <FallingPlatform Position="33,7,2" FloatTime="30" />
+  <FallingPlatform Position="32,7,2" FloatTime="30" />
+  <FallingPlatform Position="31,7,2" FloatTime="30" />
+  <FallingPlatform Position="31,6,2" FloatTime="30" />
+  <FallingPlatform Position="34,7,2" FloatTime="30" />
+  <FallingPlatform Position="34,6,2" FloatTime="30" />
+  <FallingPlatform Position="32,5,2" FloatTime="30" />
+  <FallingPlatform Position="6,33,4" FloatTime="30" />
+  <FallingPlatform Position="7,33,4" FloatTime="30" />
+  <FallingPlatform Position="12,32,4" FloatTime="30" />
+  <FallingPlatform Position="11,32,4" FloatTime="30" />
+  <FallingPlatform Position="15,30,4" FloatTime="30" />
+  <FallingPlatform Position="16,30,4" FloatTime="30" />
+  <FallingPlatform Position="14,30,4" FloatTime="30" />
+  <FallingPlatform Position="19,28,4" FloatTime="30" />
+  <FallingPlatform Position="19,27,4" FloatTime="30" />
+  <FallingPlatform Position="18,20,4" FloatTime="30" />
+  <FallingPlatform Position="21,26,4" FloatTime="30" />
+  <FallingPlatform Position="19,26,4" FloatTime="30" />
+  <FallingPlatform Position="20,26,4" FloatTime="30" />
+  <FallingPlatform Position="25,16,2" FloatTime="30" />
+  <FallingPlatform Position="18,22,4" FloatTime="30" />
+  <FallingPlatform Position="18,23,4" FloatTime="30" />
+  <FallingPlatform Position="21,23,4" FloatTime="30" />
+  <FallingPlatform Position="21,25,4" FloatTime="30" />
+  <FallingPlatform Position="21,24,4" FloatTime="30" />
+  <FallingPlatform Position="20,23,4" FloatTime="30" />
+  <FallingPlatform Position="18,21,4" FloatTime="30" />
+  <FallingPlatform Position="7,32,4" FloatTime="30" />
+  <FallingPlatform Position="6,32,4" FloatTime="30" />
+  <FallingPlatform Position="5,32,4" FloatTime="30" />
+  <FallingPlatform Position="4,32,4" FloatTime="30" />
+  <FallingPlatform Position="3,32,4" FloatTime="30" />
+  <FallingPlatform Position="12,31,4" FloatTime="30" />
+  <FallingPlatform Position="11,31,4" FloatTime="30" />
+  <FallingPlatform Position="16,29,4" FloatTime="30" />
+  <FallingPlatform Position="15,29,4" FloatTime="30" />
+  <FallingPlatform Position="14,29,4" FloatTime="30" />
+  <FallingPlatform Position="13,29,4" FloatTime="30" />
+  <FallingPlatform Position="12,30,4" FloatTime="30" />
+  <FallingPlatform Position="12,29,4" FloatTime="30" />
+  <FallingPlatform Position="18,28,4" FloatTime="30" />
+  <FallingPlatform Position="18,27,4" FloatTime="30" />
+  <FallingPlatform Position="18,26,4" FloatTime="30" />
+  <FallingPlatform Position="20,25,4" FloatTime="30" />
+  <FallingPlatform Position="20,24,4" FloatTime="30" />
+  <FallingPlatform Position="17,23,4" FloatTime="30" />
+  <FallingPlatform Position="17,22,4" FloatTime="30" />
+  <FallingPlatform Position="17,21,4" FloatTime="30" />
+  <FallingPlatform Position="17,20,4" FloatTime="30" />
+  <FallingPlatform Position="19,25,4" FloatTime="30" />
+  <FallingPlatform Position="18,25,4" FloatTime="30" />
+  <FallingPlatform Position="21,22,4" FloatTime="30" />
+  <FallingPlatform Position="20,22,4" FloatTime="30" />
+  <FallingPlatform Position="19,22,4" FloatTime="30" />
+  <FallingPlatform Position="38,1,2" FloatTime="30" />
+  <FallingPlatform Position="37,1,2" FloatTime="30" />
+  <FallingPlatform Position="36,1,2" FloatTime="30" />
+  <FallingPlatform Position="35,1,2" FloatTime="30" />
+  <FallingPlatform Position="42,1,2" FloatTime="30" />
+  <FallingPlatform Position="41,1,2" FloatTime="30" />
+  <FallingPlatform Position="40,1,2" FloatTime="30" />
+  <FallingPlatform Position="39,1,2" FloatTime="30" />
+  <FallingPlatform Position="25,14,2" FloatTime="30" />
+  <FallingPlatform Position="26,14,2" FloatTime="30" />
+  <FallingPlatform Position="28,17,2" FloatTime="30" />
+  <FallingPlatform Position="29,18,2" FloatTime="30" />
+  <FallingPlatform Position="30,17,2" FloatTime="30" />
+  <FallingPlatform Position="29,17,2" FloatTime="30" />
+  <FallingPlatform Position="28,15,2" FloatTime="30" />
+  <FallingPlatform Position="19,23,4" FloatTime="30" />
+  <Checkpoint Position="9,32,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="19,30,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="18,18,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="23,15,2" RespawnOffsetZ="2" Radius="1,1" />
+  <Checkpoint Position="32,15,2" RespawnOffsetZ="2" Radius="0,1" />
+  <Checkpoint Position="33,9,2" RespawnOffsetZ="2" Radius="2,0" />
+  <Checkpoint Position="32,2,2" RespawnOffsetZ="2" Radius="1,0" />
+  <CameraTrigger Position="20,26,1" Radius="4,9" Zoom="2" />
+  <CameraTrigger Position="21,19,2" Zoom="1" />
+  <CameraTrigger Position="19,32,2" Zoom="1" />
+  <CameraTrigger Position="10,34,2" Zoom="1" />
+  <CameraTrigger Position="12,35,1" Radius="9,9" Zoom="2" />
+  <Prism Position="25,17,1" />
+  <Prism Position="9,32,4" />
+  <Prism Position="19,30,4" />
+  <Prism Position="18,18,4" />
+  <Prism Position="37,1,2" />
+  <Prism Position="13,30,4" />
+  <Prism Position="21,24,4" />
+  <Prism Position="33,13,1" />
+  <Prism Position="32,5,1" />
+  <Prism Position="35,11,1" />
+  <Prism Position="28,15,1" />
+  <Prism Position="34,16,1" />
+  <Prism Position="29,17,1" />
+  <Prism Position="5,33,4" />
+  <Prism Position="23,15,2" />
+</Level>

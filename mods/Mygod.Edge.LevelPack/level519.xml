@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="519" Name="tiny road" TimeThresholds="122,194,266,338,410" Size="47x47x4" SpawnPoint="4,42,11" ExitPoint="1,45,1" MusicJava="11" Music="12" Zoom="2">
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="35,8,4" PauseTime="24" />
+    <Waypoint Position="35,7,4" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="35,8,4" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="23,40,1" />
+    <Waypoint Position="3,40,1" TravelTime="120" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block1" AutoStart="False">
+    <Waypoint Position="6,33,2" PauseTime="36" />
+    <Waypoint Position="6,32,2" TravelTime="12" PauseTime="36" />
+    <Waypoint Position="6,33,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="24,40,1" PauseTime="6" />
+    <Waypoint Position="4,40,1" TravelTime="120" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block2" AutoStart="False">
+    <Waypoint Position="4,34,2" PauseTime="36" />
+    <Waypoint Position="5,34,2" TravelTime="12" PauseTime="36" />
+    <Waypoint Position="4,34,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="25,40,1" PauseTime="12" />
+    <Waypoint Position="5,40,1" TravelTime="120" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="33,9,3" PauseTime="24" />
+    <Waypoint Position="33,8,3" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="33,9,3" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="35,9,2" PauseTime="24" />
+    <Waypoint Position="35,8,2" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="35,9,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="32,9,2" PauseTime="24" />
+    <Waypoint Position="32,8,2" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="32,9,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="33,9,2" PauseTime="24" />
+    <Waypoint Position="33,8,2" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="33,9,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="37,9,2" PauseTime="24" />
+    <Waypoint Position="37,8,2" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="37,9,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="37,8,4" PauseTime="24" />
+    <Waypoint Position="37,7,4" TravelTime="12" PauseTime="24" />
+    <Waypoint Position="37,8,4" TravelTime="12" />
+  </MovingPlatform>
+  <Bumper ID="Bumper7" AutoStart="False" Position="16,13,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper9" AutoStart="False" Position="24,13,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper6" AutoStart="False" Position="18,13,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper10" AutoStart="False" Position="23,13,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper1" AutoStart="False" Position="19,15,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper11" AutoStart="False" Position="30,15,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper2" AutoStart="False" Position="18,15,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper12" AutoStart="False" Position="29,15,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper3" AutoStart="False" Position="16,15,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper8" AutoStart="False" Position="17,13,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper4" AutoStart="False" Position="18,14,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <Bumper ID="Bumper5" AutoStart="False" Position="16,14,3">
+    <North PulseRate="30" />
+  </Bumper>
+  <FallingPlatform Position="21,13,1" FloatTime="40" />
+  <FallingPlatform Position="20,14,1" FloatTime="40" />
+  <FallingPlatform Position="22,13,1" FloatTime="40" />
+  <FallingPlatform Position="21,15,1" FloatTime="40" />
+  <FallingPlatform Position="22,14,1" FloatTime="40" />
+  <FallingPlatform Position="22,15,1" FloatTime="40" />
+  <FallingPlatform Position="20,13,1" FloatTime="40" />
+  <FallingPlatform Position="20,15,1" FloatTime="40" />
+  <FallingPlatform Position="4,34,4" FloatTime="10" />
+  <FallingPlatform Position="4,32,4" FloatTime="10" />
+  <FallingPlatform Position="6,33,4" FloatTime="10" />
+  <FallingPlatform Position="10,21,4" FloatTime="10" />
+  <FallingPlatform Position="10,21,1" FloatTime="40" />
+  <FallingPlatform Position="9,21,1" FloatTime="40" />
+  <FallingPlatform Position="8,21,1" FloatTime="40" />
+  <FallingPlatform Position="10,22,1" FloatTime="40" />
+  <FallingPlatform Position="9,22,1" FloatTime="40" />
+  <FallingPlatform Position="8,22,1" FloatTime="40" />
+  <FallingPlatform Position="10,23,1" FloatTime="40" />
+  <FallingPlatform Position="9,23,1" FloatTime="40" />
+  <FallingPlatform Position="6,34,1" FloatTime="40" />
+  <FallingPlatform Position="9,18,4" FloatTime="10" />
+  <FallingPlatform Position="20,15,3" FloatTime="10" />
+  <FallingPlatform Position="21,15,3" FloatTime="10" />
+  <FallingPlatform Position="22,15,3" FloatTime="10" />
+  <FallingPlatform Position="27,13,3" FloatTime="10" />
+  <FallingPlatform Position="26,13,3" FloatTime="10" />
+  <FallingPlatform Position="25,13,3" FloatTime="10" />
+  <FallingPlatform Position="28,13,3" FloatTime="10" />
+  <FallingPlatform Position="26,13,1" FloatTime="40" />
+  <FallingPlatform Position="25,13,1" FloatTime="40" />
+  <FallingPlatform Position="28,13,1" FloatTime="40" />
+  <FallingPlatform Position="27,13,1" FloatTime="40" />
+  <FallingPlatform Position="26,14,1" FloatTime="40" />
+  <FallingPlatform Position="25,14,1" FloatTime="40" />
+  <FallingPlatform Position="28,14,1" FloatTime="40" />
+  <FallingPlatform Position="27,14,1" FloatTime="40" />
+  <FallingPlatform Position="26,15,1" FloatTime="40" />
+  <FallingPlatform Position="25,15,1" FloatTime="40" />
+  <FallingPlatform Position="28,15,1" FloatTime="40" />
+  <FallingPlatform Position="27,15,1" FloatTime="40" />
+  <FallingPlatform Position="21,14,1" FloatTime="40" />
+  <Checkpoint Position="9,31,1" RespawnOffsetZ="1" Radius="1,1" />
+  <Checkpoint Position="10,20,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="16,19,1" RespawnOffsetZ="1" Radius="2,1" />
+  <Checkpoint Position="19,14,4" RespawnOffsetZ="4" Radius="0,1" />
+  <Checkpoint Position="24,14,4" RespawnOffsetZ="4" Radius="0,1" />
+  <Checkpoint Position="32,12,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="34,8,4" RespawnOffsetZ="4" Radius="0,1" />
+  <Checkpoint Position="41,7,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="41,1,4" RespawnOffsetZ="4" Radius="1,1" />
+  <Checkpoint Position="45,1,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="38,9,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="30,15,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="24,13,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="19,15,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="11,19,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="7,33,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="2,42,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="1,42,4" RespawnOffsetZ="4" Radius="1,1" />
+  <CameraTrigger Position="4,40,1" Radius="1,0" Zoom="1" />
+  <!-- AdvancedCameraTrigger Position="45,1,1" Duration="30" SingleUse="True" FieldOfView="35" -->
+  <Prism Position="34,9,4" />
+  <Prism Position="21,15,3" />
+  <Prism Position="26,13,3" />
+  <Prism Position="44,1,1" />
+  <Prism Position="8,18,4" />
+  <Prism Position="4,32,3" />
+  <Prism Position="4,37,2" />
+  <Prism Position="11,18,1" />
+  <Button Visible="False" Position="45,1,1" AffectMovingPlatforms="Block1,Block2" AffectBumpers="Bumper1 (1),Bumper2 (1),Bumper3 (1),Bumper4 (1),Bumper5 (1),Bumper6 (1),Bumper7 (1),Bumper8 (1),Bumper9 (1),Bumper10 (1),Bumper11 (1),Bumper12 (1)" />
+  <ResizerGrow Position="1,44,1" Visible="False" />
+  <ResizerGrow Position="2,44,1" Visible="False" />
+  <ResizerGrow Position="0,44,1" Visible="False" />
+  <ResizerShrink Position="45,1,1" />
+</Level>

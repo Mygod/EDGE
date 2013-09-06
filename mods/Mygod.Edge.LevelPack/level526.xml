@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="526" Name="walled up race" TimeThresholds="77,107,138,168,199" Size="60x45x4" SpawnPoint="1,42,9" ExitPoint="58,13,1" Theme="1" MusicJava="11" Music="9" Zoom="1" FieldOfViewA="21" AutoAdjustZoomA="True">
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="20,26,2" PauseTime="12" />
+    <Waypoint Position="20,27,2" TravelTime="12" PauseTime="12" />
+    <Waypoint Position="20,26,2" TravelTime="12" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null">
+    <Waypoint Position="20,26,3" PauseTime="12" />
+    <Waypoint Position="20,27,3" TravelTime="12" PauseTime="12" />
+    <Waypoint Position="20,26,3" TravelTime="12" />
+  </MovingPlatform>
+  <Bumper ID="Bumper4" AutoStart="False" Position="58,9,1">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper1" AutoStart="False" Position="58,3,1">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper3" AutoStart="False" Position="0,42,1">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper2" AutoStart="False" Position="28,2,1">
+    <East />
+  </Bumper>
+  <FallingPlatform Position="31,25,1" />
+  <FallingPlatform Position="31,26,1" FloatTime="10" />
+  <FallingPlatform Position="29,25,1" FloatTime="10" />
+  <FallingPlatform Position="31,28,1" />
+  <FallingPlatform Position="33,28,1" />
+  <FallingPlatform Position="32,28,1" FloatTime="10" />
+  <FallingPlatform Position="33,26,1" FloatTime="10" />
+  <FallingPlatform Position="33,24,1" FloatTime="10" />
+  <FallingPlatform Position="33,25,1" FloatTime="10" />
+  <FallingPlatform Position="33,27,1" FloatTime="10" />
+  <FallingPlatform Position="33,22,1" FloatTime="10" />
+  <FallingPlatform Position="33,23,1" FloatTime="10" />
+  <FallingPlatform Position="54,4,1" FloatTime="10" />
+  <FallingPlatform Position="53,4,1" FloatTime="10" />
+  <FallingPlatform Position="30,25,1" FloatTime="10" />
+  <FallingPlatform Position="52,4,1" FloatTime="10" />
+  <FallingPlatform Position="58,4,1" FloatTime="10" />
+  <FallingPlatform Position="56,4,1" FloatTime="10" />
+  <FallingPlatform Position="58,5,1" FloatTime="10" />
+  <FallingPlatform Position="58,6,1" FloatTime="10" />
+  <FallingPlatform Position="57,4,1" FloatTime="10" />
+  <FallingPlatform Position="28,25,1" />
+  <FallingPlatform Position="28,26,1" FloatTime="10" />
+  <FallingPlatform Position="28,27,1" />
+  <FallingPlatform Position="25,27,1" FloatTime="10" />
+  <FallingPlatform Position="23,27,1" FloatTime="10" />
+  <FallingPlatform Position="24,27,1" FloatTime="10" />
+  <FallingPlatform Position="22,27,1" FloatTime="10" />
+  <FallingPlatform Position="21,27,1" FloatTime="10" />
+  <FallingPlatform Position="31,27,1" FloatTime="10" />
+  <FallingPlatform Position="55,4,1" FloatTime="10" />
+  <Checkpoint Position="7,42,1" RespawnOffsetZ="1" Radius="0,1" />
+  <Checkpoint Position="7,32,1" RespawnOffsetZ="1" Radius="0,1" />
+  <Checkpoint Position="1,33,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="7,27,1" RespawnOffsetZ="1" Radius="0,1" />
+  <Checkpoint Position="17,27,1" RespawnOffsetZ="1" Radius="0,1" />
+  <Checkpoint Position="26,27,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="33,19,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="28,14,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="28,2,4" RespawnOffsetZ="4" Radius="0,2" />
+  <Checkpoint Position="44,2,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="51,4,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="58,9,2" RespawnOffsetZ="3" />
+  <CameraTrigger Position="7,32,1" Radius="0,1" Zoom="2" />
+  <CameraTrigger Position="7,27,1" Radius="0,1" Zoom="1" />
+<!--
+  <AdvancedCameraTrigger Position="52,4,1" Duration="200" FieldOfView="28" />
+  <AdvancedCameraTrigger Position="29,2,1" Reset="True" Duration="40" />
+-->
+  <Prism Position="29,2,1" />
+  <Prism Position="28,13,4" />
+  <Prism Position="49,2,1" />
+  <Prism Position="37,2,1" />
+  <Prism Position="47,5,3" />
+  <Prism Position="50,0,3" />
+  <Prism Position="48,6,1" />
+  <Prism Position="48,4,1" />
+  <Prism Position="41,2,1" />
+  <Prism Position="50,1,1" />
+  <Prism Position="33,24,1" />
+  <Prism Position="23,27,1" />
+  <Prism Position="2,42,1" />
+  <Prism Position="16,27,2" />
+  <Prism Position="2,32,1" />
+  <Prism Position="1,26,3" />
+  <Prism Position="2,31,2" />
+  <Prism Position="6,41,1" />
+  <Prism Position="33,2,1" />
+  <Prism Position="7,26,2" />
+  <Button Visible="False" Mode="Toggle" Position="58,4,1" AffectBumpers="Bumper1 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="29,2,1" AffectBumpers="Bumper2 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="1,42,1" AffectBumpers="Bumper3 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="58,10,1" AffectBumpers="Bumper4 (1)" />
+</Level>

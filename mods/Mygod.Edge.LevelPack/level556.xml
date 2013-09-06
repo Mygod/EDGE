@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="556" Name="minicube" TimeThresholds="74,108,141,175,208" Size="32x38x10" SpawnPoint="1,36,10" ExitPoint="30,2,3" Theme="1" MusicJava="11" Music="22" Zoom="1">
+  <Checkpoint Position="2,29,2" RespawnOffsetZ="2" Radius="1,1" />
+  <Checkpoint Position="1,27,4" RespawnOffsetZ="4" Radius="1,0" />
+  <Checkpoint Position="6,24,4" RespawnOffsetZ="4" Radius="0,2" />
+  <Checkpoint Position="7,23,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="9,24,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="9,21,4" RespawnOffsetZ="4" Radius="2,0" />
+  <Checkpoint Position="6,21,7" RespawnOffsetZ="7" Radius="3,3" />
+  <Checkpoint Position="4,16,8" RespawnOffsetZ="8" Radius="1,0" />
+  <Checkpoint Position="4,13,10" RespawnOffsetZ="10" />
+  <Checkpoint Position="7,9,9" RespawnOffsetZ="9" Radius="1,1" />
+  <Checkpoint Position="15,9,8" RespawnOffsetZ="8" Radius="1,1" />
+  <Checkpoint Position="17,9,6" RespawnOffsetZ="6" />
+  <Checkpoint Position="15,12,3" RespawnOffsetZ="3" />
+  <Checkpoint Position="19,13,1" RespawnOffsetZ="1" Radius="2,2" />
+  <Checkpoint Position="28,15,1" RespawnOffsetZ="1" Radius="1,1" />
+  <Checkpoint Position="29,5,1" RespawnOffsetZ="1" Radius="2,1" />
+<!--
+  <AdvancedCameraTrigger Position="9,24,1" Duration="60" SingleUse="True" FieldOfView="50" />
+-->
+  <Prism Position="7,23,1" />
+  <Prism Position="9,21,4" />
+  <Prism Position="1,33,1" />
+  <Prism Position="3,28,2" />
+  <Prism Position="5,21,7" />
+  <Prism Position="4,13,10" />
+  <Prism Position="17,9,6" />
+  <Prism Position="15,12,3" />
+  <Prism Position="20,14,1" />
+  <Prism Position="30,3,1" />
+  <Prism Position="28,3,2" />
+  <Prism Position="28,9,1" />
+  <Prism Position="28,12,1" />
+  <Prism Position="25,15,1" />
+  <ResizerShrink Position="9,24,1" />
+  <ResizerGrow Position="30,3,3" Visible="False" />
+  <ResizerGrow Position="31,2,3" Visible="False" />
+  <ResizerGrow Position="29,2,4" Visible="False" />
+  <ResizerGrow Position="30,1,4" Visible="False" />
+</Level>

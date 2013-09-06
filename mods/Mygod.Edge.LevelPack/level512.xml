@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="512" Name="stratosphere" TimeThresholds="176,238,300,362,424" Size="179x180x4" SpawnPoint="176,171,201" ExitPoint="87,176,1" Theme="1" MusicJava="11" Music="15" Zoom="2">
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="100,177,47" />
+    <Waypoint Position="99,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="98,179,47" />
+    <Waypoint Position="97,179,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="97,179,47" />
+    <Waypoint Position="96,179,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="97,177,47" />
+    <Waypoint Position="96,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="98,174,47" />
+    <Waypoint Position="97,174,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="98,173,47" />
+    <Waypoint Position="97,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="97,173,47" />
+    <Waypoint Position="96,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,173,47" />
+    <Waypoint Position="95,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,174,47" />
+    <Waypoint Position="95,174,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="95,173,47" />
+    <Waypoint Position="94,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="94,174,47" />
+    <Waypoint Position="93,174,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="95,175,47" />
+    <Waypoint Position="94,175,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,175,47" />
+    <Waypoint Position="95,175,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,178,47" />
+    <Waypoint Position="95,178,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,177,47" />
+    <Waypoint Position="95,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="96,179,47" />
+    <Waypoint Position="95,179,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="94,175,47" />
+    <Waypoint Position="93,175,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block8" AutoStart="False" Looped="False">
+    <Waypoint Position="121,178,3" PauseTime="36" />
+    <Waypoint Position="121,178,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block6" AutoStart="False" Looped="False">
+    <Waypoint Position="117,178,3" PauseTime="36" />
+    <Waypoint Position="117,178,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block32" AutoStart="False" Looped="False">
+    <Waypoint Position="121,174,3" PauseTime="36" />
+    <Waypoint Position="121,174,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block9" AutoStart="False" Looped="False">
+    <Waypoint Position="122,176,3" PauseTime="36" />
+    <Waypoint Position="122,176,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block7" AutoStart="False" Looped="False">
+    <Waypoint Position="119,173,3" PauseTime="36" />
+    <Waypoint Position="119,173,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block33" AutoStart="False" Looped="False">
+    <Waypoint Position="119,179,3" PauseTime="36" />
+    <Waypoint Position="119,179,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block1" AutoStart="False" Looped="False">
+    <Waypoint Position="117,174,1" PauseTime="36" />
+    <Waypoint Position="104,174,1" TravelTime="39" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="142,174,47" PauseTime="48" />
+    <Waypoint Position="143,174,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="142,174,47" TravelTime="6" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="143,174,47" PauseTime="48" />
+    <Waypoint Position="144,174,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="143,174,47" TravelTime="6" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="98,177,47" PauseTime="48" />
+    <Waypoint Position="98,178,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="98,177,47" TravelTime="6" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="98,178,47" PauseTime="48" />
+    <Waypoint Position="98,179,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="98,178,47" TravelTime="6" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="103,176,47" />
+    <Waypoint Position="102,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="97,176,47" PauseTime="48" />
+    <Waypoint Position="97,177,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="97,176,47" TravelTime="6" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,172,93" />
+    <Waypoint Position="175,172,93" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,172,94" />
+    <Waypoint Position="175,172,94" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,172,96" />
+    <Waypoint Position="175,172,96" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,172,95" />
+    <Waypoint Position="175,172,95" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,173,94" />
+    <Waypoint Position="175,173,94" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,171,95" />
+    <Waypoint Position="175,171,95" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="181,174,104" />
+    <Waypoint Position="180,174,104" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="180,174,104" />
+    <Waypoint Position="179,174,104" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="180,172,108" />
+    <Waypoint Position="179,172,108" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="180,172,109" />
+    <Waypoint Position="179,172,109" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block2" AutoStart="False" Looped="False">
+    <Waypoint Position="104,173,2" PauseTime="75" />
+    <Waypoint Position="104,175,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block3" AutoStart="False" Looped="False">
+    <Waypoint Position="101,177,3" PauseTime="36" />
+    <Waypoint Position="101,177,2" TravelTime="48" PauseTime="36" />
+    <Waypoint Position="101,177,47" TravelTime="54" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block4" AutoStart="False" Looped="False">
+    <Waypoint Position="144,177,0" PauseTime="36" />
+    <Waypoint Position="144,177,1" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block5" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="94,174,0" PauseTime="36" />
+    <Waypoint Position="94,174,1" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="102,176,47" />
+    <Waypoint Position="101,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="102,178,47" />
+    <Waypoint Position="101,178,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="101,177,47" />
+    <Waypoint Position="100,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="101,176,47" />
+    <Waypoint Position="100,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block14" AutoStart="False" Looped="False">
+    <Waypoint Position="130,173,3" PauseTime="36" />
+    <Waypoint Position="130,174,3" TravelTime="48" />
+    <Waypoint Position="130,174,4" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block20" AutoStart="False" Looped="False">
+    <Waypoint Position="127,173,2" PauseTime="36" />
+    <Waypoint Position="127,175,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block19" AutoStart="False" Looped="False">
+    <Waypoint Position="126,174,3" PauseTime="36" />
+    <Waypoint Position="126,176,3" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block18" AutoStart="False" Looped="False">
+    <Waypoint Position="127,174,2" PauseTime="36" />
+    <Waypoint Position="127,176,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block17" AutoStart="False" Looped="False">
+    <Waypoint Position="126,175,3" PauseTime="36" />
+    <Waypoint Position="126,177,3" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block16" AutoStart="False" Looped="False">
+    <Waypoint Position="127,175,2" PauseTime="36" />
+    <Waypoint Position="127,177,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block15" AutoStart="False" Looped="False">
+    <Waypoint Position="126,175,2" PauseTime="36" />
+    <Waypoint Position="126,177,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block13" AutoStart="False" Looped="False">
+    <Waypoint Position="130,173,2" PauseTime="36" />
+    <Waypoint Position="130,175,2" TravelTime="96" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block30" AutoStart="False" Looped="False">
+    <Waypoint Position="171,170,2" PauseTime="36" />
+    <Waypoint Position="171,170,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="143,175,47" />
+    <Waypoint Position="142,175,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block10" AutoStart="False" Looped="False" FullBlock="False">
+    <Waypoint Position="141,172,0" PauseTime="36" />
+    <Waypoint Position="141,172,1" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block12" AutoStart="False" Looped="False">
+    <Waypoint Position="146,172,2" PauseTime="36" />
+    <Waypoint Position="147,172,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block11" AutoStart="False" Looped="False">
+    <Waypoint Position="147,172,2" PauseTime="36" />
+    <Waypoint Position="148,172,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="143,176,47" />
+    <Waypoint Position="142,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="145,173,47" />
+    <Waypoint Position="144,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="144,178,47" />
+    <Waypoint Position="143,178,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="146,178,47" />
+    <Waypoint Position="145,178,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="146,176,47" />
+    <Waypoint Position="145,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="145,178,47" />
+    <Waypoint Position="144,178,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="146,177,47" />
+    <Waypoint Position="145,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="144,176,47" />
+    <Waypoint Position="143,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="145,176,47" />
+    <Waypoint Position="144,176,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="144,177,47" />
+    <Waypoint Position="143,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="146,173,47" />
+    <Waypoint Position="145,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="145,172,47" />
+    <Waypoint Position="144,172,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block28" AutoStart="False" Looped="False">
+    <Waypoint Position="164,170,3" PauseTime="36" />
+    <Waypoint Position="164,171,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block27" AutoStart="False" Looped="False">
+    <Waypoint Position="165,170,3" PauseTime="36" />
+    <Waypoint Position="165,171,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block26" AutoStart="False" Looped="False">
+    <Waypoint Position="165,171,3" PauseTime="36" />
+    <Waypoint Position="165,172,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block25" AutoStart="False" Looped="False">
+    <Waypoint Position="164,171,3" PauseTime="36" />
+    <Waypoint Position="164,172,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block24" AutoStart="False" Looped="False">
+    <Waypoint Position="165,172,3" PauseTime="36" />
+    <Waypoint Position="165,173,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block23" AutoStart="False" Looped="False">
+    <Waypoint Position="164,172,3" PauseTime="36" />
+    <Waypoint Position="164,173,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block22" AutoStart="False" Looped="False">
+    <Waypoint Position="163,171,2" PauseTime="36" />
+    <Waypoint Position="163,171,3" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block21" AutoStart="False" Looped="False">
+    <Waypoint Position="145,172,3" PauseTime="36" />
+    <Waypoint Position="145,172,2" TravelTime="48" PauseTime="36" />
+    <Waypoint Position="145,172,47" TravelTime="54" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block29" AutoStart="False" Looped="False">
+    <Waypoint Position="172,168,1" PauseTime="36" />
+    <Waypoint Position="172,168,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform ID="Block31" AutoStart="False" Looped="False">
+    <Waypoint Position="176,171,1" PauseTime="36" />
+    <Waypoint Position="176,171,2" TravelTime="48" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="184,179,47" />
+    <Waypoint Position="183,179,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="184,177,47" />
+    <Waypoint Position="183,177,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="182,174,47" />
+    <Waypoint Position="181,174,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="181,174,47" />
+    <Waypoint Position="180,174,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="179,172,47" />
+    <Waypoint Position="178,172,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False" FullBlock="False">
+    <Waypoint Position="179,173,47" />
+    <Waypoint Position="178,173,47" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,173,178" />
+    <Waypoint Position="175,173,178" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="181,169,67" />
+    <Waypoint Position="180,169,67" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="181,170,67" />
+    <Waypoint Position="180,170,67" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="181,170,68" />
+    <Waypoint Position="180,170,68" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="180,172,153" />
+    <Waypoint Position="179,172,153" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="176,173,136" />
+    <Waypoint Position="175,173,136" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="178,169,133" />
+    <Waypoint Position="177,169,133" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="105,175,1" />
+    <Waypoint Position="104,175,1" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="105,176,1" />
+    <Waypoint Position="104,176,1" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="131,175,1" />
+    <Waypoint Position="130,175,1" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="131,176,1" />
+    <Waypoint Position="130,176,1" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" FullBlock="False">
+    <Waypoint Position="97,175,47" PauseTime="48" />
+    <Waypoint Position="97,176,47" TravelTime="6" PauseTime="48" />
+    <Waypoint Position="97,175,47" TravelTime="6" />
+  </MovingPlatform>
+  <Checkpoint Position="174,170,2" RespawnOffsetZ="2" Radius="0,2" />
+  <Checkpoint Position="169,170,4" RespawnOffsetZ="4" Radius="0,2" />
+  <Checkpoint Position="164,176,2" RespawnOffsetZ="2" Radius="1,0" />
+  <Checkpoint Position="149,176,1" RespawnOffsetZ="1" Radius="1,0" />
+  <Checkpoint Position="146,172,4" RespawnOffsetZ="4" Radius="0,1" />
+  <Checkpoint Position="144,177,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="130,177,1" RespawnOffsetZ="1" Radius="0,2" />
+  <Checkpoint Position="124,177,4" RespawnOffsetZ="4" Radius="0,2" />
+  <Checkpoint Position="121,178,3" RespawnOffsetZ="3" />
+  <Checkpoint Position="121,174,3" RespawnOffsetZ="3" />
+  <Checkpoint Position="117,178,3" RespawnOffsetZ="3" />
+  <Checkpoint Position="104,176,1" RespawnOffsetZ="1" />
+  <Checkpoint Position="102,177,4" RespawnOffsetZ="4" Radius="0,1" />
+  <Checkpoint Position="94,174,1" RespawnOffsetZ="1" />
+  <CameraTrigger Position="93,173,47" Zoom="1" />
+  <CameraTrigger Position="99,178,47" Zoom="1" />
+  <CameraTrigger Position="144,172,4" Zoom="1" />
+  <CameraTrigger Position="144,177,0" Zoom="1" />
+  <CameraTrigger Position="144,171,47" Zoom="1" />
+  <CameraTrigger Position="99,176,47" Zoom="1" />
+  <CameraTrigger Position="96,178,47" Zoom="1" />
+  <CameraTrigger Position="145,174,47" Zoom="1" />
+  <CameraTrigger Position="95,172,47" Radius="2,0" Zoom="1" />
+  <CameraTrigger Position="100,175,47" Radius="2,0" Zoom="1" />
+  <CameraTrigger Position="96,180,47" Radius="2,0" Zoom="1" />
+  <CameraTrigger Position="149,176,1" Radius="1,0" Zoom="2" />
+  <CameraTrigger Position="144,179,47" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="101,178,4" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="94,176,47" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="142,173,47" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="101,179,47" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="144,175,47" Radius="1,0" Zoom="1" />
+  <CameraTrigger Position="146,176,47" Radius="0,3" Zoom="1" />
+  <CameraTrigger Position="124,177,4" Radius="0,2" Zoom="1" />
+  <CameraTrigger Position="98,174,47" Radius="0,2" Zoom="1" />
+  <CameraTrigger Position="92,175,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="94,178,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="96,175,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="143,172,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="142,178,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="141,175,47" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="102,177,4" Radius="0,1" Zoom="1" />
+  <CameraTrigger Position="101,177,2" Zoom="2" />
+  <CameraTrigger Position="117,178,3" Zoom="2" />
+  <CameraTrigger Position="121,174,3" Zoom="2" />
+  <CameraTrigger Position="145,172,2" Zoom="2" />
+  <CameraTrigger Position="97,178,47" Zoom="1" />
+  <CameraTrigger Position="117,174,1" Zoom="1" />
+  <CameraTrigger Position="145,173,4" Zoom="1" />
+  <CameraTrigger Position="176,171,1" Zoom="1" />
+  <CameraTrigger Position="146,172,4" Zoom="1" />
+  <CameraTrigger Position="145,171,4" Zoom="1" />
+  <CameraTrigger Position="94,174,0" Zoom="1" />
+  <CameraTrigger Position="100,177,4" Zoom="1" />
+  <CameraTrigger Position="147,172,3" Zoom="1" />
+  <CameraTrigger Position="101,176,4" Zoom="1" />
+  <CameraTrigger Position="103,176,47" Zoom="1" />
+<!--
+  <AdvancedCameraTrigger Position="143,179,1" Radius="3,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="143,173,1" Radius="1,1" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="141,177,1" Radius="1,1" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="145,173,4" Radius="1,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="101,178,4" Radius="1,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="101,176,4" Radius="1,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="93,175,1" Radius="0,2" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="146,177,1" Radius="0,1" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="144,172,4" Radius="0,1" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="103,176,3" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="176,171,1" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="144,177,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="102,177,4" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="145,171,4" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="146,172,4" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="100,177,4" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="94,174,0" Duration="13" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="145,172,3" Reset="True" StartDelay="84" Duration="36" />
+  <AdvancedCameraTrigger Position="101,177,3" Reset="True" StartDelay="84" Duration="36" />
+-->
+  <Prism Position="145,177,1" />
+  <Prism Position="164,174,2" />
+  <Prism Position="125,177,4" />
+  <Prism Position="156,175,3" />
+  <Prism Position="119,176,3" />
+  <Prism Position="97,174,47" />
+  <Prism Position="144,176,47" />
+  <Prism Position="170,170,4" />
+  <Prism Position="143,173,1" />
+  <Button Visible="False" MovingBlockID="Block1" AffectMovingPlatforms="Block1,Block2" />
+  <Button Visible="False" Mode="Toggle" MovingBlockID="Block3" AffectMovingPlatforms="Block3" />
+  <Button Visible="False" MovingBlockID="Block4" AffectMovingPlatforms="Block4" />
+  <Button Visible="False" MovingBlockID="Block5" AffectMovingPlatforms="Block5" />
+  <Button Visible="False" MovingBlockID="Block6" AffectMovingPlatforms="Block6,Block7" />
+  <Button Visible="False" MovingBlockID="Block8" AffectMovingPlatforms="Block8,Block9" />
+  <Button Visible="False" MovingBlockID="Block10" AffectMovingPlatforms="Block11,Block12,Block10" />
+  <Button Visible="False" Position="130,174,1" AffectMovingPlatforms="Block13,Block14,Block15,Block16,Block17,Block18,Block19,Block20" />
+  <Button Visible="False" Mode="Toggle" MovingBlockID="Block21" AffectMovingPlatforms="Block21" />
+  <Button Visible="False" MovingBlockID="Block22" AffectMovingPlatforms="Block22,Block23,Block24,Block25,Block26,Block27,Block28" />
+  <Button Visible="False" MovingBlockID="Block29" AffectMovingPlatforms="Block29,Block30" />
+  <Button Visible="False" MovingBlockID="Block31" AffectMovingPlatforms="Block31" />
+  <Button Visible="False" MovingBlockID="Block32" AffectMovingPlatforms="Block32,Block33" />
+</Level>

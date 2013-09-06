@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="509" Name="impulsed maze" TimeThresholds="60,99,137,176,214" Size="33x23x3" SpawnPoint="30,11,10" ExitPoint="24,5,2" Theme="1" MusicJava="11" Music="22" Zoom="1">
+  <Bumper ID="Bumper1" AutoStart="False" Position="0,21,2">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper20" AutoStart="False" Position="7,14,2">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper9" AutoStart="False" Position="26,17,2">
+    <North />
+  </Bumper>
+  <Bumper ID="Bumper22" AutoStart="False" Position="12,0,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper14" AutoStart="False" Position="12,15,2">
+    <North />
+  </Bumper>
+  <Bumper ID="Bumper19" AutoStart="False" Position="20,9,2">
+    <West />
+  </Bumper>
+  <Bumper ID="Bumper16" AutoStart="False" Position="19,3,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper11" AutoStart="False" Position="11,9,2">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper17" AutoStart="False" Position="27,9,2">
+    <West />
+  </Bumper>
+  <Bumper ID="Bumper13" AutoStart="False" Position="4,4,2">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper8" AutoStart="False" Position="15,21,2">
+    <West />
+  </Bumper>
+  <Bumper ID="Bumper3" AutoStart="False" Position="17,8,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper10" AutoStart="False" Position="12,4,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper5" AutoStart="False" Position="18,18,2">
+    <West />
+  </Bumper>
+  <Bumper ID="Bumper21" AutoStart="False" Position="8,8,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper15" AutoStart="False" Position="7,18,2">
+    <West />
+  </Bumper>
+  <Bumper ID="Bumper7" AutoStart="False" Position="14,17,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper4" AutoStart="False" Position="6,22,2">
+    <North />
+  </Bumper>
+  <Bumper ID="Bumper2" AutoStart="False" Position="2,9,2">
+    <East />
+  </Bumper>
+  <Bumper ID="Bumper18" AutoStart="False" Position="1,17,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper6" AutoStart="False" Position="22,8,2">
+    <South />
+  </Bumper>
+  <Bumper ID="Bumper12" AutoStart="False" Position="23,14,2">
+    <West />
+  </Bumper>
+  <Checkpoint Position="17,14,2" RespawnOffsetZ="2" />
+  <Checkpoint Position="5,4,2" RespawnOffsetZ="2" />
+<!--
+  <AdvancedCameraTrigger Position="26,16,2" Duration="20" FieldOfView="24" />
+-->
+  <Prism Position="16,15,3" />
+  <Prism Position="10,14,2" />
+  <Prism Position="15,9,2" />
+  <Prism Position="19,4,2" />
+  <Prism Position="12,1,2" />
+  <Prism Position="4,20,3" />
+  <Prism Position="5,8,2" />
+  <Prism Position="32,13,1" />
+  <Button Visible="False" Mode="Toggle" Position="1,21,2" AffectBumpers="Bumper1 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="3,9,2" AffectBumpers="Bumper2 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="17,9,2" AffectBumpers="Bumper3 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="6,21,2" AffectBumpers="Bumper4 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="17,18,2" AffectBumpers="Bumper5 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="22,9,2" AffectBumpers="Bumper6 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="14,18,2" AffectBumpers="Bumper7 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="14,21,2" AffectBumpers="Bumper8 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="26,16,2" AffectBumpers="Bumper9 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="12,5,2" AffectBumpers="Bumper10 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="12,9,2" AffectBumpers="Bumper11 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="22,14,2" AffectBumpers="Bumper12 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="5,4,2" AffectBumpers="Bumper13 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="12,14,2" AffectBumpers="Bumper14 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="6,18,2" AffectBumpers="Bumper15 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="19,4,2" AffectBumpers="Bumper16 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="26,9,2" AffectBumpers="Bumper17 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="1,18,2" AffectBumpers="Bumper18 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="19,9,2" AffectBumpers="Bumper19 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="8,14,2" AffectBumpers="Bumper20 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="8,9,2" AffectBumpers="Bumper21 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="12,1,2" AffectBumpers="Bumper22 (1)" />
+</Level>

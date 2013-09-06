@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level ID="553" Name="electric way" TimeThresholds="48,71,93,116,138" Size="32x58x4" SpawnPoint="25,55,5" ExitPoint="2,5,1" Theme="3" MusicJava="11" Music="21" Zoom="1">
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="18,0,5" />
+    <Waypoint Position="18,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="12,0,5" />
+    <Waypoint Position="12,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="13,0,5" />
+    <Waypoint Position="13,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="14,0,5" />
+    <Waypoint Position="14,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="15,0,5" />
+    <Waypoint Position="15,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="11,0,5" />
+    <Waypoint Position="11,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="7,0,5" />
+    <Waypoint Position="7,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="8,0,5" />
+    <Waypoint Position="8,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="9,0,5" />
+    <Waypoint Position="9,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="10,0,5" />
+    <Waypoint Position="10,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="22,0,5" />
+    <Waypoint Position="22,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="20,0,5" />
+    <Waypoint Position="20,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="17,0,5" />
+    <Waypoint Position="17,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="21,0,5" />
+    <Waypoint Position="21,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="16,0,5" />
+    <Waypoint Position="16,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <MovingPlatform AutoStart="Null" Looped="False">
+    <Waypoint Position="19,0,5" />
+    <Waypoint Position="19,1,5" TravelTime="3" />
+  </MovingPlatform>
+  <Bumper ID="Bumper3" AutoStart="False" Position="21,42,4">
+    <South />
+  </Bumper>
+  <Bumper Position="18,19,3">
+    <South StartDelay="2" PulseRate="13" />
+  </Bumper>
+  <Bumper Position="19,19,3">
+    <South StartDelay="1" PulseRate="13" />
+  </Bumper>
+  <Bumper ID="Bumper1" AutoStart="False" Position="19,38,4">
+    <West PulseRate="40" />
+  </Bumper>
+  <Bumper Position="19,22,2">
+    <South StartDelay="1" PulseRate="20" />
+  </Bumper>
+  <Bumper Position="16,19,3">
+    <South StartDelay="4" PulseRate="13" />
+  </Bumper>
+  <Bumper Position="19,25,1">
+    <South StartDelay="1" PulseRate="35" />
+  </Bumper>
+  <Bumper Position="18,1,3">
+    <South PulseRate="40" />
+  </Bumper>
+  <Bumper Position="17,19,3">
+    <South StartDelay="3" PulseRate="13" />
+  </Bumper>
+  <Bumper Position="18,22,2">
+    <South StartDelay="2" PulseRate="20" />
+  </Bumper>
+  <Bumper Position="17,22,2">
+    <South StartDelay="3" PulseRate="20" />
+  </Bumper>
+  <Bumper Position="20,25,1">
+    <South PulseRate="35" />
+  </Bumper>
+  <Bumper Position="17,25,1">
+    <South StartDelay="3" PulseRate="35" />
+  </Bumper>
+  <Bumper Position="16,22,2">
+    <South StartDelay="4" PulseRate="20" />
+  </Bumper>
+  <Bumper Position="16,1,3">
+    <South StartDelay="2" PulseRate="40" />
+  </Bumper>
+  <Bumper Position="20,22,2">
+    <South PulseRate="20" />
+  </Bumper>
+  <Bumper Position="13,1,3">
+    <South StartDelay="5" PulseRate="40" />
+  </Bumper>
+  <Bumper Position="18,25,1">
+    <South StartDelay="2" PulseRate="35" />
+  </Bumper>
+  <Bumper Position="12,1,3">
+    <South StartDelay="6" PulseRate="40" />
+  </Bumper>
+  <Bumper Position="20,19,3">
+    <South PulseRate="13" />
+  </Bumper>
+  <Bumper Position="9,1,3">
+    <South StartDelay="9" PulseRate="40" />
+  </Bumper>
+  <Bumper ID="Bumper2" AutoStart="False" Position="24,46,4">
+    <East />
+  </Bumper>
+  <Bumper Position="8,1,3">
+    <South StartDelay="10" PulseRate="40" />
+  </Bumper>
+  <Bumper Position="16,25,1">
+    <South StartDelay="4" PulseRate="35" />
+  </Bumper>
+  <Bumper Position="7,1,3">
+    <South StartDelay="11" PulseRate="40" />
+  </Bumper>
+  <Checkpoint Position="18,33,4" RespawnOffsetZ="4" />
+  <Checkpoint Position="18,30,1" RespawnOffsetZ="1" Radius="4,0" />
+  <Checkpoint Position="18,16,4" RespawnOffsetZ="4" Radius="2,0" />
+  <Checkpoint Position="18,13,1" RespawnOffsetZ="1" Radius="4,0" />
+<!--
+  <AdvancedCameraTrigger Position="25,46,4" Duration="12" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="21,43,4" Duration="12" FieldOfView="21" />
+  <AdvancedCameraTrigger Position="25,52,2" Reset="True" Duration="30" />
+  <AdvancedCameraTrigger Position="18,38,4" Duration="12" FieldOfView="21" />
+-->
+  <Prism Position="18,43,4" />
+  <Prism Position="18,34,4" />
+  <Prism Position="25,43,4" />
+  <Prism Position="18,18,4" />
+  <Prism Position="20,20,3" />
+  <Prism Position="6,4,3" />
+  <Prism Position="16,20,3" />
+  <Prism Position="18,30,1" />
+  <Button Visible="False" Mode="Toggle" Position="18,38,4" AffectBumpers="Bumper1 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="25,46,4" AffectBumpers="Bumper2 (1)" />
+  <Button Visible="False" Mode="Toggle" Position="21,43,4" AffectBumpers="Bumper3 (1)" />
+</Level>
