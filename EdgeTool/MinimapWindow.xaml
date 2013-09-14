@@ -7,9 +7,14 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Name="Picture" x:FieldModifier="private" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+        <Viewbox RenderOptions.BitmapScalingMode="NearestNeighbor">
+            <Image Name="Picture" x:FieldModifier="private" Stretch="None" MouseMove="UpdateCoordinates" />
+        </Viewbox>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="普通方块颜色越淡高度越高" VerticalAlignment="Center" />
+            <TextBlock VerticalAlignment="Center">
+                <Run Name="Coordinates" x:FieldModifier="private" Text="(0, 0)" />
+                普通方块颜色越淡高度越高
+            </TextBlock>
             <ToggleButton Name="SpawnPoint" x:FieldModifier="private" Content="起点" IsChecked="True" Foreground="Blue"
                           Checked="Redraw" Unchecked="Redraw" />
             <ToggleButton Name="ExitPoint" x:FieldModifier="private" Content="终点" IsChecked="True" Foreground="Red"

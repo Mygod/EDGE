@@ -335,12 +335,12 @@ namespace Mygod.Edge.Tool
             ModifiedFiles.Clear();
             var error = new StringBuilder();
             var conflicts = new Dictionary<string, EdgeMod>();
-            var cancelled = false;
             foreach (var file in SpecialFiles.Where(allModifiedFiles.Contains))
             {
                 allModifiedFiles.Remove(file);
                 RestoreCopy(file);
             }
+            var cancelled = false;
             foreach (var group in Mods.Where(mod => mod.Enabled).GroupBy(mod => mod.Type).OrderByDescending(group => group.Key)
                                       .Select(group => group.ToList()))
             {
@@ -364,7 +364,7 @@ namespace Mygod.Edge.Tool
                         cancelled = true;
                         break;
                     }
-                    if (result[i] < 0) error.AppendLine(String.Format("{0} 的安装链中含有环！该 Mod 将不会被安装。", group[i].ID));
+                    if (result[i] < 0) error.AppendLine(string.Format("{0} 的安装链中含有环！该 Mod 将不会被安装。", group[i].ID));
                     else group[i].Install(allModifiedFiles, error, conflicts, callback);
                 }
                 if (cancelled) break;
@@ -381,7 +381,7 @@ namespace Mygod.Edge.Tool
         public string BeginSfx()
         {
             if (sfxPath != null) return sfxPath;
-            Directory.CreateDirectory(sfxPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+            sfxPath = Helper.GetRandomDirectory();
             Compiler.Compile(false, AudioDirectory, sfxPath);
             return sfxPath;
         }

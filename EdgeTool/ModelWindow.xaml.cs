@@ -15,23 +15,25 @@ using _3DTools;
 
 namespace Mygod.Edge.Tool
 {
-    public partial class ModelWindow
+    public sealed partial class ModelWindow
     {
         public ModelWindow()
         {
             InitializeComponent();
         }
 
-        public void Draw(string path, bool debug = false)
+        public void Draw(string path, bool debug = false, Matrix3D? parentMatrix = null)
         {
             var eso = ESO.FromFile(path);
+            var matrix = GetMatrix(eso);
+            if (parentMatrix.HasValue) matrix = matrix * parentMatrix.Value;
             foreach (var model in eso.Models)
             {
                 BitmapImage image;
                 var material = new DiffuseMaterial(Brushes.White);
                 var geom = new MeshGeometry3D
                 {
-                    Positions = new Point3DCollection(model.Vertices.Select(ConvertVertex)),
+                    Positions = new Point3DCollection(model.Vertices.Select(AssetHelper.ConvertVertex)),
                     Normals = new Vector3DCollection(model.Normals.Select(ConvertNormal))
                 };
                 var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset.ToString() + ".ema"));
@@ -46,13 +48,6 @@ namespace Mygod.Edge.Tool
                 if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors)) TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
                     "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。", TaskDialogType.Warning);
                 for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
-                var matrix = new Matrix3D();
-                matrix.Scale(new Vector3D(eso.Header.Scale.X, eso.Header.Scale.Y, eso.Header.Scale.Z));
-                matrix.Scale(new Vector3D(eso.Header.ScaleXYZ, eso.Header.ScaleXYZ, eso.Header.ScaleXYZ));
-                matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
-                matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
-                matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
-                matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
                 var transform = new MatrixTransform3D(matrix);
                 Model.Children.Add(new Viewport2DVisual3D
                     { Geometry = geom, Material = material, Visual = new Image { Source = image }, Transform = transform });
@@ -62,15 +57,31 @@ namespace Mygod.Edge.Tool
                 var k = 0;
                 while (k < model.Vertices.Length)
                 {
-                    lines.Points.Add(ConvertVertex(model.Vertices[k]));
-                    lines.Points.Add(ConvertVertex(model.Vertices[k + 1]));
-                    lines.Points.Add(ConvertVertex(model.Vertices[k + 1]));
-                    lines.Points.Add(ConvertVertex(model.Vertices[k + 2]));
-                    lines.Points.Add(ConvertVertex(model.Vertices[k + 2]));
-                    lines.Points.Add(ConvertVertex(model.Vertices[k]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
+                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
                     k += 3;
                 }
             }
+            if (!eso.Header.NodeChild.IsZero())
+                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeChild.ToString() + ".eso"), debug, matrix);
+            if (!eso.Header.NodeSibling.IsZero())
+                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeSibling.ToString() + ".eso"), debug, parentMatrix);
+        }
+
+        private static Matrix3D GetMatrix(ESO eso)
+        {
+            var matrix = new Matrix3D();
+            matrix.Scale(new Vector3D(eso.Header.Scale.X, eso.Header.Scale.Y, eso.Header.Scale.Z));
+            matrix.Scale(new Vector3D(eso.Header.ScaleXYZ, eso.Header.ScaleXYZ, eso.Header.ScaleXYZ));
+            matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
+            matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
+            return matrix;
         }
 
         public void ApplyAnimation(string path, bool loop = true)
@@ -123,10 +134,6 @@ namespace Mygod.Edge.Tool
 
         private const double ToDegree = 180 / Math.PI;
 
-        private static Point3D ConvertVertex(Vec3 vec)
-        {
-            return new Point3D(vec.X, vec.Y, vec.Z);
-        }
         private static Vector3D ConvertNormal(Vec3 vec)
         {
             return new Vector3D(vec.X, vec.Y, vec.Z);

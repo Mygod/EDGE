@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 using ExcelLibrary.SpreadSheet;
 using LibTwoTribes;
@@ -111,6 +112,13 @@ namespace Mygod.Edge.Tool
                 bitmapImage.EndInit();
                 return bitmapImage;
             }
+        }
+
+        public static string GetRandomDirectory()
+        {
+            var result = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(result);
+            return result;
         }
     }
 
@@ -382,38 +390,59 @@ namespace Mygod.Edge.Tool
 
         public static ESO ParseEso(XElement element, string name, string nameSpace = "models")
         {
+            var modelsAutoNormals = element.GetAttributeValueWithDefault<bool>("AutoNormals");
             var models = new List<ESOModel>();
             foreach (var e in element.ElementsCaseInsensitive("Model"))
             {
-                var vertices =
-                    e.ElementsCaseInsensitive("Triangle").SelectMany(triangle => triangle.ElementsCaseInsensitive("Vertex")).ToArray();
+                var modelAutoNormals = e.GetAttributeValueWithDefault("AutoNormals", modelsAutoNormals);
+                var triangles = e.ElementsCaseInsensitive("Triangle").ToArray();
+                var vertexCount = triangles.Length * 3;
                 var model = new ESOModel
                 {
-                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"), Colors = new Color[vertices.Length],
-                    Normals = new Vec3[vertices.Length], TexCoords = new Vec2[vertices.Length], Vertices = new Vec3[vertices.Length],
-                    Wat = new Vec2[vertices.Length]
+                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"), Colors = new Color[vertexCount],
+                    Normals = new Vec3[vertexCount], TexCoords = new Vec2[vertexCount], Vertices = new Vec3[vertexCount],
+                    Wat = new Vec2[vertexCount]
                 };
-                for (var i = 0; i < vertices.Length; i++)
+                var j = 0;
+                foreach (var triangle in triangles)
                 {
-                    vertices[i].GetAttributeValueWithDefault(out model.Vertices[i], "Position");
-                    if (vertices[i].AttributeCaseInsensitive("Normal") != null)
+                    var autoNormals = triangle.GetAttributeValueWithDefault("AutoNormals", modelAutoNormals);
+                    var normals = new bool[3];
+                    var i = j;
+                    var vertices = triangle.ElementsCaseInsensitive("Vertex").ToArray();
+                    if (vertices.Length != 3) throw new FormatException("一个 Triangle 元素必须要有三个 Vertex 元素！");
+                    foreach (var vertex in vertices)
                     {
-                        vertices[i].GetAttributeValueWithDefault(out model.Normals[i], "Normal");
-                        model.TypeFlags |= ESOModel.Flags.Normals;
+                        vertex.GetAttributeValueWithDefault(out model.Vertices[j], "Position");
+                        if (vertex.AttributeCaseInsensitive("Normal") != null)
+                        {
+                            vertex.GetAttributeValueWithDefault(out model.Normals[j], "Normal");
+                            model.TypeFlags |= ESOModel.Flags.Normals;
+                            normals[j - i] = true;
+                        }
+                        if (vertex.AttributeCaseInsensitive("Color") != null)
+                        {
+                            model.Colors[j] = Helper.Parse(vertex.GetAttributeValueWithDefault("Color", "Transparent"));
+                            model.TypeFlags |= ESOModel.Flags.Colors;
+                        }
+                        if (vertex.AttributeCaseInsensitive("TexCoord") != null)
+                        {
+                            vertex.GetAttributeValueWithDefault(out model.TexCoords[j], "TexCoord");
+                            model.TypeFlags |= ESOModel.Flags.TexCoords;
+                        }
+                        if (vertex.AttributeCaseInsensitive("Unknown") != null)
+                        {
+                            vertex.GetAttributeValueWithDefault(out model.Wat[j], "Unknown");
+                            model.TypeFlags |= ESOModel.Flags.Wat;
+                        }
+                        j++;
                     }
-                    if (vertices[i].AttributeCaseInsensitive("Color") != null)
-                    {
-                        model.Colors[i] = Helper.Parse(vertices[i].GetAttributeValueWithDefault("Color", "Transparent"));
-                        model.TypeFlags |= ESOModel.Flags.Colors;
-                    }
-                    if (vertices[i].AttributeCaseInsensitive("TexCoord") != null)
-                    {
-                        vertices[i].GetAttributeValueWithDefault(out model.TexCoords[i], "TexCoord");
-                        model.TypeFlags |= ESOModel.Flags.TexCoords;
-                    }
-                    if (vertices[i].AttributeCaseInsensitive("Unknown") == null) continue;
-                    vertices[i].GetAttributeValueWithDefault(out model.Wat[i], "Unknown");
-                    model.TypeFlags |= ESOModel.Flags.Wat;
+                    if (!autoNormals) continue;
+                    var p0 = ConvertVertex(model.Vertices[i]);
+                    var normal = Vector3D.CrossProduct(ConvertVertex(model.Vertices[i + 2]) - p0, ConvertVertex(model.Vertices[i + 1]) - p0);
+                    var vec3 = new Vec3((float) normal.X, (float) normal.Y, (float) normal.Z);
+                    for (var k = i; k < j; k++) if (!normals[k - i]) model.Normals[k] = vec3;
+                    model.TypeFlags |= ESOModel.Flags.Normals;
                 }
                 models.Add(model);
             }
@@ -447,6 +476,10 @@ namespace Mygod.Edge.Tool
             return result;
         }
 
+        public static Point3D ConvertVertex(Vec3 vec)
+        {
+            return new Point3D(vec.X, vec.Y, vec.Z);
+        }
         private static XElement GetVertexElement(ESOModel model, int index)
         {
             var element = new XElement("Vertex");
@@ -474,16 +507,23 @@ namespace Mygod.Edge.Tool
                 switch ((Path.GetExtension(file) ?? string.Empty).ToLowerInvariant())
                 {
                     case ".bin":
-                        if (fileName.Equals("cos", StringComparison.InvariantCultureIgnoreCase))
+                        switch (fileName.ToLowerInvariant())
                         {
-                            var array = new short[181];
-                            using (var stream = File.OpenRead(file))
-                            using (var reader = new BinaryReader(stream))
-                                for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
-                            File.WriteAllText(outputPath + ".txt",
-                                              string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                            case "cos":
+                                var array = new short[181];
+                                using (var stream = File.OpenRead(file))
+                                using (var reader = new BinaryReader(stream))
+                                    for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
+                                File.WriteAllText(outputPath + ".txt",
+                                                  string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                                break;
+                            case "font":
+                                using (var stream = File.OpenRead(file)) File.WriteAllText(outputPath + ".xml", GetFontElement(stream).ToString());
+                                break;
+                            default:
+                                Level.CreateFromCompiled(file).Decompile(outputPath);
+                                break;
                         }
-                        else Level.CreateFromCompiled(file).Decompile(outputPath);
                         break;
                     case ".xml":
                         var root = XHelper.Load(file).Elements().First();
@@ -510,6 +550,11 @@ namespace Mygod.Edge.Tool
                                 Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
                                 var eso = AssetHelper.ParseEso(root, name);
                                 eso.Save(Path.Combine(directory, compiledFileName + ".eso"));
+                                break;
+                            }
+                            case "font":
+                            {
+                                using (var stream = File.Create(inputPath + ".bin")) WriteFontElement(stream, root);
                                 break;
                             }
                         }
@@ -559,7 +604,7 @@ namespace Mygod.Edge.Tool
                                 writer.Write((short) Math.Round(num * 256));
                         break;
                     default:
-                        switch (fileName)
+                        switch (Path.GetFileName(file))
                         {
                             case "audio":
                                 outputPath = Path.Combine(directory, "sfx");
@@ -581,13 +626,23 @@ namespace Mygod.Edge.Tool
                             case "sfx":
                                 outputPath = Path.Combine(directory, "audio");
                                 Directory.CreateDirectory(outputPath);
+                                var tempOutputPath = Helper.GetRandomDirectory();
+                                Directory.CreateDirectory(tempOutputPath);
                                 var projectPath = GenerateXactProject(file);
-                                var project = new CXACTMasterProject();
-                                project.Create();
-                                project.Load(projectPath, new CXACTMasterProjectCallback(), 0);
-                                project.Build(new CXACTMasterProjectCallback(), outputPath, false, false);
-                                project.Dispose();
+                                using (var project = new CXACTMasterProject())
+                                {
+                                    project.Create();
+                                    project.Load(projectPath, new CXACTMasterProjectCallback(), 0);
+                                    project.Build(new CXACTMasterProjectCallback(), tempOutputPath, false, false);
+                                }
+                                foreach (var stuff in Directory.EnumerateFiles(tempOutputPath))
+                                    File.Move(stuff, Path.Combine(outputPath, Path.GetFileName(stuff)));
                                 File.Delete(projectPath);
+                                try
+                                {
+                                    Directory.Delete(tempOutputPath, true);
+                                }
+                                catch { }   // ignore any error that may have caused
                                 break;
                             default:
                                 throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
@@ -605,6 +660,78 @@ namespace Mygod.Edge.Tool
                 Warning.Clear();
             }
         }
+
+        private static XElement GetFontElement(Stream stream)
+        {
+            var result = new XElement("Font");
+            using (var reader = new BinaryReader(stream))
+            {
+                result.SetAttributeValueWithDefault("SpaceWidth", reader.ReadByte());
+                result.SetAttributeValueWithDefault("LineSpacing", reader.ReadByte());
+                var count = reader.ReadUInt16();
+                for (var i = 0; i < count; i++)
+                {
+                    var ch = new XElement("Char");
+                    if (i < CharLookup.Length) ch.SetAttributeValue("Character", CharLookup[i]);
+                    var rects = reader.ReadByte();
+                    ch.SetAttributeValueWithDefault("Width", reader.ReadByte());
+                    for (var j = 0; j < rects; j++)
+                    {
+                        var rect = new XElement("Rect");
+                        rect.SetAttributeValue("Point", new Point2D8(reader));
+                        rect.SetAttributeValue("Size", new Point2D8(reader));
+                        ch.Add(rect);
+                    }
+                    result.Add(ch);
+                }
+            }
+            return result;
+        }
+
+        private static void WriteFontElement(Stream stream, XElement element)
+        {
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(element.GetAttributeValueWithDefault<byte>("SpaceWidth"));
+                writer.Write(element.GetAttributeValueWithDefault<byte>("LineSpacing"));
+                var chars = element.ElementsCaseInsensitive("Char").ToArray();
+                writer.Write((ushort) chars.Length);
+                var charsLookup = chars.ToLookup(e => e.GetAttributeValue("Character"));
+                for (var i = 0; i < CharLookup.Length; i++)
+                {
+                    var lookupChar = CharLookup[i].ToString(CultureInfo.InvariantCulture);
+                    if (charsLookup.Contains(lookupChar)) WriteCharElement(writer, charsLookup[lookupChar].First());
+                    else    // write an empty char here!
+                    {
+                        writer.Write((byte) 0);
+                        writer.Write((byte) 1);
+                    }
+                }
+                foreach (var pair in charsLookup)
+                {
+                    if (pair.Key != null && pair.Key.Length == 1)   // is a valid char
+                    {
+                        var i = 0;
+                        foreach (var ch in pair) if (i++ > 0 || !CharSet.Contains(pair.Key[0])) WriteCharElement(writer, ch);
+                    }
+                    else foreach (var ch in pair) WriteCharElement(writer, ch);
+                }
+            }
+        }
+        private static void WriteCharElement(BinaryWriter writer, XElement ch)
+        {
+            var rects = ch.ElementsCaseInsensitive("Rect").ToArray();
+            writer.Write((byte)rects.Length);
+            writer.Write(ch.GetAttributeValueWithDefault<byte>("Width"));
+            foreach (var rect in rects)
+            {
+                rect.GetAttributeValueWithDefault<Point2D8>("Point").Write(writer);
+                rect.GetAttributeValueWithDefault<Point2D8>("Size").Write(writer);
+            }
+        }
+
+        private static readonly string CharLookup = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%１２３４５６７８９,.?!:'()_-=+@/\"çβāäēëīíōöūü><[]ñ¡À$ÉȇÜ|şğÇĕčřýňšžŮďĎŐȁÚâćęźɫąśńżŚ";
+        private static readonly HashSet<char> CharSet = new HashSet<char>(CharLookup);
 
         #region GenerateXactProject
         private static string GenerateXactProject(string outputPath)

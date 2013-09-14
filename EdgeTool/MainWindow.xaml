@@ -217,7 +217,7 @@
                         <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
                         <Hyperlink Click="ShowCommandLineHelp">使用命令行(反)编译帮助</Hyperlink>
                         <LineBreak />
-                        支持的格式：localization 文件夹中的 text.loc 文件；levels 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；cos.bin；audio 文件夹；其对应的反编译产物。
+                        支持的格式：localization 文件夹中的 text.loc 文件；根目录及 level 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；audio 文件夹；其对应的反编译产物。
                     </TextBlock>
                     <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
                              TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />

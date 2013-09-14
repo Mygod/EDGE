@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
@@ -72,6 +73,12 @@ namespace Mygod.Edge.Tool
             encoder.Frames.Add(BitmapFrame.Create((BitmapSource)Picture.Source));
             using (var stream = new FileStream(fileSaver.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
                 encoder.Save(stream);
+        }
+
+        private void UpdateCoordinates(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition((IInputElement) sender);
+            Coordinates.Text = string.Format("({0}, {1})", Math.Floor(position.X), Math.Floor(position.Y));
         }
     }
 }
