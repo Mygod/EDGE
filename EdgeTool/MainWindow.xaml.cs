@@ -209,9 +209,9 @@ namespace Mygod.Edge.Tool
         {
             e.Handled = e.Column.Header.ToString() == "#";
             if (!e.Handled) return;
-            e.Column.SortDirection = e.Column.SortDirection != ListSortDirection.Ascending ? ListSortDirection.Ascending
-                                                                                           : ListSortDirection.Descending;
-            ((ListCollectionView)CollectionViewSource.GetDefaultView(levels)).CustomSort = new LevelSorter();
+            var descending = e.Column.SortDirection == ListSortDirection.Ascending;
+            e.Column.SortDirection = descending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            ((ListCollectionView)CollectionViewSource.GetDefaultView(levels)).CustomSort = new LevelSorter(descending);
         }
 
         private void OnGridInitialized(object sender, EventArgs e)
@@ -704,9 +704,17 @@ namespace Mygod.Edge.Tool
 
     public sealed class LevelSorter : IComparer
     {
+        public LevelSorter(bool descending)
+        {
+            this.descending = descending;
+        }
+
+        private readonly bool @descending;
+
         public int Compare(object x, object y)
         {
-            return ((Level)x).Mapping.CompareTo(((Level)y).Mapping);
+            var result = ((Level) x).Mapping.CompareTo(((Level) y).Mapping);
+            return descending ? -result : result;
         }
     }
 

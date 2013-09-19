@@ -693,8 +693,8 @@ namespace Mygod.Edge.Tool
 
         public int CompareTo(MappingLevel other)
         {
-            if (Type == 0) return other.Type == 0 ? 0 : 1;
-            if (other.Type == 0) return -1;
+            if (Type == LevelType.None) return other.Type == LevelType.None ? 0 : 1;
+            if (other.Type == LevelType.None) return -1;
             var i = Type.CompareTo(other.Type);
             return i == 0 ? Index.CompareTo(other.Index) : i;
         }

@@ -26,7 +26,7 @@ namespace Mygod.Edge.Tool
         {
             var eso = ESO.FromFile(path);
             var matrix = GetMatrix(eso);
-            if (parentMatrix.HasValue) matrix = matrix * parentMatrix.Value;
+            if (parentMatrix.HasValue) matrix *= parentMatrix.Value;
             foreach (var model in eso.Models)
             {
                 BitmapImage image;
