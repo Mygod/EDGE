@@ -656,23 +656,17 @@ namespace Mygod.Edge.Tool
         }
 
         public static ModelWindow ModelWindow;
-        private void ViewModel(bool debug = false)
+        private void ViewModel(object sender, RoutedEventArgs e)
         {
             var item = ModelTreeView.SelectedItem as TreeViewItem;
             if (item == null) return;
             var path = item.Tag.ToString();
             if (!path.EndsWith(".eso", false, CultureInfo.InvariantCulture)) return;
             if (ModelWindow == null) (ModelWindow = new ModelWindow()).Show();
-            ModelWindow.Draw(path, debug);
+            ModelWindow.DrawChildModels = DrawChildModelsBox.IsChecked == true;
+            ModelWindow.DebugMode = EnableDebugModeBox.IsChecked == true;
+            ModelWindow.Draw(path);
             ModelWindow.Activate();
-        }
-        private void ViewModel(object sender, RoutedEventArgs e)
-        {
-            ViewModel();
-        }
-        private void ViewModelDebug(object sender, RoutedEventArgs e)
-        {
-            ViewModel(true);
         }
 
         private void ViewAnimation(bool loop = true)

@@ -21,8 +21,10 @@ namespace Mygod.Edge.Tool
         {
             InitializeComponent();
         }
+        
+        public bool DrawChildModels, DebugMode;
 
-        public void Draw(string path, bool debug = false, Matrix3D? parentMatrix = null)
+        public void Draw(string path, Matrix3D? parentMatrix = null)
         {
             var eso = ESO.FromFile(path);
             var matrix = GetMatrix(eso);
@@ -34,7 +36,7 @@ namespace Mygod.Edge.Tool
                 var geom = new MeshGeometry3D
                 {
                     Positions = new Point3DCollection(model.Vertices.Select(AssetHelper.ConvertVertex)),
-                    Normals = new Vector3DCollection(model.Normals.Select(ConvertNormal))
+                    Normals = new Vector3DCollection(model.Normals.Select(AssetHelper.ConvertVector))
                 };
                 var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset.ToString() + ".ema"));
                 if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
@@ -51,7 +53,7 @@ namespace Mygod.Edge.Tool
                 var transform = new MatrixTransform3D(matrix);
                 Model.Children.Add(new Viewport2DVisual3D
                     { Geometry = geom, Material = material, Visual = new Image { Source = image }, Transform = transform });
-                if (!debug) continue;
+                if (!DebugMode) continue;
                 var lines = new ScreenSpaceLines3D { Color = Colors.Red, Transform = transform };
                 Model.Children.Add(lines);
                 var k = 0;
@@ -66,21 +68,22 @@ namespace Mygod.Edge.Tool
                     k += 3;
                 }
             }
+            if (!DrawChildModels) return;
             if (!eso.Header.NodeChild.IsZero())
-                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeChild.ToString() + ".eso"), debug, matrix);
+                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeChild.ToString() + ".eso"), matrix);
             if (!eso.Header.NodeSibling.IsZero())
-                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeSibling.ToString() + ".eso"), debug, parentMatrix);
+                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeSibling.ToString() + ".eso"), parentMatrix);
         }
 
         private static Matrix3D GetMatrix(ESO eso)
         {
             var matrix = new Matrix3D();
-            matrix.Scale(new Vector3D(eso.Header.Scale.X, eso.Header.Scale.Y, eso.Header.Scale.Z));
+            matrix.Scale(AssetHelper.ConvertVector(eso.Header.Scale));
             matrix.Scale(new Vector3D(eso.Header.ScaleXYZ, eso.Header.ScaleXYZ, eso.Header.ScaleXYZ));
             matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), eso.Header.Rotate.X * AssetHelper.ToDegree));
             matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), eso.Header.Rotate.Y * AssetHelper.ToDegree));
             matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), eso.Header.Rotate.Z * AssetHelper.ToDegree));
-            matrix.Translate(new Vector3D(eso.Header.Translate.X, eso.Header.Translate.Y, eso.Header.Translate.Z));
+            matrix.Translate(AssetHelper.ConvertVector(eso.Header.Translate));
             return matrix;
         }
 
@@ -134,10 +137,6 @@ namespace Mygod.Edge.Tool
 
         private const double ToDegree = 180 / Math.PI;
 
-        private static Vector3D ConvertNormal(Vec3 vec)
-        {
-            return new Vector3D(vec.X, vec.Y, vec.Z);
-        }
         private static Point ConvertTexCoord(Vec2 vec)
         {
             return new Point(Math.Abs(vec.X - 1) > 1e-4 ? (vec.X % 1 + 1) % 1 : 1, Math.Abs(vec.Y - 1) > 1e-4 ? (vec.Y % 1 + 1) % 1 : 1);

@@ -387,9 +387,44 @@ namespace Mygod.Edge.Tool
             }
             return result;
         }
+        
+        private static XElement GetVertexElement(ESOModel model, int index)
+        {
+            var element = new XElement("Vertex");
+            element.SetAttributeValueWithDefault("Position", model.Vertices[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals)) element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+                element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
+                element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat)) element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
+            return element;
+        }
 
         public static ESO ParseEso(XElement element, string name, string nameSpace = "models")
         {
+            var scaleXYZ = element.GetAttributeValueWithDefault<float>("ScaleXYZ", 1);
+            Vec3 translate = element.GetAttributeValueWithDefault<Vec3>("Translate"),
+                 rotate = element.GetAttributeValueWithDefault<Vec3>("Rotate") * ToRadian,
+                 scale = element.GetAttributeValueWithDefault("Scale", new Vec3(1, 1, 1));
+            var mode = element.GetAttributeValueWithDefault<ApplyTransformMode>("ApplyTransform");
+            var matrix = new Matrix3D();
+            if (mode.HasFlag(ApplyTransformMode.MultiplicationOnly) || mode.HasFlag(ApplyTransformMode.DivisionOnly))
+            {
+                matrix.Scale(ConvertVector(scale));
+                matrix.Scale(new Vector3D(scaleXYZ, scaleXYZ, scaleXYZ));
+                matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), rotate.X * ToDegree));
+                matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), rotate.Y * ToDegree));
+                matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), rotate.Z * ToDegree));
+                matrix.Translate(ConvertVector(translate));
+                if (mode.HasFlag(ApplyTransformMode.DivisionOnly)) matrix.Invert();
+            }
+            if (mode.HasFlag(ApplyTransformMode.Remove))
+            {
+                scaleXYZ = 1;
+                rotate = translate = default(Vec3);
+                scale = new Vec3(1, 1, 1);
+            }
             var modelsAutoNormals = element.GetAttributeValueWithDefault<bool>("AutoNormals");
             var models = new List<ESOModel>();
             foreach (var e in element.ElementsCaseInsensitive("Model"))
@@ -414,9 +449,11 @@ namespace Mygod.Edge.Tool
                     foreach (var vertex in vertices)
                     {
                         vertex.GetAttributeValueWithDefault(out model.Vertices[j], "Position");
+                        model.Vertices[j] = ConvertFromVertex(matrix.Transform(ConvertVertex(model.Vertices[j])));
                         if (vertex.AttributeCaseInsensitive("Normal") != null)
                         {
                             vertex.GetAttributeValueWithDefault(out model.Normals[j], "Normal");
+                            model.Normals[j] = ConvertFromVector(matrix.Transform(ConvertVector(model.Normals[j])));
                             model.TypeFlags |= ESOModel.Flags.Normals;
                             normals[j - i] = true;
                         }
@@ -456,17 +493,16 @@ namespace Mygod.Edge.Tool
                     NodeSibling = element.GetAttributeValueWithDefault<AssetHash>("NodeSibling"),
                     V07 = element.GetAttributeValueWithDefault<int>("V07"), V08 = element.GetAttributeValueWithDefault<int>("V08"),
                     V09 = element.GetAttributeValueWithDefault<int>("V09"), V21 = element.GetAttributeValueWithDefault<int>("V21"),
-                    ScaleXYZ = element.GetAttributeValueWithDefault<float>("ScaleXYZ", 1),
-                    Translate = element.GetAttributeValueWithDefault<Vec3>("Translate"),
-                    Rotate = element.GetAttributeValueWithDefault<Vec3>("Rotate") * ToRadian, NumModels = models.Count, 
-                    Scale = element.GetAttributeValueWithDefault("Scale", new Vec3(1, 1, 1)), 
+                    ScaleXYZ = scaleXYZ, Scale = scale, Translate = translate, Rotate = rotate, NumModels = models.Count, 
                     V20 = element.GetAttributeValueWithDefault<float>("V20")
                 }
             };
             if (models.Count > 0)
             {
-                result.Header.BoundingMin = element.GetAttributeValueWithDefault<Vec3>("BoundingMin");
-                result.Header.BoundingMax = element.GetAttributeValueWithDefault<Vec3>("BoundingMax");
+                result.Header.BoundingMin
+                    = ConvertFromVertex(matrix.Transform(ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMin"))));
+                result.Header.BoundingMax
+                    = ConvertFromVertex(matrix.Transform(ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMax"))));
                 result.Footer = new ESOFooter(element.GetAttributeValueWithDefault<float>("FooterV01"), 
                     element.GetAttributeValueWithDefault<float>("FooterV02"), element.GetAttributeValueWithDefault<int>("FooterV03"), 
                     element.GetAttributeValueWithDefault<int>("FooterV04"));
@@ -480,18 +516,23 @@ namespace Mygod.Edge.Tool
         {
             return new Point3D(vec.X, vec.Y, vec.Z);
         }
-        private static XElement GetVertexElement(ESOModel model, int index)
+        public static Vector3D ConvertVector(Vec3 vec)
         {
-            var element = new XElement("Vertex");
-            element.SetAttributeValueWithDefault("Position", model.Vertices[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals)) element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
-                element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
-                element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat)) element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
-            return element;
+            return new Vector3D(vec.X, vec.Y, vec.Z);
         }
+        public static Vec3 ConvertFromVertex(Point3D point)
+        {
+            return new Vec3((float) point.X, (float) point.Y, (float) point.Z);
+        }
+        public static Vec3 ConvertFromVector(Vector3D vector)
+        {
+            return new Vec3((float) vector.X, (float) vector.Y, (float) vector.Z);
+        }
+    }
+    
+    public enum ApplyTransformMode
+    {
+        Copy = 0x000, Remove = 0x001, MultiplicationOnly = 0x010, Multiplication = 0x011, DivisionOnly = 0x100, Division = 0x101
     }
 
     public static class Compiler
