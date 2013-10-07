@@ -155,7 +155,7 @@
                         <Button Margin="0,0,2,0" Content="刷新(_F)" Click="RefreshMods" />
                         <Button Margin="2,0" Content="删除当前选中的 EdgeMo_d" Click="DeleteCurrentMod" />
                         <Button Margin="2,0" Content="删除所有未启用的 Edge_Mod" Click="DeleteDisabledMods" />
-                        <Button Margin="2,0" Content="安装(_I)" Click="InstallMods" />
+                        <Button Margin="2,0" Content="应用更改(_A)" Click="InstallMods" />
                         <Button Margin="2,0,0,0" Content="临时全部卸载(_C)" Click="CleanUpInstall" />
                     </StackPanel>
                 </Grid>
