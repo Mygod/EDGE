@@ -1,4 +1,0 @@
-<Level ID="101" Name="1st contact" TimeThresholds="8,12,15,20,30" Size="7x10x1" SpawnPoint="5,8,5" ExitPoint="2,1,1" Theme="1" MusicJava="9" Zoom="1">
-  <GenerateModel />
-  <Prism Position="2,5,1" />
-</Level>
