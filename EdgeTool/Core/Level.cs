@@ -658,7 +658,7 @@ namespace Mygod.Edge.Tool
                                        new XAttribute("SpawnPoint", SpawnPoint), new XAttribute("ExitPoint", ExitPoint));
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
-            element.SetAttributeValueWithDefault("Music", Music);
+            element.SetAttributeValueWithDefault("Music", Music, 6);
             if (Zoom < 0) element.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
             else element.SetAttributeValueWithDefault("Zoom", Zoom, (short) -1);
             foreach (var e in MovingPlatforms.GetXElements()) element.Add(e);
