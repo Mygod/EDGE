@@ -422,7 +422,7 @@ namespace Mygod.Edge.Tool
 
         private void UpdateProgress(string additionalMessage)
         {
-            Dispatcher.Invoke(() => dialog.ReportProgress((int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
+            Dispatcher.Invoke(() => dialog.ReportProgress(filesCount == 0 ? 100 : (int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
         }
 
         private void CleanUpInstall(object sender, RoutedEventArgs e)

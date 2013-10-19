@@ -290,6 +290,7 @@ namespace Mygod.Edge.Tool
             LegacyMinimap = new Flat(reader, new Size2D(width, length));
             CollisionMap = new Cube(reader, Size);
             SpawnPoint = new Point3D16(reader);
+            if (SpawnPoint.Z < -20) Warning.WriteLine("Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！");
             Zoom = reader.ReadInt16();
             if (Zoom < 0)
             {
@@ -297,6 +298,7 @@ namespace Mygod.Edge.Tool
                 ValueIsAngle = reader.ReadBoolean();
             }
             ExitPoint = new Point3D16(reader);
+            if (SpawnPoint.Z < -20) Warning.WriteLine("Level 元素：@ExitPoint 的 Z 坐标小于 -20，关卡将无法过关！");
             var count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) MovingPlatforms.Add(new MovingPlatform(MovingPlatforms, reader));
             count = reader.ReadUInt16();
