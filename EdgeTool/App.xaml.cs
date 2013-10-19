@@ -12,7 +12,7 @@ using Mygod.Windows.Dialogs;
 
 namespace Mygod.Edge.Tool
 {
-    public partial class App
+    public sealed partial class App
     {
         public static readonly List<string> EdgeMods = new List<string>();
         public static string GamePath;

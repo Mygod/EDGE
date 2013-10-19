@@ -49,16 +49,15 @@ namespace Mygod.Edge.Tool
             Load(null, null);
             foreach (var edgemod in App.EdgeMods) InstallEdgeMod(edgemod);
             if (!Directory.Exists(Users.Root)) return;
-            watcher = new FileSystemWatcher(Users.Root) { IncludeSubdirectories = true };
+            var watcher = new FileSystemWatcher(Users.Root) { IncludeSubdirectories = true };
             watcher.Created += RefreshAchievements;
             watcher.Changed += RefreshAchievements;
             watcher.Deleted += RefreshAchievements;
             watcher.Renamed += RefreshAchievements;
             watcher.EnableRaisingEvents = true;
+            GC.KeepAlive(watcher);
             RefreshAchievements();
         }
-
-        private readonly FileSystemWatcher watcher;
 
         private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done", AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
 
@@ -98,7 +97,8 @@ namespace Mygod.Edge.Tool
         public static Edge Edge;
         private readonly ObservableCollection<Level> levels = new ObservableCollection<Level>();
         private Thread searcher;
-        private readonly OpenFileDialog exeSelector = new OpenFileDialog {Title = "请选择 edge.exe", Filter = "可执行文件 (*.exe)|*.exe"};
+        private readonly OpenFileDialog exeSelector = new OpenFileDialog
+            { Title = "请选择 edge.exe", Filter = "可执行文件 (*.exe)|*.exe" };
         private readonly FolderBrowserDialog outputSelector = new FolderBrowserDialog
             { Description = "请选择要保存的位置", UseDescriptionForTitle = true };
 
@@ -257,8 +257,8 @@ namespace Mygod.Edge.Tool
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null && TaskDialog.Show(this, "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion)
-                == TaskDialogSimpleResult.Yes) Users.Current.CurrentUser.SetAchieved(item, Users.Current.CurrentUser.GetAchieved(item));
+            if (item != null && TaskDialog.Show(this, "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion) ==
+                TaskDialogSimpleResult.Yes) Users.Current.CurrentUser.SetAchieved(item, !Users.Current.CurrentUser.GetAchieved(item));
         }
 
         private void RefreshAchievements(object sender = null, FileSystemEventArgs e = null)
@@ -334,9 +334,7 @@ namespace Mygod.Edge.Tool
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if (files == null) return;
-            var count = ProcessCore(files);
-            if (count > 0) TaskDialog.Show(this, "(反)编译完毕。", "共(反)编译了 " + count + " 个文件。", TaskDialogType.Information);
+            if (files != null) WarningBox.Text += string.Format("(反)编译完毕。共(反)编译了 {0} 个文件。", ProcessCore(files));
         }
 
         private int ProcessCore(IEnumerable<string> files, string directory = null)
@@ -381,15 +379,11 @@ namespace Mygod.Edge.Tool
 
         private void InstallMods(object sender, EventArgs e)
         {
-            if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Edge.GamePath))
-                       .Any(process => Edge.GamePath.Equals(process.MainModule.FileName, StringComparison.InvariantCultureIgnoreCase))
-                && TaskDialog.Show(this, "确定要应用修改吗？", "EdgeTool 机智地检测到了你的游戏正在运行，继续操作可能会发生灾难性后果。",
-                                   TaskDialogType.OKCancelQuestion, defaultButtonIndex: 2) != TaskDialogSimpleResult.Ok) return;
             if (!Settings.ModLoaded)
             {
                 Settings.ModLoaded = true;
-                TaskDialog.Show(this, "第一次安装 Mod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。",
-                                type: TaskDialogType.Information);
+                TaskDialog.Show(this, type: TaskDialogType.Information,
+                    mainInstruction: "第一次安装 Mod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。");
             }
             dialog = new ProgressDialog { Description = "开始安装中……", ShowTimeRemaining = true, 
                 Text = "安装 Mod", WindowTitle = "安装 Mod", UseCompactPathsForDescription = true };
@@ -403,11 +397,11 @@ namespace Mygod.Edge.Tool
             Dispatcher.Invoke(() =>
             {
                 if (string.IsNullOrWhiteSpace(e.Result.ToString()))
-                    TaskDialog.Show(this, "加载完毕。", type: TaskDialogType.Information);
+                    TaskDialog.Show(this, "安装完毕。", type: TaskDialogType.Information);
                 else
                 {
                     DescriptionBlock.Text = e.Result.ToString();
-                    TaskDialog.Show(this, "加载完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
+                    TaskDialog.Show(this, "安装完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
                 }
                 isDirty = false;
             });

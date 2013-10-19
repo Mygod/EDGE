@@ -77,7 +77,8 @@ namespace Mygod.Edge.Tool
 
         private static readonly Regex CompiledFileNameAnalyzer = new Regex(@"^(.+)\.([0-9A-Fa-f]{8})$", RegexOptions.Compiled);
 
-        public static void AnalyzeFileName(out string name, out string compiledFileName, string fileName, string nameSpace = "models")
+        public static void AnalyzeFileName(out string name, out string compiledFileName, string fileName,
+                                           string nameSpace = "models")
         {
             var match = CompiledFileNameAnalyzer.Match(fileName);
             if (match.Success)
@@ -196,15 +197,12 @@ namespace Mygod.Edge.Tool
                     NodeChild = element.GetAttributeValueWithDefault<AssetHash>("NodeChild"),
                     NodeSibling = element.GetAttributeValueWithDefault<AssetHash>("NodeSibling")
                 },
-                BlockRotateX = ParseKeyframeBlock(element.ElementCaseInsensitive("RotateX")),
-                BlockRotateY = ParseKeyframeBlock(element.ElementCaseInsensitive("RotateY")),
-                BlockRotateZ = ParseKeyframeBlock(element.ElementCaseInsensitive("RotateZ")),
-                BlockScaleX = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleX")),
-                BlockScaleY = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleY")),
-                BlockScaleZ = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleZ")),
-                BlockTranslateX = ParseKeyframeBlock(element.ElementCaseInsensitive("TranslateX")),
-                BlockTranslateY = ParseKeyframeBlock(element.ElementCaseInsensitive("TranslateY")),
-                BlockTranslateZ = ParseKeyframeBlock(element.ElementCaseInsensitive("TranslateZ"))
+                BlockRotateX = ParseKeyframeBlock(element, "RotateX"), BlockRotateY = ParseKeyframeBlock(element, "RotateY"),
+                BlockRotateZ = ParseKeyframeBlock(element, "RotateZ"), BlockScaleX = ParseKeyframeBlock(element, "ScaleX"),
+                BlockScaleY = ParseKeyframeBlock(element, "ScaleY"), BlockScaleZ = ParseKeyframeBlock(element, "ScaleZ"),
+                BlockTranslateX = ParseKeyframeBlock(element, "TranslateX"),
+                BlockTranslateY = ParseKeyframeBlock(element, "TranslateY"),
+                BlockTranslateZ = ParseKeyframeBlock(element, "TranslateZ")
             };
         }
 
@@ -225,13 +223,14 @@ namespace Mygod.Edge.Tool
             return result;
         }
 
-        private static KeyframeBlock ParseKeyframeBlock(XElement element)
+        private static KeyframeBlock ParseKeyframeBlock(XElement root, string name)
         {
             var result = new KeyframeBlock();
+            var isScale = name.StartsWith("Scale", true, CultureInfo.InvariantCulture);
+            var element = root.ElementCaseInsensitive(name);
             if (element != null)
             {
-                bool isScale = element.Name.LocalName.StartsWith("Scale", true, CultureInfo.InvariantCulture),
-                     isRotate = element.Name.LocalName.StartsWith("Rotate", true, CultureInfo.InvariantCulture);
+                var isRotate = name.StartsWith("Rotate", true, CultureInfo.InvariantCulture);
                 result.DefaultValue = element.GetAttributeValueWithDefault<float>("Value", isScale ? 1 : 0);
                 result.Keyframes = element.ElementsCaseInsensitive("Keyframe")
                     .Select(e => new Keyframe(e.GetAttributeValueWithDefault<float>("Time"),
@@ -240,6 +239,7 @@ namespace Mygod.Edge.Tool
                             isRotate ? (float)(e.GetAttributeValueWithDefault<double>("Delta") * Math.PI / 180)
                                 : e.GetAttributeValueWithDefault<float>("Delta"))).ToArray();
             }
+            else if (isScale) result.DefaultValue = 1;
             return result;
         }
 
@@ -317,11 +317,11 @@ namespace Mygod.Edge.Tool
                 case "animationblock":
                     blocks.Add(new EMAAnimationBlock
                     {
-                        ScaleU = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleU")),
-                        ScaleV = ParseKeyframeBlock(element.ElementCaseInsensitive("ScaleV")),
-                        Rotation = ParseKeyframeBlock(element.ElementCaseInsensitive("Rotation")),
-                        TranslationU = ParseKeyframeBlock(element.ElementCaseInsensitive("TranslationU")),
-                        TranslationV = ParseKeyframeBlock(element.ElementCaseInsensitive("TranslationV"))
+                        ScaleU = ParseKeyframeBlock(element, "ScaleU"),
+                        ScaleV = ParseKeyframeBlock(element, "ScaleV"),
+                        Rotation = ParseKeyframeBlock(element, "Rotation"),
+                        TranslationU = ParseKeyframeBlock(element, "TranslationU"),
+                        TranslationV = ParseKeyframeBlock(element, "TranslationV")
                     });
                     break;
             }

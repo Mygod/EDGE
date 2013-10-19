@@ -290,7 +290,6 @@ namespace Mygod.Edge.Tool
             LegacyMinimap = new Flat(reader, new Size2D(width, length));
             CollisionMap = new Cube(reader, Size);
             SpawnPoint = new Point3D16(reader);
-            if (SpawnPoint.Z < -20) Warning.WriteLine("Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！");
             Zoom = reader.ReadInt16();
             if (Zoom < 0)
             {
@@ -298,7 +297,6 @@ namespace Mygod.Edge.Tool
                 ValueIsAngle = reader.ReadBoolean();
             }
             ExitPoint = new Point3D16(reader);
-            if (SpawnPoint.Z < -20) Warning.WriteLine("Level 元素：@ExitPoint 的 Z 坐标小于 -20，关卡将无法过关！");
             var count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) MovingPlatforms.Add(new MovingPlatform(MovingPlatforms, reader));
             count = reader.ReadUInt16();
@@ -449,7 +447,16 @@ namespace Mygod.Edge.Tool
         public Size3D Size { get; set; }
         public ushort Temp1 { get { return (ushort) (Size.Width + Size.Length); } }
         public ushort Temp2 { get { return (ushort) (Temp1 + Size.Height + Size.Height); } }
-        public Point3D16 SpawnPoint { get; set; }
+
+        public Point3D16 SpawnPoint
+        {
+            get { return spawnPoint; }
+            set
+            {
+                spawnPoint = value;
+                if (value.Z < -20) Warning.WriteLine("Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！");
+            }
+        }
         public Point3D16 ExitPoint
         {
             get { return exitPoint; }
@@ -505,7 +512,7 @@ namespace Mygod.Edge.Tool
             }
         }
 
-        private Point3D16 exitPoint;
+        private Point3D16 spawnPoint, exitPoint;
         private short zoom, value;
         private byte theme, musicJava, music;
 
@@ -527,9 +534,9 @@ namespace Mygod.Edge.Tool
         [Obsolete]
         public XElementObjectList<MiniBlock> MiniBlocks = new XElementObjectList<MiniBlock>();
 
-        private static readonly string[] Musics = {"00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", 
-                                                   "07_Dark", "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", 
-                                                   "13_Debrief", "14_Space", "15_Voyage_geometrique", "16_Mzone", "17_R2", 
+        private static readonly string[] Musics = {"00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec",
+                                                   "06_Kakkoi", "07_Dark", "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter",
+                                                   "12_Shame", "13_Debrief", "14_Space", "15_Voyage_geometrique", "16_Mzone", "17_R2",
                                                    "18_Mystery_cube", "19_Duty", "20_PerfectCell", "21_fun", "22_lol", "23_lostway", 
                                                    "24_wall_street"},
                                          MusicsJava = { "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", 
@@ -651,7 +658,7 @@ namespace Mygod.Edge.Tool
                                        new XAttribute("SpawnPoint", SpawnPoint), new XAttribute("ExitPoint", ExitPoint));
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
-            element.SetAttributeValueWithDefault("Music", Music, 6);
+            element.SetAttributeValueWithDefault("Music", Music);
             if (Zoom < 0) element.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
             else element.SetAttributeValueWithDefault("Zoom", Zoom, (short) -1);
             foreach (var e in MovingPlatforms.GetXElements()) element.Add(e);

@@ -306,7 +306,7 @@ namespace Mygod.Edge.Tool
             return errors.ToString();
         }
 
-        private static readonly string[] SpecialFiles = new[]
+        private static readonly string[] SpecialFiles = 
             { "audio\\edge.xgs", "audio\\sfx.xsb", "audio\\sfx.xwb", "levels\\mapping.xml" };
 
         public void CreateCopy(ICollection<string> allModifiedFiles, string relativePath)
@@ -537,14 +537,11 @@ namespace Mygod.Edge.Tool
 
     public sealed class SteamOtl : IniFile
     {
-        public SteamOtl(string filePath, uint stringLong = 1024)
-            : base(filePath, stringLong)
+        public SteamOtl(string filePath, uint stringLong = 1024) : base(filePath, stringLong)
         {
-            settings = this["Settings"];
-            settingsUserNameData = new StringData(settings, "UserName");
+            settingsUserNameData = new StringData(this["Settings"], "UserName");
         }
 
-        private readonly IniSection settings;
         private readonly StringData settingsUserNameData;
 
         public string SettingsUserName { get { return settingsUserNameData.Get(); } set { settingsUserNameData.Set(value); } }

@@ -8,15 +8,11 @@ namespace Mygod.Edge.Tool
     {
         static Settings()
         {
-            SettingsFile = new IniFile("Settings.ini");
-            SettingsSection = SettingsFile["Settings"];
-            ModLoadedData = new YesNoData(SettingsSection, "ModLoaded");
-            RecentPathsData = new StringListData(SettingsFile, "RecentPaths");
-            CurrentPathData = new StringData(RecentPathsData, "Current");
+            var settingsFile = new IniFile("Settings.ini");
+            ModLoadedData = new YesNoData(settingsFile["Settings"], "ModLoaded");
+            CurrentPathData = new StringData(RecentPathsData = new StringListData(settingsFile, "RecentPaths"), "Current");
         }
 
-        private static readonly IniFile SettingsFile;
-        private static readonly IniSection SettingsSection;
         private static readonly YesNoData ModLoadedData;
         private static readonly StringListData RecentPathsData;
         private static readonly StringData CurrentPathData;
