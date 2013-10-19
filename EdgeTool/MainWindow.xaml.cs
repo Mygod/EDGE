@@ -381,15 +381,11 @@ namespace Mygod.Edge.Tool
 
         private void InstallMods(object sender, EventArgs e)
         {
-            if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Edge.GamePath))
-                       .Any(process => Edge.GamePath.Equals(process.MainModule.FileName, StringComparison.InvariantCultureIgnoreCase))
-                && TaskDialog.Show(this, "确定要应用修改吗？", "EdgeTool 机智地检测到了你的游戏正在运行，继续操作可能会发生灾难性后果。",
-                                   TaskDialogType.OKCancelQuestion, defaultButtonIndex: 2) != TaskDialogSimpleResult.Ok) return;
             if (!Settings.ModLoaded)
             {
                 Settings.ModLoaded = true;
-                TaskDialog.Show(this, "第一次安装 Mod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。",
-                                type: TaskDialogType.Information);
+                TaskDialog.Show(this, type: TaskDialogType.Information,
+                    mainInstruction: "第一次安装 Mod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。");
             }
             dialog = new ProgressDialog { Description = "开始安装中……", ShowTimeRemaining = true, 
                 Text = "安装 Mod", WindowTitle = "安装 Mod", UseCompactPathsForDescription = true };
@@ -403,11 +399,11 @@ namespace Mygod.Edge.Tool
             Dispatcher.Invoke(() =>
             {
                 if (string.IsNullOrWhiteSpace(e.Result.ToString()))
-                    TaskDialog.Show(this, "加载完毕。", type: TaskDialogType.Information);
+                    TaskDialog.Show(this, "安装完毕。", type: TaskDialogType.Information);
                 else
                 {
                     DescriptionBlock.Text = e.Result.ToString();
-                    TaskDialog.Show(this, "加载完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
+                    TaskDialog.Show(this, "安装完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
                 }
                 isDirty = false;
             });
@@ -422,7 +418,7 @@ namespace Mygod.Edge.Tool
 
         private void UpdateProgress(string additionalMessage)
         {
-            Dispatcher.Invoke(() => dialog.ReportProgress((int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
+            Dispatcher.Invoke(() => dialog.ReportProgress(filesCount == 0 ? 100 : (int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
         }
 
         private void CleanUpInstall(object sender, RoutedEventArgs e)

@@ -38,17 +38,18 @@ namespace Mygod.Edge.Tool
                     Positions = new Point3DCollection(model.Vertices.Select(AssetHelper.ConvertVertex)),
                     Normals = new Vector3DCollection(model.Normals.Select(AssetHelper.ConvertVector))
                 };
-                var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset.ToString() + ".ema"));
+                var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset + ".ema"));
                 if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
                 {
                     geom.TextureCoordinates = new PointCollection(model.TexCoords.Select(ConvertTexCoord));
-                    var etx = ETX.FromFile(Path.Combine(MainWindow.Edge.TexturesDirectory, ema.Textures[0].Asset.ToString() + ".etx"));
+                    var etx = ETX.FromFile(Path.Combine(MainWindow.Edge.TexturesDirectory, ema.Textures[0].Asset + ".etx"));
                     image = etx.GetBitmap().GetBitmapImage();
                     Viewport2DVisual3D.SetIsVisualHostMaterial(material, true);
                 }
                 else image = new BitmapImage();
-                if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors)) TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
-                    "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。", TaskDialogType.Warning);
+                if (!parentMatrix.HasValue && model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+                    TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
+                        "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。", TaskDialogType.Warning);
                 for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
                 var transform = new MatrixTransform3D(matrix);
                 Model.Children.Add(new Viewport2DVisual3D
@@ -139,7 +140,8 @@ namespace Mygod.Edge.Tool
 
         private static Point ConvertTexCoord(Vec2 vec)
         {
-            return new Point(Math.Abs(vec.X - 1) > 1e-4 ? (vec.X % 1 + 1) % 1 : 1, Math.Abs(vec.Y - 1) > 1e-4 ? (vec.Y % 1 + 1) % 1 : 1);
+            double x = Math.Abs(vec.X - 1) > 1e-4 ? vec.X % 1 : 1, y = Math.Abs(vec.Y - 1) > 1e-4 ? vec.Y % 1 : 1;
+            return new Point(x < 0 ? x + 1 : x, y < 0 ? y + 1 : y);
         }
 
         private bool dragging;
