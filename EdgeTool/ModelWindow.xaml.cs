@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -183,6 +185,23 @@ namespace Mygod.Edge.Tool
         private void ModelWindowClosed(object sender, EventArgs e)
         {
             MainWindow.ModelWindow = null;
+        }
+    }
+
+    [ValueConversion(typeof(Color), typeof(SolidColorBrush))]
+    public sealed class SolidColorBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is Color)) return null;
+            return new SolidColorBrush((Color) value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var brush = value as SolidColorBrush;
+            if (brush == null) return null;
+            return brush.Color;
         }
     }
 }

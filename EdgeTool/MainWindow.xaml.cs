@@ -334,7 +334,9 @@ namespace Mygod.Edge.Tool
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if (files != null) WarningBox.Text += string.Format("(反)编译完毕。共(反)编译了 {0} 个文件。", ProcessCore(files));
+            if (files == null) return;
+            var count = ProcessCore(files);
+            WarningBox.Text += string.Format("(反)编译完毕。共(反)编译了 {0} 个文件。", count);
         }
 
         private int ProcessCore(IEnumerable<string> files, string directory = null)
@@ -344,9 +346,9 @@ namespace Mygod.Edge.Tool
             WarningBox.Text = string.Empty;
             foreach (var file in files)
             {
-                if (file.EndsWith(".png", true, CultureInfo.InvariantCulture) && !exFormat.HasValue) exFormat = TaskDialog.Show(
-                    this, "要使用新版 .etx 格式吗？", "仅适用于 Steam 正版。（非 Demo）", TaskDialogType.YesNoQuestion)
-                    == TaskDialogSimpleResult.Yes;
+                if (file.EndsWith(".png", true, CultureInfo.InvariantCulture) && !exFormat.HasValue)
+                    exFormat = TaskDialog.Show(this, "要使用新版 .etx 格式吗？", "仅适用于 Steam 正版。（非 Demo）",
+                                               TaskDialogType.YesNoQuestion) == TaskDialogSimpleResult.Yes;
                 var result = Compiler.Compile(exFormat ?? false, file, directory);
                 if (result.Item1 == null) count++;
                 else TaskDialog.Show(this, Path.GetFileNameWithoutExtension(file) + " (反)编译失败。",

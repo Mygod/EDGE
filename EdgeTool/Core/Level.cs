@@ -652,9 +652,9 @@ namespace Mygod.Edge.Tool
         }
         public XElement GetXElement()
         {
-            var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Name", Name), new XAttribute("TimeThresholds", 
-                                       string.Format("{0},{1},{2},{3},{4}", SPlusTime, STime, ATime, BTime, CTime)), 
-                                       new XAttribute("Size", Size),
+            var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Name", Name),
+                                       new XAttribute("TimeThresholds", string.Format("{0},{1},{2},{3},{4}", SPlusTime, STime, ATime,
+                                                                                      BTime, CTime)), new XAttribute("Size", Size),
                                        new XAttribute("SpawnPoint", SpawnPoint), new XAttribute("ExitPoint", ExitPoint));
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
