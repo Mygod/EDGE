@@ -17,21 +17,6 @@
   <FallingPlatform Position="4,1,1" />
   <FallingPlatform Position="4,2,1" />
   <FallingPlatform Position="4,3,1" />
-  <Prism Position="0,1,1" />
-  <Prism Position="0,2,1" />
-  <Prism Position="0,3,1" />
-  <Prism Position="0,4,1" />
-  <Prism Position="1,4,1" />
-  <Prism Position="2,4,1" />
-  <Prism Position="2,3,1" />
-  <Prism Position="2,2,1" />
-  <Prism Position="2,1,1" />
-  <Prism Position="2,0,1" />
-  <Prism Position="3,0,1" />
-  <Prism Position="4,0,1" />
-  <Prism Position="4,1,1" />
-  <Prism Position="4,2,1" />
-  <Prism Position="4,3,1" />
   <MovingPlatform AutoStart="False" LoopStartIndex="0" FullBlock="False" ID="LevelUpper1">
     <Waypoint Position="4,4,1" />
     <Waypoint Position="4,4,13" TravelTime="10" />
@@ -63,13 +48,6 @@
   <FallingPlatform Position="8,6,11" />
   <FallingPlatform Position="8,7,11" />
   <FallingPlatform Position="8,8,11" />
-  <Prism Position="4,5,11" />
-  <Prism Position="4,6,11" />
-  <Prism Position="4,7,11" />
-  <Prism Position="4,8,11" />
-  <Prism Position="4,9,11" />
-  <Prism Position="4,10,11" />
-  <Prism Position="4,11,11" />
   <Prism Position="5,6,11" />
   <Prism Position="5,7,11" />
   <Prism Position="5,8,11" />
@@ -127,11 +105,8 @@
   <Prism Position="4,11,21" />
   <Prism Position="5,10,21" />
   <Prism Position="5,11,21" />
-  <Prism Position="5,12,21" />
-  <Prism Position="6,12,21" />
   <Prism Position="7,10,21" />
   <Prism Position="7,11,21" />
-  <Prism Position="7,12,21" />
   <Prism Position="8,10,21" />
   <Prism Position="8,11,21" />
   <Prism Position="9,10,21" />
@@ -673,7 +648,6 @@
   <Prism Position="8,11,41" />
   <Prism Position="8,12,41" />
   <Prism Position="8,13,41" />
-  <Prism Position="9,1,41" />
   <Prism Position="9,2,41" />
   <Prism Position="9,3,41" />
   <Prism Position="9,4,41" />
@@ -683,5 +657,4 @@
   <Prism Position="9,10,41" />
   <Prism Position="9,11,41" />
   <Prism Position="9,12,41" />
-  <Prism Position="10,1,41" />
 </Level>

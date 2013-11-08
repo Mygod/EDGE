@@ -10,6 +10,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using LibTwoTribes;
 using Mygod.IO;
 using Mygod.Xml.Linq;
 using SevenZip;
@@ -97,9 +98,10 @@ namespace Mygod.Edge.Tool
                 }
             }
             if (!initialized) throw new FormatException("mod.xml 未找到！");
-            if (Type != ModType.Game)
+            if (Type != EdgeModType.Game)
             {
-                if (containXml) throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 mapping.xml。请改用 mod.xml 或 mapping.xsl。");
+                if (containXml)
+                    throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 mapping.xml。请改用 mod.xml 或 mapping.xsl。");
                 if (containAudio)
                     throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 audio 文件夹以及之下的内容。请改用 sfx 文件夹。");
             }
@@ -114,8 +116,8 @@ namespace Mygod.Edge.Tool
                 Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
                 XslCracked = XslHead + xslBuilder;
             }
-            if (Xsl != null && containXml) throw new FormatException("不允许在使用 mapping.xml 的情况下再使用 mapping.xsl 和/或 mod.xml " +
-                                                                     "进行修改。请将修改合并到 mapping.xml 中。");
+            if (Xsl != null && containXml) throw new FormatException("不允许在使用 mapping.xml 的情况下再使用 mapping.xsl 和/或 " +
+                                                                     "mod.xml 进行修改。请将修改合并到 mapping.xml 中。");
         }
 
         private static void Set(out HashSet<string> set, string value)
@@ -129,7 +131,7 @@ namespace Mygod.Edge.Tool
         public readonly uint FilesCount;
         public readonly string FilePath, ID, Description;
         public readonly Version MinEngineVersion, MaxEngineVersion;
-        public readonly ModType Type;
+        public readonly EdgeModType Type;
         public readonly HashSet<string> Conflicts, Dependency, InstallAfter, InstallBefore;
         public readonly string Xsl, XslCracked;
 
@@ -144,10 +146,10 @@ namespace Mygod.Edge.Tool
             if (MinEngineVersion != null && parent.EngineVersion < MinEngineVersion
                 || MaxEngineVersion != null && parent.EngineVersion > MaxEngineVersion)
             {
-                error.AppendLine(string.Format("{0} 不支持版本为 {1} 的游戏引擎！该 mod 将不会被安装。", ID, parent.EngineVersion));
+                error.AppendLine(string.Format("{0} 不支持版本为 {1} 的游戏引擎！该 EdgeMod 将不会被安装。", ID, parent.EngineVersion));
                 return;
             }
-            if (!Dependency.IsSubsetOf(parent.Mods.Where(mod => mod.Enabled).Select(mod => mod.ID)))
+            if (!Dependency.IsSubsetOf(parent.EdgeMods.Where(edgeMod => edgeMod.Enabled).Select(edgeMod => edgeMod.ID)))
             {
                 error.AppendLine(string.Format("{0} 的依赖项没有全部被安装！", ID));
                 return;
@@ -187,7 +189,7 @@ namespace Mygod.Edge.Tool
                                     }
                                     else
                                     {
-                                        if (Type == ModType.Level && fileInfo.Exists
+                                        if (Type == EdgeModType.Level && fileInfo.Exists
                                         && !allModifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower())) throw new IOException(
                                             "不允许 Level 类的 EdgeMod 修改游戏自带的文件！请改用 Theme 或 Game 类。");
                                         if (!fileInfo.Exists || (ulong)fileInfo.Length != e.ArchiveFileInfo.Size
@@ -203,7 +205,20 @@ namespace Mygod.Edge.Tool
                                     }
                                     break;
                                 case ExtractFileCallbackReason.Done:
-                                    if (e.ExtractToFile != null) fileInfo.LastWriteTime = e.ArchiveFileInfo.LastWriteTime;
+                                    if (e.ExtractToFile != null)
+                                    {
+                                        fileInfo.LastWriteTime = e.ArchiveFileInfo.LastWriteTime;
+                                        if (!e.ExtractToFile.EndsWith(".etx", StringComparison.Ordinal)) return;
+                                        try
+                                        {
+                                            var etx = ETX.FromFile(e.ExtractToFile);
+                                            if (parent.ExFormat && etx is ETX1803)
+                                                ETX1804.CreateFromImage(etx.GetBitmap(), etx.AssetHeader).Save(e.ExtractToFile);
+                                            else if (!parent.ExFormat && etx is ETX1804)
+                                                ETX1803.CreateFromImage(etx.GetBitmap(), etx.AssetHeader).Save(e.ExtractToFile);
+                                        }
+                                        catch { }
+                                    }
                                     break;
                                 case ExtractFileCallbackReason.Failure:
                                     throw e.Exception;
@@ -243,7 +258,7 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    public enum ModType
+    public enum EdgeModType
     {
         Level, Theme, Game
     }
@@ -261,47 +276,56 @@ namespace Mygod.Edge.Tool
             LevelsDirectory = Path.Combine(GameDirectory, "levels");
             ModelsDirectory = Path.Combine(GameDirectory, "models");
             TexturesDirectory = Path.Combine(GameDirectory, "textures");
-            disabledMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledMods.txt"));
+            disabledEdgeMods = new StringSetFile(Path.Combine(ModsDirectory, "disabledEdgeMods.txt"));
             ModifiedFiles = new StringSetFile(Path.Combine(ModsDirectory, "modifiedFiles.txt"));
             if (IsCracked) SteamOtl = new SteamOtl(Path.Combine(GameDirectory, "steam_otl.ini"));
-            RefreshMods();
+            RefreshEdgeMods();
+            foreach (var file in Directory.EnumerateFiles(TexturesDirectory, "*.etx"))
+                try
+                {
+                    ExFormat = ETX.FromFile(file) is ETX1804;
+                    break;
+                }
+                catch { }
         }
 
         private static readonly Version CrackedEngineVersion = new Version(1, 0, 2483, 7086);
+        public readonly bool ExFormat;
 
-        public readonly string GamePath, GameDirectory, ModsDirectory, AudioDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
-        public readonly ObservableCollection<EdgeMod> Mods = new ObservableCollection<EdgeMod>();
-        private readonly StringSetFile disabledMods;
+        public readonly string GamePath, GameDirectory, ModsDirectory, 
+                               AudioDirectory, LevelsDirectory, ModelsDirectory, TexturesDirectory;
+        public readonly ObservableCollection<EdgeMod> EdgeMods = new ObservableCollection<EdgeMod>();
+        private readonly StringSetFile disabledEdgeMods;
         public readonly StringSetFile ModifiedFiles;
         public readonly Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
         public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
-        public EventHandler DisabledModsChanged;
+        public EventHandler DisabledEdgeModsChanged;
 
-        public bool GetIsDisabled(EdgeMod mod)
+        public bool GetIsDisabled(EdgeMod edgeMod)
         {
-            return disabledMods.Contains(mod.ID);
+            return disabledEdgeMods.Contains(edgeMod.ID);
         }
-        public void SetIsDisabled(EdgeMod mod, bool value)
+        public void SetIsDisabled(EdgeMod edgeMod, bool value)
         {
-            if (value ? !disabledMods.Add(mod.ID) : !disabledMods.Remove(mod.ID)) return;
-            if (DisabledModsChanged != null) DisabledModsChanged(this, EventArgs.Empty);
-            disabledMods.Save();
+            if (value ? !disabledEdgeMods.Add(edgeMod.ID) : !disabledEdgeMods.Remove(edgeMod.ID)) return;
+            if (DisabledEdgeModsChanged != null) DisabledEdgeModsChanged(this, EventArgs.Empty);
+            disabledEdgeMods.Save();
         }
 
-        public string RefreshMods()
+        public string RefreshEdgeMods()
         {
-            disabledMods.Refresh();
-            Mods.Clear();
+            disabledEdgeMods.Refresh();
+            EdgeMods.Clear();
             var errors = new StringBuilder();
-            foreach (var mod in Directory.EnumerateFiles(ModsDirectory, "*.edgemod"))
+            foreach (var edgeMod in Directory.EnumerateFiles(ModsDirectory, "*.edgemod"))
                 try
                 {
-                    Mods.Add(new EdgeMod(this, mod));
+                    EdgeMods.Add(new EdgeMod(this, edgeMod));
                 }
                 catch (Exception exc)
                 {
-                    errors.AppendFormat("加载 {0} 失败：{1}{2}", Path.GetFileNameWithoutExtension(mod), exc.Message, Environment.NewLine);
+                    errors.AppendFormat("加载 {0} 失败：{1}{2}", Path.GetFileNameWithoutExtension(edgeMod), exc.Message, Environment.NewLine);
                 }
             return errors.ToString();
         }
@@ -341,8 +365,8 @@ namespace Mygod.Edge.Tool
                 RestoreCopy(file);
             }
             var cancelled = false;
-            foreach (var group in Mods.Where(mod => mod.Enabled).GroupBy(mod => mod.Type).OrderByDescending(group => group.Key)
-                                      .Select(group => group.ToList()))
+            foreach (var group in EdgeMods.Where(edgeMod => edgeMod.Enabled).GroupBy(edgeMod => edgeMod.Type)
+                                          .OrderByDescending(group => group.Key).Select(group => group.ToList()))
             {
                 var sorter = new TopologicalSorter(group.Count);
                 var lookup = new Dictionary<string, int>();
@@ -364,7 +388,7 @@ namespace Mygod.Edge.Tool
                         cancelled = true;
                         break;
                     }
-                    if (result[i] < 0) error.AppendLine(string.Format("{0} 的安装链中含有环！该 Mod 将不会被安装。", group[i].ID));
+                    if (result[i] < 0) error.AppendLine(string.Format("{0} 的安装链中含有环！该 EdgeMod 将不会被安装。", group[i].ID));
                     else group[i].Install(allModifiedFiles, error, conflicts, callback);
                 }
                 if (cancelled) break;
@@ -374,6 +398,7 @@ namespace Mygod.Edge.Tool
             allModifiedFiles.ExceptWith(ModifiedFiles);
             foreach (var oldFile in allModifiedFiles) RestoreCopy(oldFile);
             ModifiedFiles.Save();
+            if (callback != null) callback("已完成。");
             return error.ToString();
         }
 

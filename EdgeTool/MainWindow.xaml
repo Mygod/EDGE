@@ -133,8 +133,8 @@
                                Text="提示：右击可强制(取消)获得成就。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。" Margin="0,5,0,0" />
                 </Grid>
             </TabItem>
-            <TabItem Header="EdgeMod 管理" AllowDrop="True" PreviewDragEnter="OnModDragEnter" PreviewDragOver="OnDragOver"
-                     PreviewDragLeave="OnDragLeave" PreviewDrop="OnModDrop" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
+            <TabItem Header="EdgeMod 管理" AllowDrop="True" PreviewDragEnter="OnEdgeModDragEnter" PreviewDragOver="OnDragOver"
+                     PreviewDragLeave="OnDragLeave" PreviewDrop="OnEdgeModDrop" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" />
@@ -143,8 +143,8 @@
                         <RowDefinition Height="5" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <m:DataGridEx x:Name="ModGrid" x:FieldModifier="private" AutoGenerateColumns="False" SelectionMode="Single"
-                                         SelectionChanged="UpdateDescription">
+                    <m:DataGridEx x:Name="EdgeModGrid" x:FieldModifier="private" AutoGenerateColumns="False" SelectionMode="Single"
+                                  SelectionChanged="UpdateDescription">
                         <m:DataGridEx.Columns>
                             <DataGridTextColumn Header="名称" Binding="{Binding Name}" IsReadOnly="True" />
                             <DataGridTextColumn Header="版本" Binding="{Binding Version}" IsReadOnly="True" />
@@ -155,10 +155,11 @@
                     <TextBox Name="DescriptionBlock" x:FieldModifier="private" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True"
                              IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto" Text="要开始，请点击这里的什么东西。如果想要安装 EdgeMod，请把要安装的 EdgeMod 拖动到游戏目录下的 mods 文件夹中后按下刷新，或更简单地，把它拖动到这里。" />
                     <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="0,0,2,0" Content="刷新(_F)" Click="RefreshMods" />
-                        <Button Margin="2,0" Content="删除当前选中的 EdgeMo_d" Click="DeleteCurrentMod" />
-                        <Button Margin="2,0" Content="删除所有未启用的 Edge_Mod" Click="DeleteDisabledMods" />
-                        <Button Margin="2,0" Content="应用更改(_A)" Click="InstallMods" />
+                        <Button Margin="0,0,2,0" Content="刷新(_F)" Click="RefreshEdgeMods" />
+                        <Button Margin="2,0" Content="删除当前选中的 EdgeMo_d" Click="DeleteCurrentEdgeMod" />
+                        <Button Margin="2,0" Content="删除所有未启用的 Edge_Mod" Click="DeleteDisabledEdgeMods" />
+                        <Button Margin="2,0" Content="应用更改(_A)" Click="InstallEdgeMods" />
+                        <Button Margin="2,0" Content="应用更改并运行游戏(_X)" Click="InstallEdgeModsAndRun" />
                         <Button Margin="2,0,0,0" Content="临时全部卸载(_C)" Click="CleanUpInstall" />
                     </StackPanel>
                 </Grid>

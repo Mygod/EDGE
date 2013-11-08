@@ -9,15 +9,15 @@ namespace Mygod.Edge.Tool
         static Settings()
         {
             var settingsFile = new IniFile("Settings.ini");
-            ModLoadedData = new YesNoData(settingsFile["Settings"], "ModLoaded");
+            EdgeModLoadedData = new YesNoData(settingsFile["Settings"], "EdgeModLoaded");
             CurrentPathData = new StringData(RecentPathsData = new StringListData(settingsFile, "RecentPaths"), "Current");
         }
 
-        private static readonly YesNoData ModLoadedData;
+        private static readonly YesNoData EdgeModLoadedData;
         private static readonly StringListData RecentPathsData;
         private static readonly StringData CurrentPathData;
 
-        public static bool ModLoaded { get { return ModLoadedData.Get(); } set { ModLoadedData.Set(value); } }
+        public static bool EdgeModLoaded { get { return EdgeModLoadedData.Get(); } set { EdgeModLoadedData.Set(value); } }
 
         public static List<string> RecentPaths { get { return RecentPathsData.Get(); } private set { RecentPathsData.Set(value); } }
         public static string CurrentPath

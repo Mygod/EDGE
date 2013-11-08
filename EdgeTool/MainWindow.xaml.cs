@@ -34,7 +34,8 @@ namespace Mygod.Edge.Tool
         public MainWindow()
         {
             notifyIcon = new NotifyIcon { Icon = CurrentApp.DrawingIcon, Visible = true, Text = "EdgeTool", 
-                ContextMenu = new ContextMenu(new[] { new MenuItem("启动游戏(&S)", RunGame), new MenuItem("安装 &Mod", InstallMods),
+                ContextMenu = new ContextMenu(new[] { new MenuItem("启动游戏(&S)", RunGame),
+                                                      new MenuItem("安装 &EdgeMod", InstallEdgeMods),
                                                       new MenuItem("关闭(&C)", (sender, e) => Close()) }) };
             notifyIcon.MouseClick += OnHideWindow;
             notifyIcon.BalloonTipClicked += OnBalloonClosed;
@@ -117,8 +118,8 @@ namespace Mygod.Edge.Tool
             try
             {
                 Edge = new Edge(GamePath.Text);
-                Edge.DisabledModsChanged += (a, b) => isDirty = true;
-                ModGrid.ItemsSource = Edge.Mods;
+                Edge.DisabledEdgeModsChanged += (a, b) => isDirty = true;
+                EdgeModGrid.ItemsSource = Edge.EdgeMods;
                 if (searcher != null) searcher.Abort();
                 try
                 {
@@ -361,57 +362,64 @@ namespace Mygod.Edge.Tool
 
         #endregion
 
-        #region Mod
+        #region EdgeMod
 
         private void UpdateDescription(object sender, SelectionChangedEventArgs e)
         {
-            var mod = ModGrid.SelectedItem as EdgeMod;
-            if (mod != null && !string.IsNullOrWhiteSpace(mod.Description)) DescriptionBlock.Text = mod.Description;
+            var edgeMod = EdgeModGrid.SelectedItem as EdgeMod;
+            if (edgeMod != null && !string.IsNullOrWhiteSpace(edgeMod.Description)) DescriptionBlock.Text = edgeMod.Description;
         }
 
-        private void RefreshMods(object sender = null, RoutedEventArgs e = null)
+        private void RefreshEdgeMods(object sender = null, RoutedEventArgs e = null)
         {
-            var result = Edge.RefreshMods();
-            if (!string.IsNullOrWhiteSpace(result)) TaskDialog.Show(this, "加载 mod 时出现了问题。", result, TaskDialogType.Error);
+            var result = Edge.RefreshEdgeMods();
+            if (!string.IsNullOrWhiteSpace(result)) TaskDialog.Show(this, "加载 EdgeMod 时出现了问题。", result, TaskDialogType.Error);
         }
 
         private ProgressDialog dialog;
         private long filesCount, currentFileIndex;
         private bool isDirty;
 
-        private void InstallMods(object sender, EventArgs e)
+        private void InstallEdgeMods(object sender, EventArgs e)
         {
-            if (!Settings.ModLoaded)
+            if (!Settings.EdgeModLoaded)
             {
-                Settings.ModLoaded = true;
+                Settings.EdgeModLoaded = true;
                 TaskDialog.Show(this, type: TaskDialogType.Information,
-                    mainInstruction: "第一次安装 Mod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。");
+                    mainInstruction: "第一次安装 EdgeMod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。");
             }
             dialog = new ProgressDialog { Description = "开始安装中……", ShowTimeRemaining = true, 
-                Text = "安装 Mod", WindowTitle = "安装 Mod", UseCompactPathsForDescription = true };
-            dialog.DoWork += InstallMods;
-            dialog.RunWorkerCompleted += InstallModsCompleted;
+                Text = "安装 EdgeMod", WindowTitle = "安装 EdgeMod", UseCompactPathsForDescription = true };
+            dialog.DoWork += InstallEdgeMods;
+            dialog.RunWorkerCompleted += InstallEdgeModsCompleted;
             dialog.ShowDialog(this);
         }
 
-        private void InstallModsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void InstallEdgeModsAndRun(object sender, EventArgs e)
+        {
+            needsRunning = true;
+            InstallEdgeMods(sender, e);
+        }
+
+        private bool needsRunning;
+
+        private void InstallEdgeModsCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                if (string.IsNullOrWhiteSpace(e.Result.ToString()))
-                    TaskDialog.Show(this, "安装完毕。", type: TaskDialogType.Information);
-                else
+                if (!string.IsNullOrWhiteSpace(e.Result.ToString()))
                 {
                     DescriptionBlock.Text = e.Result.ToString();
                     TaskDialog.Show(this, "安装完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
                 }
-                isDirty = false;
+                else if (needsRunning) RunGame(sender, e);
+                needsRunning = isDirty = false;
             });
         }
 
-        private void InstallMods(object sender, DoWorkEventArgs e)
+        private void InstallEdgeMods(object sender, DoWorkEventArgs e)
         {
-            filesCount = Edge.Mods.Where(mod => mod.Enabled).Sum(mod => mod.FilesCount);
+            filesCount = Edge.EdgeMods.Where(edgeMod => edgeMod.Enabled).Sum(edgeMod => edgeMod.FilesCount);
             currentFileIndex = 0;
             e.Result = Edge.Install(UpdateProgress, e);
         }
@@ -424,17 +432,17 @@ namespace Mygod.Edge.Tool
         private void CleanUpInstall(object sender, RoutedEventArgs e)
         {
             Edge.CleanUp();
-            TaskDialog.Show(this, "清理完毕。", "所有 Mod 已被临时卸载。想要再次安装点击安装即可。", TaskDialogType.Information);
+            TaskDialog.Show(this, "清理完毕。", "所有的 EdgeMod 已被临时卸载。想要再次安装点击安装即可。", TaskDialogType.Information);
             isDirty = true;
         }
 
-        private void OnModDragEnter(object sender, DragEventArgs e)
+        private void OnEdgeModDragEnter(object sender, DragEventArgs e)
         {
             e.Handled = true;
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
                 e.Effects = e.AllowedEffects & DragDropEffects.Copy;
-                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "安装 %1", "Mod");
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "安装 %1", "EdgeMod");
             }
             else
             {
@@ -442,7 +450,7 @@ namespace Mygod.Edge.Tool
                 DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects);
             }
         }
-        private void OnModDrop(object sender, DragEventArgs e)
+        private void OnEdgeModDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
             e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
@@ -452,7 +460,7 @@ namespace Mygod.Edge.Tool
             if (files == null) return;
             if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture)).Count(InstallEdgeMod) == 0) return;
             TaskDialog.Show(this, "安装成功。", type: TaskDialogType.Information);
-            RefreshMods();
+            RefreshEdgeMods();
         }
 
         private bool InstallEdgeMod(string file)
@@ -473,19 +481,19 @@ namespace Mygod.Edge.Tool
             return false;
         }
 
-        private void DeleteCurrentMod(object sender, RoutedEventArgs e)
+        private void DeleteCurrentEdgeMod(object sender, RoutedEventArgs e)
         {
-            var mod = ModGrid.SelectedItem as EdgeMod;
-            if (mod == null) return;
-            if (!Edge.GetIsDisabled(mod)) isDirty = true;
-            File.Delete(mod.FilePath);
-            RefreshMods();
+            var edgeMod = EdgeModGrid.SelectedItem as EdgeMod;
+            if (edgeMod == null) return;
+            if (!Edge.GetIsDisabled(edgeMod)) isDirty = true;
+            File.Delete(edgeMod.FilePath);
+            RefreshEdgeMods();
         }
 
-        private void DeleteDisabledMods(object sender, RoutedEventArgs e)
+        private void DeleteDisabledEdgeMods(object sender, RoutedEventArgs e)
         {
-            foreach (var mod in Edge.Mods.Where(mod => !mod.Enabled)) File.Delete(mod.FilePath);
-            RefreshMods();
+            foreach (var edgeMod in Edge.EdgeMods.Where(edgeMod => !edgeMod.Enabled)) File.Delete(edgeMod.FilePath);
+            RefreshEdgeMods();
         }
 
         #endregion

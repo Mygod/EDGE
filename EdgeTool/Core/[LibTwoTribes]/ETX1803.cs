@@ -37,8 +37,12 @@ namespace LibTwoTribes
         
         public static ETX1803 CreateFromImage(Bitmap bitmap, string name, string nameSpace = "textures")
         {
-            return new ETX1803 { m_Bitmap = bitmap, 
-                m_AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1803_Rush, name, nameSpace) };
+            return CreateFromImage(bitmap, new AssetHeader(AssetUtil.EngineVersion.Version1803_Rush, name, nameSpace));
+        }
+
+        public static ETX1803 CreateFromImage(Bitmap bitmap, AssetHeader header)
+        {
+            return new ETX1803 { m_Bitmap = bitmap, m_AssetHeader = header };
         }
 
         protected override void _CreateFromStream(Stream stream)
