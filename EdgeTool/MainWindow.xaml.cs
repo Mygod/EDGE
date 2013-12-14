@@ -407,13 +407,14 @@ namespace Mygod.Edge.Tool
         {
             Dispatcher.Invoke(() =>
             {
+                isDirty = false;
                 if (!string.IsNullOrWhiteSpace(e.Result.ToString()))
                 {
                     DescriptionBlock.Text = e.Result.ToString();
                     TaskDialog.Show(this, "安装完毕。", "但是出了一些问题，去看看详情吧。", TaskDialogType.Information);
                 }
                 else if (needsRunning) RunGame(sender, e);
-                needsRunning = isDirty = false;
+                needsRunning = false;
             });
         }
 

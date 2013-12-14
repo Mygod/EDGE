@@ -14,6 +14,21 @@
     <WarningLevel>4</WarningLevel>
     <ApplicationIcon>Main.ico</ApplicationIcon>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>发布\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,8 +51,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>Mygod.Edge.Tool.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -61,6 +75,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,7 +98,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="XactInterop3, Version=9.28.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\XactInterop3.dll</HintPath>
+      <HintPath>Resources\Libraries\XactInterop3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +181,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
+    <None Include="Resources\Tools\Source\easycrt.o" />
+    <None Include="Resources\Tools\Source\easycrt.pas" />
+    <None Include="Resources\Tools\Source\easycrt.ppu" />
+    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lpi" />
+    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lpr" />
+    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lps" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\EdgeBin.h" />
@@ -189,145 +215,145 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AllLevelsARank.jpg">
+    <None Include="Resources\Achievements\AllLevelsARank.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\AllLevelsSPlusRank.jpg">
+    <None Include="Resources\Achievements\AllLevelsSPlusRank.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\AllPrisms.jpg">
+    <None Include="Resources\Achievements\AllPrisms.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\AllPrismsOriginalLevels.jpg">
+    <None Include="Resources\Achievements\AllPrismsOriginalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\CubeCrushed.jpg">
+    <None Include="Resources\Achievements\CubeCrushed.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeBackpack.jpg">
+    <None Include="Resources\Achievements\EdgeTimeBackpack.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeDroppedByPlatform.jpg">
+    <None Include="Resources\Achievements\EdgeTimeDroppedByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeGrabbedByPlatform.jpg">
+    <None Include="Resources\Achievements\EdgeTimeGrabbedByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeLong.jpg">
+    <None Include="Resources\Achievements\EdgeTimeLong.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeMedium.jpg">
+    <None Include="Resources\Achievements\EdgeTimeMedium.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeMovingPlatform.jpg">
+    <None Include="Resources\Achievements\EdgeTimeMovingPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeOnAllClimbs.jpg">
+    <None Include="Resources\Achievements\EdgeTimeOnAllClimbs.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeOnBumper.jpg">
+    <None Include="Resources\Achievements\EdgeTimeOnBumper.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeOnFloor.jpg">
+    <None Include="Resources\Achievements\EdgeTimeOnFloor.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeRoundtripByPlatform.jpg">
+    <None Include="Resources\Achievements\EdgeTimeRoundtripByPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeShort.jpg">
+    <None Include="Resources\Achievements\EdgeTimeShort.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\EdgeTimeShortSmall.jpg">
+    <None Include="Resources\Achievements\EdgeTimeShortSmall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Fall.jpg">
+    <None Include="Resources\Achievements\Fall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedAllOriginalLevels.jpg">
+    <None Include="Resources\Achievements\FinishedAllOriginalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedBonusLevels.jpg">
+    <None Include="Resources\Achievements\FinishedBonusLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedExtendedLevels.jpg">
+    <None Include="Resources\Achievements\FinishedExtendedLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedLevelsStep1.jpg">
+    <None Include="Resources\Achievements\FinishedLevelsStep1.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedLevelsStep2.jpg">
+    <None Include="Resources\Achievements\FinishedLevelsStep2.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedLevelsStep3.jpg">
+    <None Include="Resources\Achievements\FinishedLevelsStep3.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedLevelWithNoPrisms.jpg">
+    <None Include="Resources\Achievements\FinishedLevelWithNoPrisms.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedLevelWithSmallCube.jpg">
+    <None Include="Resources\Achievements\FinishedLevelWithSmallCube.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FinishedNormalLevels.jpg">
+    <None Include="Resources\Achievements\FinishedNormalLevels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Chicken.jpg">
+    <None Include="Resources\Achievements\id_Chicken.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_EnemyOfMyEnemy.jpg">
+    <None Include="Resources\Achievements\id_EnemyOfMyEnemy.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Flag.jpg">
+    <None Include="Resources\Achievements\id_Flag.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_HardWired.jpg">
+    <None Include="Resources\Achievements\id_HardWired.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Hitchup.jpg">
+    <None Include="Resources\Achievements\id_Hitchup.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Invader.jpg">
+    <None Include="Resources\Achievements\id_Invader.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Jumper.jpg">
+    <None Include="Resources\Achievements\id_Jumper.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_LeapOfFaith.jpg">
+    <None Include="Resources\Achievements\id_LeapOfFaith.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Minimalist.jpg">
+    <None Include="Resources\Achievements\id_Minimalist.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Monkey.jpg">
+    <None Include="Resources\Achievements\id_Monkey.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_MythicalBird.jpg">
+    <None Include="Resources\Achievements\id_MythicalBird.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_NailedIt.jpg">
+    <None Include="Resources\Achievements\id_NailedIt.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_PerfectLanding.jpg">
+    <None Include="Resources\Achievements\id_PerfectLanding.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_QuickResponse.jpg">
+    <None Include="Resources\Achievements\id_QuickResponse.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Shuffle.jpg">
+    <None Include="Resources\Achievements\id_Shuffle.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Stubborn.jpg">
+    <None Include="Resources\Achievements\id_Stubborn.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_Subway.jpg">
+    <None Include="Resources\Achievements\id_Subway.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_TumblingTravels.jpg">
+    <None Include="Resources\Achievements\id_TumblingTravels.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\id_TurnstileJumper.jpg">
+    <None Include="Resources\Achievements\id_TurnstileJumper.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Winter.jpg">
+    <None Include="Resources\Achievements\Winter.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -337,7 +363,62 @@
     <Resource Include="Resources\Images\Help.png" />
     <Resource Include="Resources\Images\HelpUnavailable.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Tools\toMobi.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Tools\toPC.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tools\unxwb.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Libraries\7z.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Libraries\XactInterop3.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>move /y %25TargetDir%25ExcelLibrary.dll %25TargetDir%25Resources\Libraries\ExcelLibrary.dll
+move /y %25TargetDir%25ExcelLibrary.pdb %25TargetDir%25Resources\Libraries\ExcelLibrary.pdb
+move /y %25TargetDir%25MygodLibrary.dll %25TargetDir%25Resources\Libraries\MygodLibrary.dll
+move /y %25TargetDir%25MygodLibrary.pdb %25TargetDir%25Resources\Libraries\MygodLibrary.pdb
+del /f /q %25TargetDir%25MygodLibrary.xml
+move /y %25TargetDir%25SevenZipSharp.dll %25TargetDir%25Resources\Libraries\SevenZipSharp.dll
+move /y %25TargetDir%25SevenZipSharp.pdb %25TargetDir%25Resources\Libraries\SevenZipSharp.pdb
+del /f /q %25TargetDir%25SevenZipSharp.xml
+move /y %25TargetDir%25WPFToolkit.Extended.dll %25TargetDir%25Resources\Libraries\WPFToolkit.Extended.dll
+move /y %25TargetDir%25WPFToolkit.Extended.pdb %25TargetDir%25Resources\Libraries\WPFToolkit.Extended.pdb
+move /y %25TargetDir%25XactInterop3.dll %25TargetDir%25Resources\Libraries\XactInterop3.dll</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

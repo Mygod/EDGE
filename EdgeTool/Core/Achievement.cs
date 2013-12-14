@@ -162,7 +162,7 @@ namespace Mygod.Edge.Tool
         {
             get
             {
-                return new Uri(Path.Combine(CurrentApp.Directory, string.Format("Resources/{0}.jpg", ApiName)), UriKind.Absolute);
+                return new Uri(Path.Combine(CurrentApp.Directory, string.Format("Resources/Achievements/{0}.jpg", ApiName)), UriKind.Absolute);
             }
         }
         public int Points { get; private set; }

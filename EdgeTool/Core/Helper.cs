@@ -658,9 +658,10 @@ namespace Mygod.Edge.Tool
                                     stream.Position = 0x2A;
                                     using (var reader = new BinaryReader(stream)) offset = reader.ReadInt32();
                                 }
-                                var unxwb = new Process { StartInfo = new ProcessStartInfo(Path.Combine(CurrentApp.Directory, "unxwb.exe"),
+                                var unxwb = new Process { StartInfo = new ProcessStartInfo(
+                                    Path.Combine(CurrentApp.Directory, "Resources/Tools/unxwb.exe"),
                                     string.Format("-d \"{0}\" -b \"{1}\" {2} \"{3}\"", outputPath, xsb, offset, xwb))
-                                    { UseShellExecute = false, CreateNoWindow = true } };
+                                        { UseShellExecute = false, CreateNoWindow = true } };
                                 unxwb.Start();
                                 unxwb.WaitForExit();
                                 break;

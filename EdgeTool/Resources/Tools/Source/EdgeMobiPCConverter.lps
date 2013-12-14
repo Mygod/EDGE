@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EdgeMobiPCConverter"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="19" Y="2"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="5" HistoryIndex="4">
+      <Position1>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <Caret Line="30" Column="7" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <Caret Line="20" Column="20" TopLine="6"/>
+      </Position2>
+      <Position3>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <Caret Line="21" Column="3" TopLine="6"/>
+      </Position3>
+      <Position4>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <Caret Line="12" Column="36" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="EdgeMobiPCConverter.lpr"/>
+        <Caret Line="26" Column="39" TopLine="7"/>
+      </Position5>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
