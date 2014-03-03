@@ -34,13 +34,15 @@ namespace Mygod.Edge.Tool
                 for (short y = 0; y < level.Size.Length; y++) heights.Add(new Point3D16(x, y, 0), 0.5F);
             foreach (var e in element.ElementsCaseInsensitive("SetBlocks"))
             {
-                Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
+                Point3D16 min = e.GetAttributeValue<Point3D16>("Min"),
+                          max = e.GetAttributeValueWithDefault("Max", min);
                 var height = e.GetAttributeValueWithDefault("Height", -1F);
-                for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
-                {
-                    var point = new Point3D16(x, y, z);
-                    if (Math.Abs(height - 1) < 1e-4) heights.Remove(point); else heights[point] = height;
-                }
+                for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++)
+                    for (var z = min.Z; z <= max.Z; z++)
+                    {
+                        var point = new Point3D16(x, y, z);
+                        if (Math.Abs(height - 1) < 1e-4) heights.Remove(point); else heights[point] = height;
+                    }
             }
         }
 
@@ -78,8 +80,8 @@ namespace Mygod.Edge.Tool
                         texY1 = 1 - (z > 3 ? 3 : z) * 0.25F;
                         texY = texY1 - 0.25F;
                     }
-                    if (GetHeight(x, y, z1) < 1F
-                        && (Math.Abs(x - level.ExitPoint.X) > 1 || Math.Abs(y - level.ExitPoint.Y) > 1 || z1 != level.ExitPoint.Z))
+                    if (GetHeight(x, y, z1) < 1F && (Math.Abs(x - level.ExitPoint.X) > 1
+                        || Math.Abs(y - level.ExitPoint.Y) > 1 || z1 != level.ExitPoint.Z))
                     {
                         vertices.Add(Transform(new Vec3(x, z1, y)));
                         vertices.Add(Transform(new Vec3(x1, z1, y)));

@@ -21,11 +21,23 @@
     <Waypoint Position="39,78,1" TravelTime="297" />
     <Waypoint Position="39,39,1" TravelTime="297" />
     <Waypoint Position="39,27,1" TravelTime="92" />
+    <!-- Prevent the ugly bug -->
+    <Waypoint Position="39,27,-1" TravelTime="1" />
+    <Waypoint Position="39,26,-1" TravelTime="1" />
+    <Waypoint Position="38,26,-1" TravelTime="1" />
   </MovingPlatform>
-  <MovingPlatform ID="PlayerBlockN" RelatedTo="PlayerBlock" Offset="0,1,0" />
-  <MovingPlatform ID="PlayerBlockS" RelatedTo="PlayerBlock" Offset="0,-1,0" />
-  <MovingPlatform ID="PlayerBlockE" RelatedTo="PlayerBlock" Offset="1,0,0" />
-  <MovingPlatform ID="PlayerBlockW" RelatedTo="PlayerBlock" Offset="-1,0,0" />
+  <MovingPlatform ID="PlayerBlockN" RelatedTo="PlayerBlock" Offset="0,1,0">
+    <Waypoint Position="38,26,-1" TravelTime="1" />
+  </MovingPlatform>
+  <MovingPlatform ID="PlayerBlockS" RelatedTo="PlayerBlock" Offset="0,-1,0">
+    <Waypoint Position="38,26,-1" TravelTime="1" />
+  </MovingPlatform>
+  <MovingPlatform ID="PlayerBlockE" RelatedTo="PlayerBlock" Offset="1,0,0">
+    <Waypoint Position="38,26,-1" TravelTime="1" />
+  </MovingPlatform>
+  <MovingPlatform ID="PlayerBlockW" RelatedTo="PlayerBlock" Offset="-1,0,0">
+    <Waypoint Position="38,26,-1" TravelTime="1" />
+  </MovingPlatform>
   <Button Visible="False" MovingPlatformID="PlayerBlock" AffectMovingPlatforms="PlayerBlock,PlayerBlockN,PlayerBlockS,PlayerBlockE,PlayerBlockW" />
   
   <!-- Wave 1 -->

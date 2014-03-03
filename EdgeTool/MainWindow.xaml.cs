@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using LibTwoTribes;
 using LibTwoTribes.Util;
+using Mygod.Net;
 using Mygod.Windows;
 using Mygod.Windows.Dialogs;
 using ContextMenu = System.Windows.Forms.ContextMenu;
@@ -60,7 +61,9 @@ namespace Mygod.Edge.Tool
             RefreshAchievements();
         }
 
-        private const string ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done", AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
+        private const string
+            ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done",
+            AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
 
         private static void ShowInExplorer(string path)
         {
@@ -130,7 +133,8 @@ namespace Mygod.Edge.Tool
                 searcher = new Thread(Load);
                 searcher.Start();
                 User current = null;
-                if (Edge.SteamOtl != null) current = Users.Current.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
+                if (Edge.SteamOtl != null)
+                    current = Users.Current.FirstOrDefault(user => user.Name == Edge.SteamOtl.SettingsUserName);
                 else if (Users.Current.CurrentUser == null) current = Users.Current.FirstOrDefault();
                 if (current != null) Users.Current.CurrentUser = current;
                 AchievementsList.Items.Refresh();
@@ -161,28 +165,38 @@ namespace Mygod.Edge.Tool
                 }
                 catch (Exception exc)
                 {
-                    Trace.WriteLine(string.Format("{0} error: {1}", Path.GetFileNameWithoutExtension(file), exc.Message));
+                    Trace.WriteLine(string.Format("{0} error: {1}", Path.GetFileNameWithoutExtension(file),
+                                                  exc.Message));
                 }
         }
 
         private void RunGame(object sender, EventArgs e)
         {
-            if (Edge != null && (!isDirty || TaskDialog.Show(this, "确定要继续吗？", "您对要安装的 edgemod 的修改还没有应用，启动游戏后" +
-                "你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 edgemod 的修改。",
-                TaskDialogType.OKCancelQuestion, defaultButtonIndex: 2) == TaskDialogSimpleResult.Ok))
+            if (Edge != null && (!isDirty || TaskDialog.Show(this, "确定要继续吗？", "您对要安装的 edgemod 的修改还没" +
+                "有应用，启动游戏后你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 edgemod 的修" +
+                "改。", TaskDialogType.OKCancelQuestion, defaultButtonIndex: 2) == TaskDialogSimpleResult.Ok))
                 Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
         }
 
         private void OnDragOver(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true)
+                ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
             DropTargetHelper.DragOver(e.GetPosition(this), e.Effects);
         }
         private void OnDragLeave(object sender, DragEventArgs e)
         {
             e.Handled = true;
             DropTargetHelper.DragLeave(e.Data);
+        }
+
+        private void CheckForUpdates(object sender, RoutedEventArgs e)
+        {
+            WebsiteManager.CheckForUpdates(219,
+                () => TaskDialog.Show(this, "没有可用更新。", title: "检查完毕", type: TaskDialogType.Information),
+                exc => TaskDialog.Show(this, "检查更新失败。", type: TaskDialogType.Error,
+                                       expandedInfo: exc.GetMessage()));
         }
 
         #endregion
@@ -197,7 +211,8 @@ namespace Mygod.Edge.Tool
         private void Decompile(object sender, RoutedEventArgs e)
         {
             if (outputSelector.ShowDialog(this) != true) return;
-            ProcessCore(LevelList.SelectedItems.OfType<Level>().Select(level => level.FilePath), outputSelector.SelectedPath);
+            ProcessCore(LevelList.SelectedItems.OfType<Level>().Select(level => level.FilePath),
+                        outputSelector.SelectedPath);
             if (!string.IsNullOrWhiteSpace(WarningBox.Text)) Tabs.SelectedItem = CompileTab;
         }
 
@@ -212,14 +227,16 @@ namespace Mygod.Edge.Tool
             if (!e.Handled) return;
             var descending = e.Column.SortDirection == ListSortDirection.Ascending;
             e.Column.SortDirection = descending ? ListSortDirection.Descending : ListSortDirection.Ascending;
-            ((ListCollectionView)CollectionViewSource.GetDefaultView(levels)).CustomSort = new LevelSorter(descending);
+            ((ListCollectionView)CollectionViewSource.GetDefaultView(levels)).CustomSort =
+                new LevelSorter(descending);
         }
 
         private void OnGridInitialized(object sender, EventArgs e)
         {
             var column = LevelList.Columns.First();
             column.SortDirection = ListSortDirection.Ascending;
-            LevelList.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath, ListSortDirection.Ascending));
+            LevelList.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath,
+                                                                     ListSortDirection.Ascending));
         }
 
         private void DrawLevelModelTree(object sender, RoutedEventArgs e)
@@ -258,8 +275,9 @@ namespace Mygod.Edge.Tool
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null && TaskDialog.Show(this, "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion) ==
-                TaskDialogSimpleResult.Yes) Users.Current.CurrentUser.SetAchieved(item, !Users.Current.CurrentUser.GetAchieved(item));
+            if (item != null && TaskDialog.Show(this, "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion)
+                == TaskDialogSimpleResult.Yes) Users.Current.CurrentUser.SetAchieved
+                    (item, !Users.Current.CurrentUser.GetAchieved(item));
         }
 
         private void RefreshAchievements(object sender = null, FileSystemEventArgs e = null)
@@ -273,12 +291,14 @@ namespace Mygod.Edge.Tool
                 AchievementsList.Items.Refresh();
                 AchievementsTip.Visibility = Visibility.Visible;
             });
-            if (Users.Current.CurrentUser != null) foreach (var achievement in Achievements.Current)
+            if (Users.Current.CurrentUser == null) return;
+            foreach (var achievement in Achievements.Current.Where(achievement =>
+                !achievedBefore.Contains(achievement.ApiName) && Users.Current.CurrentUser.GetAchieved(achievement)))
             {
-                if (achievedBefore.Contains(achievement.ApiName) || !Users.Current.CurrentUser.GetAchieved(achievement)) continue;
                 while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
-                notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！", "恭喜你获得了一个成就！快去 EdgeTool 看看吧！"
-                    + Environment.NewLine + "说明：" + achievement.Description, ToolTipIcon.Info);
+                notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！",
+                    "恭喜你获得了一个成就！快去 EdgeTool 看看吧！" + Environment.NewLine
+                    + "说明：" + achievement.Description, ToolTipIcon.Info);
             }
         }
 
@@ -331,7 +351,8 @@ namespace Mygod.Edge.Tool
         private void OnBinaryDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true)
+                ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
@@ -353,7 +374,8 @@ namespace Mygod.Edge.Tool
                 var result = Compiler.Compile(exFormat ?? false, file, directory);
                 if (result.Item1 == null) count++;
                 else TaskDialog.Show(this, Path.GetFileNameWithoutExtension(file) + " (反)编译失败。",
-                                     string.Format("错误信息：" + Environment.NewLine + result.Item1.GetMessage()), TaskDialogType.Error);
+                                     string.Format("错误信息：" + Environment.NewLine + result.Item1.GetMessage()),
+                                     TaskDialogType.Error);
                 if (!string.IsNullOrWhiteSpace(result.Item2))
                     WarningBox.Text += string.Format("{0}{1}{2}{1}", file, Environment.NewLine, result.Item2);
             }
@@ -367,13 +389,15 @@ namespace Mygod.Edge.Tool
         private void UpdateDescription(object sender, SelectionChangedEventArgs e)
         {
             var edgeMod = EdgeModGrid.SelectedItem as EdgeMod;
-            if (edgeMod != null && !string.IsNullOrWhiteSpace(edgeMod.Description)) DescriptionBlock.Text = edgeMod.Description;
+            if (edgeMod != null && !string.IsNullOrWhiteSpace(edgeMod.Description))
+                DescriptionBlock.Text = edgeMod.Description;
         }
 
         private void RefreshEdgeMods(object sender = null, RoutedEventArgs e = null)
         {
             var result = Edge.RefreshEdgeMods();
-            if (!string.IsNullOrWhiteSpace(result)) TaskDialog.Show(this, "加载 EdgeMod 时出现了问题。", result, TaskDialogType.Error);
+            if (!string.IsNullOrWhiteSpace(result))
+                TaskDialog.Show(this, "加载 EdgeMod 时出现了问题。", result, TaskDialogType.Error);
         }
 
         private ProgressDialog dialog;
@@ -427,13 +451,15 @@ namespace Mygod.Edge.Tool
 
         private void UpdateProgress(string additionalMessage)
         {
-            Dispatcher.Invoke(() => dialog.ReportProgress(filesCount == 0 ? 100 : (int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
+            Dispatcher.Invoke(() => dialog.ReportProgress(filesCount == 0 ? 100
+                : (int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
         }
 
         private void CleanUpInstall(object sender, RoutedEventArgs e)
         {
             Edge.CleanUp();
-            TaskDialog.Show(this, "清理完毕。", "所有的 EdgeMod 已被临时卸载。想要再次安装点击安装即可。", TaskDialogType.Information);
+            TaskDialog.Show(this, "清理完毕。", "所有的 EdgeMod 已被临时卸载。想要再次安装点击安装即可。",
+                            TaskDialogType.Information);
             isDirty = true;
         }
 
@@ -454,21 +480,24 @@ namespace Mygod.Edge.Tool
         private void OnEdgeModDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true)
+                ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (files == null) return;
-            if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture)).Count(InstallEdgeMod) == 0) return;
+            if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture))
+                .Count(InstallEdgeMod) == 0) return;
             TaskDialog.Show(this, "安装成功。", type: TaskDialogType.Information);
             RefreshEdgeMods();
         }
 
         private bool InstallEdgeMod(string file)
         {
-            string id = Path.GetFileNameWithoutExtension(file), target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
-            if (File.Exists(target) && TaskDialog.Show(this, id + " 已存在。", "是否要覆盖？", TaskDialogType.YesNoQuestion)
-                != TaskDialogSimpleResult.Yes) return false;
+            string id = Path.GetFileNameWithoutExtension(file),
+                   target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
+            if (File.Exists(target) && TaskDialog.Show(this, id + " 已存在。", "是否要覆盖？",
+                TaskDialogType.YesNoQuestion) != TaskDialogSimpleResult.Yes) return false;
             try
             {
                 File.Copy(file, target, true);
@@ -596,7 +625,8 @@ namespace Mygod.Edge.Tool
 
         private void ShowFileInExplorer(object sender, RoutedEventArgs e)
         {
-            var item = (Equals(Tabs.SelectedItem, DrawModelTreeTab) ? ModelTreeView : AnimationTreeView).SelectedItem as TreeViewItem;
+            var item = (Equals(Tabs.SelectedItem, DrawModelTreeTab) ? ModelTreeView : AnimationTreeView)
+                            .SelectedItem as TreeViewItem;
             if (item != null) ShowInExplorer(item.Tag.ToString());
         }
 
@@ -618,7 +648,8 @@ namespace Mygod.Edge.Tool
         private void OnModelDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true)
+                ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
@@ -650,7 +681,8 @@ namespace Mygod.Edge.Tool
         private void OnAnimationDrop(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true) ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop, true)
+                ? e.AllowedEffects & DragDropEffects.Copy : DragDropEffects.None;
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
@@ -685,8 +717,8 @@ namespace Mygod.Edge.Tool
             var path = item.Tag.ToString();
             if (!path.EndsWith(".ean", false, CultureInfo.InvariantCulture)) return;
             if (ModelWindow == null) TaskDialog.Show(this, "对不起，没有可应用动画的模型。",
-                "动画不能离开被应用动画的模型独自存在。应用动画之前必须先在绘制模型树中将要应用动画的模型添加到模型查看器中。",
-                TaskDialogType.Error);
+                "动画不能离开被应用动画的模型独自存在。应用动画之前必须先在绘制模型树中将要应用动画的模型添加到模型查看器" +
+                "中。", TaskDialogType.Error);
             else 
             {
                 ModelWindow.ApplyAnimation(path, loop);
@@ -727,7 +759,8 @@ namespace Mygod.Edge.Tool
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var achievement = value as Achievement;
-            if (achievement == null || Users.Current.CurrentUser == null) return Application.Current.Resources["Disabled"];
+            if (achievement == null || Users.Current.CurrentUser == null)
+                return Application.Current.Resources["Disabled"];
             if (Users.Current.CurrentUser.GetAchieved(achievement)) return Application.Current.Resources["Achieved"];
             if (achievement.Help == null) return Application.Current.Resources["HelpUnavailable"];
             var result = (Image) Application.Current.Resources["Help"];
@@ -777,7 +810,8 @@ namespace Mygod.Edge.Tool
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value.ToString().GetRelativePath(MainWindow.Edge.LevelsDirectory).RemoveExtension().ToCorrectPath();
+            return value.ToString().GetRelativePath(MainWindow.Edge.LevelsDirectory)
+                        .RemoveExtension().ToCorrectPath();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

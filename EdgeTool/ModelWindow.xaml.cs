@@ -28,54 +28,65 @@ namespace Mygod.Edge.Tool
 
         public void Draw(string path, Matrix3D? parentMatrix = null)
         {
-            var eso = ESO.FromFile(path);
-            var matrix = GetMatrix(eso);
-            if (parentMatrix.HasValue) matrix *= parentMatrix.Value;
-            foreach (var model in eso.Models)
+            ESO eso;
+            do
             {
-                BitmapImage image;
-                var material = new DiffuseMaterial(Brushes.White);
-                var geom = new MeshGeometry3D
+                var matrix = GetMatrix(eso = ESO.FromFile(path));
+                if (parentMatrix.HasValue) matrix *= parentMatrix.Value;
+                foreach (var model in eso.Models)
                 {
-                    Positions = new Point3DCollection(model.Vertices.Select(AssetHelper.ConvertVertex)),
-                    Normals = new Vector3DCollection(model.Normals.Select(AssetHelper.ConvertVector))
-                };
-                var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory, model.MaterialAsset + ".ema"));
-                if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
-                {
-                    geom.TextureCoordinates = new PointCollection(model.TexCoords.Select(ConvertTexCoord));
-                    var etx = ETX.FromFile(Path.Combine(MainWindow.Edge.TexturesDirectory, ema.Textures[0].Asset + ".etx"));
-                    image = etx.GetBitmap().GetBitmapImage();
-                    Viewport2DVisual3D.SetIsVisualHostMaterial(material, true);
+                    BitmapImage image;
+                    var material = new DiffuseMaterial(Brushes.White);
+                    var geom = new MeshGeometry3D
+                    {
+                        Positions = new Point3DCollection(model.Vertices.Select(AssetHelper.ConvertVertex)),
+                        Normals = new Vector3DCollection(model.Normals.Select(AssetHelper.ConvertVector))
+                    };
+                    var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory,
+                                                        model.MaterialAsset + ".ema"));
+                    if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
+                    {
+                        geom.TextureCoordinates = new PointCollection(model.TexCoords.Select(ConvertTexCoord));
+                        var etx = ETX.FromFile(Path.Combine(MainWindow.Edge.TexturesDirectory,
+                                                            ema.Textures[0].Asset + ".etx"));
+                        image = etx.GetBitmap().GetBitmapImage();
+                        Viewport2DVisual3D.SetIsVisualHostMaterial(material, true);
+                    }
+                    else image = new BitmapImage();
+                    if (!parentMatrix.HasValue && model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+                        TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
+                            "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。",
+                            TaskDialogType.Warning);
+                    for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
+                    var transform = new MatrixTransform3D(matrix);
+                    Model.Children.Add(new Viewport2DVisual3D
+                    {
+                        Geometry = geom,
+                        Material = material,
+                        Visual = new Image { Source = image },
+                        Transform = transform
+                    });
+                    if (!DebugMode) continue;
+                    var lines = new ScreenSpaceLines3D { Color = Colors.Red, Transform = transform };
+                    Model.Children.Add(lines);
+                    var k = 0;
+                    while (k < model.Vertices.Length)
+                    {
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
+                        lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
+                        k += 3;
+                    }
                 }
-                else image = new BitmapImage();
-                if (!parentMatrix.HasValue && model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
-                    TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
-                        "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。", TaskDialogType.Warning);
-                for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
-                var transform = new MatrixTransform3D(matrix);
-                Model.Children.Add(new Viewport2DVisual3D
-                    { Geometry = geom, Material = material, Visual = new Image { Source = image }, Transform = transform });
-                if (!DebugMode) continue;
-                var lines = new ScreenSpaceLines3D { Color = Colors.Red, Transform = transform };
-                Model.Children.Add(lines);
-                var k = 0;
-                while (k < model.Vertices.Length)
-                {
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 2]));
-                    lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
-                    k += 3;
-                }
+                if (!DrawChildModels) return;
+                if (!eso.Header.NodeChild.IsZero())
+                    Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeChild + ".eso"), matrix);
+                path = Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeSibling + ".eso");
             }
-            if (!DrawChildModels) return;
-            if (!eso.Header.NodeChild.IsZero())
-                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeChild.ToString() + ".eso"), matrix);
-            if (!eso.Header.NodeSibling.IsZero())
-                Draw(Path.Combine(Path.GetDirectoryName(path), eso.Header.NodeSibling.ToString() + ".eso"), parentMatrix);
+            while (!eso.Header.NodeSibling.IsZero());
         }
 
         private static Matrix3D GetMatrix(ESO eso)
@@ -97,13 +108,14 @@ namespace Mygod.Edge.Tool
             AxisAngleRotation3D x, y, z;
             transforms.Children.Add(new ScaleTransform3D(ean.BlockScaleX.DefaultValue, ean.BlockScaleY.DefaultValue,
                                                          ean.BlockScaleZ.DefaultValue));
-            transforms.Children.Add(new RotateTransform3D(z = new AxisAngleRotation3D(new Vector3D(0, 0, 1),
-                                                                                      ean.BlockRotateZ.DefaultValue * ToDegree)));
-            transforms.Children.Add(new RotateTransform3D(y = new AxisAngleRotation3D(new Vector3D(0, 1, 0),
-                                                                                      ean.BlockRotateY.DefaultValue * ToDegree)));
-            transforms.Children.Add(new RotateTransform3D(x = new AxisAngleRotation3D(new Vector3D(1, 0, 0),
-                                                                                      ean.BlockRotateX.DefaultValue * ToDegree)));
-            transforms.Children.Add(new TranslateTransform3D(ean.BlockTranslateX.DefaultValue, ean.BlockTranslateY.DefaultValue,
+            transforms.Children.Add(new RotateTransform3D(
+                z = new AxisAngleRotation3D(new Vector3D(0, 0, 1), ean.BlockRotateZ.DefaultValue * ToDegree)));
+            transforms.Children.Add(new RotateTransform3D(
+                y = new AxisAngleRotation3D(new Vector3D(0, 1, 0), ean.BlockRotateY.DefaultValue * ToDegree)));
+            transforms.Children.Add(new RotateTransform3D(
+                x = new AxisAngleRotation3D(new Vector3D(1, 0, 0), ean.BlockRotateX.DefaultValue * ToDegree)));
+            transforms.Children.Add(new TranslateTransform3D(ean.BlockTranslateX.DefaultValue,
+                                                             ean.BlockTranslateY.DefaultValue,
                                                              ean.BlockTranslateZ.DefaultValue));
             foreach (var child in Model.Children) child.Transform = transforms;
             var repeatBehavior = loop ? RepeatBehavior.Forever : new RepeatBehavior(1);
@@ -120,21 +132,21 @@ namespace Mygod.Edge.Tool
             x.BeginAnimation(AxisAngleRotation3D.AngleProperty,
                              GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockRotateX, ToDegree));
             transforms.Children[4].BeginAnimation(TranslateTransform3D.OffsetZProperty,
-                                                  GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateZ));
+                GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateZ));
             transforms.Children[4].BeginAnimation(TranslateTransform3D.OffsetYProperty,
-                                                  GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateY));
+                GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateY));
             transforms.Children[4].BeginAnimation(TranslateTransform3D.OffsetXProperty,
-                                                  GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateX));
+                GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateX));
         }
 
-        private static DoubleAnimationUsingKeyFrames GetAnimation(RepeatBehavior repeatBehavior, float duration, KeyframeBlock block,
-                                                                  double k = 1)
+        private static DoubleAnimationUsingKeyFrames GetAnimation(RepeatBehavior repeatBehavior, float duration,
+                                                                  KeyframeBlock block, double k = 1)
         {
             var animation = new DoubleAnimationUsingKeyFrames
                 { RepeatBehavior = repeatBehavior, Duration = new Duration(TimeSpan.FromSeconds(duration / 30.0)) };
             animation.KeyFrames.Add(new DiscreteDoubleKeyFrame(block.DefaultValue * k, TimeSpan.Zero));
-            foreach (var keyframe in block.Keyframes)
-                animation.KeyFrames.Add(new LinearDoubleKeyFrame(keyframe.Value * k, TimeSpan.FromSeconds(keyframe.Time / 30.0)));
+            foreach (var keyframe in block.Keyframes) animation.KeyFrames.Add(
+                new LinearDoubleKeyFrame(keyframe.Value * k, TimeSpan.FromSeconds(keyframe.Time / 30.0)));
             return animation;
         }
 
@@ -164,7 +176,8 @@ namespace Mygod.Edge.Tool
             var position = e.GetPosition(Grid);
             double deltaX = mouseDown.X - position.X, deltaY = mouseDown.Y - position.Y;
             if (e.LeftButton == MouseButtonState.Pressed)
-                Camera.Position = new Point3D(mouseDownPosition.X + (deltaX + deltaY) * Camera.FieldOfView / 450, mouseDownPosition.Y,
+                Camera.Position = new Point3D(mouseDownPosition.X + (deltaX + deltaY) * Camera.FieldOfView / 450,
+                                              mouseDownPosition.Y,
                                               mouseDownPosition.Z + (deltaY - deltaX) * Camera.FieldOfView / 450);
             else if (e.RightButton == MouseButtonState.Pressed) Camera.Position =
                 new Point3D(mouseDownPosition.X, mouseDownPosition.Y - deltaY * Camera.FieldOfView / 450, mouseDownPosition.Z);

@@ -39,8 +39,8 @@ namespace Mygod.Edge.Tool
                 array[pos + 3] = 255;
                 pos += 4;
             }
-            foreach (var resizer in level.Resizers)
-                SetColor(array, resizer.Position, resizer.Direction == ResizeDirection.Grow ? ResizerGrow : ResizerShrink);
+            foreach (var resizer in level.Resizers) SetColor(array, resizer.Position,
+                resizer.Direction == ResizeDirection.Grow ? ResizerGrow : ResizerShrink);
             foreach (var bumper in level.Bumpers) SetColor(array, bumper.Position, Bumper);
             foreach (var platform in level.FallingPlatforms) SetColor(array, platform.Position, FallingPlatform);
             foreach (var prism in level.Prisms) SetColor(array, prism.Position, Prism);
@@ -63,7 +63,8 @@ namespace Mygod.Edge.Tool
 
         private readonly Level level;
 
-        private readonly SaveFileDialog fileSaver = new SaveFileDialog {Title = "保存小地图", Filter = "PNG 文件 (*.png)|*.png"};
+        private readonly SaveFileDialog fileSaver = new SaveFileDialog
+            { Title = "保存小地图", Filter = "PNG 文件 (*.png)|*.png" };
 
         private void Save(object sender, RoutedEventArgs e)
         {

@@ -163,7 +163,11 @@ namespace Mygod.Edge.Tool
             else Index = reference.Index;
         }
 
-        public string Name { get { return Index.ToString(CultureInfo.InvariantCulture); } set { Index = short.Parse(value); } }
+        public string Name
+        {
+            get { return Index.ToString(CultureInfo.InvariantCulture); }
+            set { Index = short.Parse(value); }
+        }
         public short Index { get; set; }
     }
     public sealed class IDReference : IIDReference
@@ -274,18 +278,24 @@ namespace Mygod.Edge.Tool
             #region Boring verifying
             var temp = reader.ReadUInt16();
             if (Temp1 != temp)
-                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_1 数值错误！将被自动纠正：{0} => {1}", temp, Temp1));
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_1 数值错误！将被自动纠正：{0} => {1}",
+                                                temp, Temp1));
             temp = reader.ReadUInt16();
             if (Temp2 != temp)
-                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_2 数值错误！将被自动纠正：{0} => {1}", temp, Temp2));
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_2 数值错误！将被自动纠正：{0} => {1}",
+                                                temp, Temp2));
             ushort width = reader.ReadUInt16(), length = reader.ReadUInt16();
             var tempByte = reader.ReadByte();
-            if (tempByte != 10) Warning.WriteLine(string.Format("Level 元素：unknown_byte_1 数值错误！将被自动纠正：{0} => 10", tempByte));
+            if (tempByte != 10)
+                Warning.WriteLine(string.Format("Level 元素：unknown_byte_1 数值错误！将被自动纠正：{0} => 10",
+                                                tempByte));
             temp = reader.ReadUInt16();
             if (Size.Length - 1 != temp)
-                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_5 数值错误！将被自动纠正：{0} => {1}", temp, Size.Length - 1));
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_5 数值错误！将被自动纠正：{0} => {1}",
+                                                temp, Size.Length - 1));
             temp = reader.ReadUInt16();
-            if (0 != temp) Warning.WriteLine(string.Format("Level 元素：unknown_ushort_6 数值错误！将被自动纠正：{0} => 0", temp));
+            if (0 != temp)
+                Warning.WriteLine(string.Format("Level 元素：unknown_ushort_6 数值错误！将被自动纠正：{0} => 0", temp));
             #endregion
             LegacyMinimap = new Flat(reader, new Size2D(width, length));
             CollisionMap = new Cube(reader, Size);
@@ -310,7 +320,8 @@ namespace Mygod.Edge.Tool
             count = reader.ReadUInt16();
             for (var i = 0; i < count; i++) Prisms.Add(new Prism(reader));
             if (count != prismsCount)
-                Warning.WriteLine(string.Format("Level 元素：prisms_count 数值错误！将被自动纠正：{0} => {1}", prismsCount, count));
+                Warning.WriteLine(string.Format("Level 元素：prisms_count 数值错误！将被自动纠正：{0} => {1}",
+                                                prismsCount, count));
             if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("Fan 元素：已过时，请勿使用。");
             for (var i = 0; i < count; i++) Fans.Add(new Fan(reader));
             Buttons = new Buttons(this, reader);
@@ -364,8 +375,8 @@ namespace Mygod.Edge.Tool
             else if (element.AttributeCaseInsensitive("FieldOfView") != null)
                 Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
             else advanced = false;
-            if (Zoom > 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被忽略。" +
-                                                        "要启用请将 @Zoom 删去或设为负值。");
+            if (Zoom > 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被" +
+                                                        "忽略。要启用请将 @Zoom 删去或设为负值。");
             Buttons = new Buttons(this);
             foreach (var e in element.Elements())
                 switch (e.Name.LocalName.ToLower())
@@ -454,7 +465,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 spawnPoint = value;
-                if (value.Z < -20) Warning.WriteLine("Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！");
+                if (value.Z < -20)
+                    Warning.WriteLine("Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！");
             }
         }
         public Point3D16 ExitPoint
@@ -463,7 +475,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 exitPoint = value;
-                if (!Size.IsCubeInArea(value)) Warning.WriteLine("Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！");
+                if (!Size.IsCubeInArea(value))
+                    Warning.WriteLine("Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！");
             }
         }
         public short Zoom
@@ -472,7 +485,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 zoom = value;
-                if (value == 0 || value > 5) Warning.WriteLine("Level 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
+                if (value == 0 || value > 5)
+                    Warning.WriteLine("Level 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
             }
         }
         public short Value
@@ -481,7 +495,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 this.value = value;
-                if (value > 184) Warning.WriteLine("Level 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
+                if (value > 184)
+                    Warning.WriteLine("Level 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
             }
         }
         public byte Theme
@@ -534,17 +549,25 @@ namespace Mygod.Edge.Tool
         [Obsolete]
         public XElementObjectList<MiniBlock> MiniBlocks = new XElementObjectList<MiniBlock>();
 
-        private static readonly string[] Musics = {"00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec",
-                                                   "06_Kakkoi", "07_Dark", "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter",
-                                                   "12_Shame", "13_Debrief", "14_Space", "15_Voyage_geometrique", "16_Mzone", "17_R2",
-                                                   "18_Mystery_cube", "19_Duty", "20_PerfectCell", "21_fun", "22_lol", "23_lostway", 
-                                                   "24_wall_street"},
-                                         MusicsJava = { "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", 
-                                                        "05_test", "06_mysterycube", "07_03_EDGE", "08_jungle", "09_RetardTonic", 
-                                                        "10_oldschool_simon", "11_planant" };
+        private static readonly string[]
+            Musics =
+            {
+                "00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", "07_Dark",
+                "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", "13_Debrief", "14_Space",
+                "15_Voyage_geometrique", "16_Mzone", "17_R2", "18_Mystery_cube", "19_Duty", "20_PerfectCell",
+                "21_fun", "22_lol", "23_lostway",  "24_wall_street"
+            },
+            MusicsJava =
+            {
+                "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", "05_test",
+                "06_mysterycube", "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
+            };
 
         public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
-        public string MusicJavaName { get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; } }
+        public string MusicJavaName
+        {
+            get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; }
+        }
 
         public void Compile(string path)
         {
@@ -559,7 +582,8 @@ namespace Mygod.Edge.Tool
                     blocks.Add(new Point3D16(x, y, 0), false);
                 foreach (var e in StaticMovingPlatforms.ElementsCaseInsensitive("SetBlocks"))
                 {
-                    Point3D16 min = e.GetAttributeValue<Point3D16>("Min"), max = e.GetAttributeValueWithDefault("Max", min);
+                    Point3D16 min = e.GetAttributeValue<Point3D16>("Min"),
+                              max = e.GetAttributeValueWithDefault("Max", min);
                     bool? type;
                     switch (e.GetAttributeValue("Type").ToLowerInvariant())
                     {
@@ -568,12 +592,13 @@ namespace Mygod.Edge.Tool
                         default: type = null; break;
                     }
                     var glowing = e.GetAttributeValueWithDefault<bool>("Glowing");
-                    for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++) for (var z = min.Z; z <= max.Z; z++)
-                    {
-                        var point = new Point3D16(x, y, z);
-                        if (type.HasValue) blocks[point] = type.Value; else blocks.Remove(point);
-                        if (glowing) glowingBlocks.Add(point);
-                    }
+                    for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++)
+                        for (var z = min.Z; z <= max.Z; z++)
+                        {
+                            var point = new Point3D16(x, y, z);
+                            if (type.HasValue) blocks[point] = type.Value; else blocks.Remove(point);
+                            if (glowing) glowingBlocks.Add(point);
+                        }
                 }
                 level = (Level)MemberwiseClone();
                 level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
@@ -653,9 +678,10 @@ namespace Mygod.Edge.Tool
         public XElement GetXElement()
         {
             var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Name", Name),
-                                       new XAttribute("TimeThresholds", string.Format("{0},{1},{2},{3},{4}", SPlusTime, STime, ATime,
-                                                                                      BTime, CTime)), new XAttribute("Size", Size),
-                                       new XAttribute("SpawnPoint", SpawnPoint), new XAttribute("ExitPoint", ExitPoint));
+                                       new XAttribute("TimeThresholds", string.Format("{0},{1},{2},{3},{4}",
+                                           SPlusTime, STime, ATime, BTime, CTime)), new XAttribute("Size", Size),
+                                       new XAttribute("SpawnPoint", SpawnPoint),
+                                       new XAttribute("ExitPoint", ExitPoint));
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
             element.SetAttributeValueWithDefault("Music", Music, 6);
@@ -691,8 +717,9 @@ namespace Mygod.Edge.Tool
             LeaderboardID = leaderboardID;
             NameSfx = nameSfx;
         }
-        public MappingLevel(LevelType type, int index, XElement element) : this(type, index, element.GetAttributeValue("filename"),
-            element.GetAttributeValueWithDefault<int>("leaderboard_id"), element.GetAttributeValue("name_sfx"))
+        public MappingLevel(LevelType type, int index, XElement element)
+            : this(type, index, element.GetAttributeValue("filename"),
+                   element.GetAttributeValueWithDefault<int>("leaderboard_id"), element.GetAttributeValue("name_sfx"))
         {
         }
 
@@ -734,7 +761,8 @@ namespace Mygod.Edge.Tool
         public MappingLevels()
         {
         }
-        public MappingLevels(string levelsDir) : this(XHelper.Load(Path.Combine(levelsDir, "mapping.xml")).Root, levelsDir)
+        public MappingLevels(string levelsDir)
+            : this(XHelper.Load(Path.Combine(levelsDir, "mapping.xml")).Root, levelsDir)
         {
         }
         public MappingLevels(XContainer container, string levelsDir = null)
@@ -816,8 +844,8 @@ namespace Mygod.Edge.Tool
         {
             var numbers = str.Trim('(', ')').Split(',');
             byte x, y;
-            if (numbers.Length != 2 || !byte.TryParse(numbers[0].Trim(), out x) || !byte.TryParse(numbers[1].Trim(), out y))
-                throw new FormatException("无法识别的坐标！");
+            if (numbers.Length != 2 || !byte.TryParse(numbers[0].Trim(), out x)
+                || !byte.TryParse(numbers[1].Trim(), out y)) throw new FormatException("无法识别的坐标！");
             return new Point2D8(x, y);
         }
     }
@@ -970,8 +998,9 @@ namespace Mygod.Edge.Tool
             var numbers = str.Split('x');
             ushort width, length;
             byte height;
-            if (numbers.Length != 3 || !ushort.TryParse(numbers[0].Trim(), out width) || !ushort.TryParse(numbers[1].Trim(), out length)
-                || !byte.TryParse(numbers[2].Trim(), out height)) throw new FormatException("无法识别的关卡大小！");
+            if (numbers.Length != 3 || !ushort.TryParse(numbers[0].Trim(), out width)
+                || !ushort.TryParse(numbers[1].Trim(), out length) || !byte.TryParse(numbers[2].Trim(), out height))
+                throw new FormatException("无法识别的关卡大小！");
             return new Size3D(height, width, length);
         }
 
@@ -1046,7 +1075,8 @@ namespace Mygod.Edge.Tool
             Width = width;
             data = array == null ? new BitArray(GetBytes(width, length) << 3) : new BitArray(array);
         }
-        public Flat(BinaryReader reader, Size2D size) : this(size.Width, size.Length, reader.ReadBytes(size.FlatBytes))
+        public Flat(BinaryReader reader, Size2D size)
+            : this(size.Width, size.Length, reader.ReadBytes(size.FlatBytes))
         {
         }
         public Flat(string path, Size2D size) : this(size.Width, size.Length)
@@ -1202,7 +1232,6 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out Clones, "Clones", (short)-1);
                 if (Clones != -1) Warning.WriteLine("MovingPlatform 元素：@Clones 已过时，请勿使用。");
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", true);
-                foreach (var e in element.ElementsCaseInsensitive("Waypoint")) Waypoints.Add(new Waypoint(e));
             }
             else
             {
@@ -1214,8 +1243,12 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out FullBlock, "FullBlock", relative.FullBlock);
                 var offset = element.GetAttributeValueWithDefault<Point3D16>("Offset");
                 foreach (var waypoint in relative.Waypoints) Waypoints.Add(new Waypoint
-                    { Position = waypoint.Position + offset, PauseTime = waypoint.PauseTime, TravelTime = waypoint.TravelTime });
+                {
+                    Position = waypoint.Position + offset, PauseTime = waypoint.PauseTime,
+                    TravelTime = waypoint.TravelTime
+                });
             }
+            foreach (var e in element.ElementsCaseInsensitive("Waypoint")) Waypoints.Add(new Waypoint(e));
         }
 
         private readonly MovingPlatforms parent;
@@ -1440,14 +1473,16 @@ namespace Mygod.Edge.Tool
             set
             {
                 position = value;
-                if (value.Equals(parent.ExitPoint)) Warning.WriteLine("FallingPlatform 元素：@Position 与 /Level/@ExitPoint 相同！" +
-                                                                      "终点将被腐蚀，关卡将无法过关！");
-                if (parent.CollisionMap[value]) Warning.WriteLine("FallingPlatform 元素：" + value + " 处已经有静态方块！" +
-                                                                  "该静态方块将被腐蚀。");
+                if (value.Equals(parent.ExitPoint))
+                    Warning.WriteLine("FallingPlatform 元素：@Position 与 /Level/@ExitPoint 相同！终点将被腐蚀，" +
+                                      "关卡将无法过关！");
+                if (parent.CollisionMap[value])
+                    Warning.WriteLine("FallingPlatform 元素：" + value + " 处已经有静态方块！该静态方块将被腐蚀。");
                 if (value.Z <= 0) Warning.WriteLine("FallingPlatform 元素：Z 坐标小于等于 0！" +
                                                     "玩家方块在此可掉落平台上将无法向上翻滚/EDGE！");
-                else if (value.Z <= parent.Size.Height && (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
-                                                        || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length))
+                else if (value.Z <= parent.Size.Height
+                    && (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
+                        || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length))
                     Warning.WriteLine("FallingPlatform 元素：将可掉落平台放在 " + value + " 将使其可见但可被穿透！" +
                                       "请移动该平台位置或扩大关卡大小。");
             }
@@ -1541,7 +1576,8 @@ namespace Mygod.Edge.Tool
             {
                 Value = element.GetAttributeValueWithDefault<short>("Angle");
                 if (element.AttributeCaseInsensitive("FieldOfView") != null)
-                    Warning.WriteLine("CameraTrigger 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。");
+                    Warning.WriteLine("CameraTrigger 元素：@Angle 与 @FieldOfView 被同时设置！" +
+                                      "@FieldOfView 将会被忽略。");
             }
             else if (element.AttributeCaseInsensitive("FieldOfView") != null)
                 Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
@@ -1553,18 +1589,22 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out StartDelay, "StartDelay");
                 element.GetAttributeValueWithDefault(out Duration, "Duration");
                 element.GetAttributeValueWithDefault(out SingleUse, "SingleUse");
-                if (Duration == 0) Warning.WriteLine("CameraTrigger 元素：由于 @Duration 当前为 0，该元素将在实际游戏中被禁用。");
+                if (Duration == 0)
+                    Warning.WriteLine("CameraTrigger 元素：由于 @Duration 当前为 0，该元素将在实际游戏中被禁用。");
             }
             else
             {
-                if (advanced) Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Reset、@Angle 或 @FieldOfView 将会被忽略。" +
-                                                "要启用请将 @Zoom 删去或设为负值。");
+                if (advanced) Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Reset、@Angle 或 " +
+                                                "@FieldOfView 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
                 if (element.AttributeCaseInsensitive("StartDelay") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@StartDelay 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@StartDelay 将会被忽略。" +
+                                      "要启用请将 @Zoom 删去或设为负值。");
                 if (element.AttributeCaseInsensitive("Duration") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Duration 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Duration 将会被忽略。" +
+                                      "要启用请将 @Zoom 删去或设为负值。");
                 if (element.AttributeCaseInsensitive("SingleUse") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@SingleUse 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@SingleUse 将会被忽略。" +
+                                      "要启用请将 @Zoom 删去或设为负值。");
             }
         }
 
@@ -1575,7 +1615,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 zoom = value;
-                if (value == 0 || value > 6) Warning.WriteLine("CameraTrigger 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
+                if (value == 0 || value > 6)
+                    Warning.WriteLine("CameraTrigger 元素：@Zoom 超出范围！在实际游戏中将使用 1 级缩放。");
             }
         }
         public short Value
@@ -1584,7 +1625,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 this.value = value;
-                if (value > 184) Warning.WriteLine("CameraTrigger 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
+                if (value > 184)
+                    Warning.WriteLine("CameraTrigger 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。");
             }
         }
 
@@ -1784,7 +1826,10 @@ namespace Mygod.Edge.Tool
             var parentID = (short)parent.Count;
             foreach (var e in element.Elements())
                 if (initialized)
-                    new Button(parent, e) { Mode = ButtonMode.StayDown, SequenceInOrder = SequenceInOrder, ParentID = parentID };
+                    new Button(parent, e)
+                    {
+                        Mode = ButtonMode.StayDown, SequenceInOrder = SequenceInOrder, ParentID = parentID
+                    };
                 else
                 {
                     Initialize(e);
@@ -1794,9 +1839,10 @@ namespace Mygod.Edge.Tool
                         Warning.WriteLine("Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。");
                         Mode = ButtonMode.StayDown;
                     }
-                    if (e.AttributeCaseInsensitive("AffectMovingPlatforms") != null ||
-                        e.AttributeCaseInsensitive("AffectBumpers") != null || e.AttributeCaseInsensitive("TriggerAchievements") != null ||
-                        e.AttributeCaseInsensitive("AffectButtons") != null)
+                    if (e.AttributeCaseInsensitive("AffectMovingPlatforms") != null
+                        || e.AttributeCaseInsensitive("AffectBumpers") != null
+                        || e.AttributeCaseInsensitive("TriggerAchievements") != null
+                        || e.AttributeCaseInsensitive("AffectButtons") != null)
                         Warning.WriteLine("Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。");
                     element.GetAttributeValueWithDefault(out SequenceInOrder, "SequenceInOrder");
                 }
@@ -1813,15 +1859,18 @@ namespace Mygod.Edge.Tool
             element.GetAttributeValueWithDefault(out DisableCount, "DisableCount");
             element.GetAttributeValueWithDefault(out Mode, "Mode", ButtonMode.StayDown);
             if (IsMoving = element.GetAttributeValue("MovingPlatformID") != null)
-                MovingPlatformID = new IDReference<MovingPlatform>(parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingPlatformID"));
+                MovingPlatformID = new IDReference<MovingPlatform>
+                    (parent.Parent.MovingPlatforms, element.GetAttributeValue("MovingPlatformID"));
             else element.GetAttributeValueWithDefault(out Position, "Position");
             parent.Add(this);
         }
         private void CheckChild()
         {
             if (ParentID <= 0) return;
-            if (Mode != ButtonMode.StayDown) Warning.WriteLine("Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。");
-            if (Events.Count > 0) Warning.WriteLine("Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。");
+            if (Mode != ButtonMode.StayDown)
+                Warning.WriteLine("Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。");
+            if (Events.Count > 0)
+                Warning.WriteLine("Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。");
         }
 
         private bool initialized;
@@ -1850,7 +1899,8 @@ namespace Mygod.Edge.Tool
                     {
                         if (parent.GetSiblingsCount(this) > 0) return ButtonType.ButtonSequence;
                     }
-                    else if (parent[ParentID] != this && parent[ParentID].Type == ButtonType.ButtonSequence) return ButtonType.Children;
+                    else if (parent[ParentID] != this && parent[ParentID].Type == ButtonType.ButtonSequence)
+                        return ButtonType.Children;
                 return ButtonType.Standalone;
             }
         }
@@ -1916,7 +1966,8 @@ namespace Mygod.Edge.Tool
             {
                 switch (Type)
                 {
-                    case BlockEventType.AffectMovingPlatform: return new IDReference<MovingPlatform>(parent.MovingPlatforms, id);
+                    case BlockEventType.AffectMovingPlatform:
+                        return new IDReference<MovingPlatform>(parent.MovingPlatforms, id);
                     case BlockEventType.AffectBumper: return new IDReference<Bumper>(parent.Bumpers, id);
                     case BlockEventType.TriggerAchievement: return new NormalID(id);
                     case BlockEventType.AffectButton: return new IDReference<Button>(parent.Buttons, id);
@@ -2016,7 +2067,8 @@ namespace Mygod.Edge.Tool
                 {
                     if (!e.Name.LocalName.Equals("MovingPlatform", StringComparison.InvariantCultureIgnoreCase)
                         && !e.Name.LocalName.Equals("Button", StringComparison.InvariantCultureIgnoreCase))
-                        Warning.WriteLine(e.Name + " 元素：无法识别在 " + element.Name + " 元素下的该子元素，它将被忽略。");
+                        Warning.WriteLine(e.Name + " 元素：无法识别在 " + element.Name
+                                          + " 元素下的该子元素，它将被忽略。");
                     
                 }
             if (element.Name == "OtherCube")
@@ -2029,13 +2081,17 @@ namespace Mygod.Edge.Tool
                 if (DarkCubeRadius.Equals(default(Point2D8))) return;
                 var radius = DarkCubeRadius;
                 DarkCubeRadius = default(Point2D8);
-                for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++) if (x != 0 || y != 0)
-                {
-                    var position = PositionTrigger + new Point3D16((short) x, (short) y, 0);
-                    parent.OtherCubes.Add(new OtherCube { PositionTrigger = position, MovingBlockSync = MovingBlockSync,
-                                                          PositionCube = PositionCube, KeyEvents = KeyEvents });
-                    AddHelper(parent, mode, position, moveDirection, element);
-                }
+                for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++)
+                    if (x != 0 || y != 0)
+                    {
+                        var position = PositionTrigger + new Point3D16((short) x, (short) y, 0);
+                        parent.OtherCubes.Add(new OtherCube
+                        {
+                            PositionTrigger = position, MovingBlockSync = MovingBlockSync,
+                            PositionCube = PositionCube, KeyEvents = KeyEvents
+                        });
+                        AddHelper(parent, mode, position, moveDirection, element);
+                    }
             }
             else
             {
@@ -2059,12 +2115,18 @@ namespace Mygod.Edge.Tool
         {
             if (mode == OtherCubeMode.AutoHide) return;
             var child = container.ElementCaseInsensitive("Button");
-            if (child == null) level.Buttons.Add(new Button(level.Buttons) { Position = position, Visible = NullableBoolean.False, 
-                                                            Events = new List<ushort> { (ushort) level.Buttons.BlockEvents.Count } });
+            if (child == null) level.Buttons.Add(new Button(level.Buttons)
+            {
+                Position = position, Visible = NullableBoolean.False, 
+                Events = new List<ushort> { (ushort) level.Buttons.BlockEvents.Count }
+            });
             else
             {
-                var button = new Button(level.Buttons, child) { Position = child.GetAttributeValueWithDefault("Position", position),
-                    Visible = child.GetAttributeValueWithDefault("Visible", NullableBoolean.False) };
+                var button = new Button(level.Buttons, child)
+                {
+                    Position = child.GetAttributeValueWithDefault("Position", position),
+                    Visible = child.GetAttributeValueWithDefault("Visible", NullableBoolean.False)
+                };
                 button.Events.Add((ushort)level.Buttons.BlockEvents.Count);
             }
             level.Buttons.BlockEvents.Add(new BlockEvent(level)
@@ -2074,7 +2136,8 @@ namespace Mygod.Edge.Tool
             if (child == null) platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = false, LoopStartIndex = 0 };
             else
             {
-                platform = new MovingPlatform(level.MovingPlatforms, child) {
+                platform = new MovingPlatform(level.MovingPlatforms, child)
+                {
                     AutoStart = child.GetAttributeValueWithDefault<bool>("AutoStart"),
                     LoopStartIndex = child.GetAttributeValueWithDefault<byte>("LoopStartIndex")
                 };
@@ -2082,8 +2145,11 @@ namespace Mygod.Edge.Tool
             if (platform.Waypoints.Count == 0)
             {
                 platform.Waypoints.Add(new Waypoint { Position = position });
-                platform.Waypoints.Add(new Waypoint { Position = position + moveDirection, 
-                                                      TravelTime = (ushort) (mode == OtherCubeMode.Hole ? 1 : 32000) });
+                platform.Waypoints.Add(new Waypoint
+                {
+                    Position = position + moveDirection, 
+                    TravelTime = (ushort) (mode == OtherCubeMode.Hole ? 1 : 32000)
+                });
             }
             level.MovingPlatforms.Add(platform);
         }
@@ -2194,9 +2260,12 @@ namespace Mygod.Edge.Tool
             element.GetAttributeValueWithDefault(out Visible, "Visible", true);
             var radius = element.GetAttributeValueWithDefault<Point2D8>("Radius");
             if (radius.Equals(default(Point2D8))) return;
-            for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++) if (x != 0 || y != 0)
-                parent.Resizers.Add(new Resizer(parent) { Position = Position + new Point3D16((short)x, (short)y, 0), 
-                                                          Visible = Visible, Direction = Direction });
+            for (var x = -radius.X; x <= radius.X; x++) for (var y = -radius.Y; y <= radius.Y; y++)
+                if (x != 0 || y != 0) parent.Resizers.Add(new Resizer(parent)
+                    {
+                        Position = Position + new Point3D16((short)x, (short)y, 0),
+                        Visible = Visible, Direction = Direction
+                    });
         }
 
         private readonly Level parent;
@@ -2210,8 +2279,8 @@ namespace Mygod.Edge.Tool
                 if (value.Z > parent.Size.Height || value.Z <= 0)
                     Warning.WriteLine("Resizer" + Direction + " 元素：Z 坐标超出范围！这会导致游戏崩溃。");
                 if (value.X >= parent.Size.Width || value.X < 0 || value.Y >= parent.Size.Length || value.Y < 0)
-                    Warning.WriteLine("Resizer" + Direction + " 元素：X 坐标 和/或 Y 坐标超出范围！该方块尺寸调整器将在关卡中可见，" +
-                                      "但没有任何实际作用，也不会添加任何静态方块，并有几率导致游戏崩溃！");
+                    Warning.WriteLine("Resizer" + Direction + " 元素：X 坐标 和/或 Y 坐标超出范围！该方块尺寸调整器将在" +
+                                      "关卡中可见，但没有任何实际作用，也不会添加任何静态方块，并有几率导致游戏崩溃！");
             }
         }
         public bool Visible = true;

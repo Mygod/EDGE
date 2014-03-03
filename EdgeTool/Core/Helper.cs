@@ -60,11 +60,13 @@ namespace Mygod.Edge.Tool
             return value.Replace('\\', '/').Trim('/');
         }
 
-        private static readonly ILookup<int, Color> Lookup = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static)
-            .Select(f => (Color)f.GetValue(null, null)).Where(c => c.IsNamedColor).ToLookup(c => c.ToArgb());
+        private static readonly ILookup<int, Color> Lookup =
+            typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Select(f => (Color)f.GetValue(null, null)).Where(c => c.IsNamedColor).ToLookup(c => c.ToArgb());
         public static string GetString(this Color color)
         {
-            foreach (var first in Lookup[color.ToArgb()]) return first.Name;    // it will only return the first if there is one or more
+            // it will only return the first if there is one or more
+            foreach (var first in Lookup[color.ToArgb()]) return first.Name;
             var result = string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
             if (color.A == 255) return '#' + result;
             return string.Format("#{0:X2}{1}", color.A, result);
@@ -75,7 +77,8 @@ namespace Mygod.Edge.Tool
             return string.IsNullOrWhiteSpace(value) ? Color.Transparent : ColorTranslator.FromHtml(value);
         }
 
-        private static readonly Regex CompiledFileNameAnalyzer = new Regex(@"^(.+)\.([0-9A-Fa-f]{8})$", RegexOptions.Compiled);
+        private static readonly Regex CompiledFileNameAnalyzer = new Regex(@"^(.+)\.([0-9A-Fa-f]{8})$",
+                                                                           RegexOptions.Compiled);
 
         public static void AnalyzeFileName(out string name, out string compiledFileName, string fileName,
                                            string nameSpace = "models")
@@ -96,7 +99,8 @@ namespace Mygod.Edge.Tool
         public static string GetDecompiledFileName(string fileName, Asset asset)
         {
             var correctHash = fileName.Substring(0, 8);
-            if (correctHash == AssetUtil.CRCName(asset.AssetHeader.Name).ToString("X8")) return asset.AssetHeader.Name;
+            if (correctHash == AssetUtil.CRCName(asset.AssetHeader.Name).ToString("X8"))
+                return asset.AssetHeader.Name;
             return asset.AssetHeader.Name + '.' + correctHash;
         }
 
@@ -169,8 +173,10 @@ namespace Mygod.Edge.Tool
             var result = new XElement("Animation");
             result.SetAttributeValueWithDefault("Unknown", ean.Header.Unknown1);
             result.SetAttributeValueWithDefault("Duration", ean.Header.Duration);
-            if (ean.Header.Zero1 != 0) Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero1));
-            if (ean.Header.Zero2 != 0) Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero2));
+            if (ean.Header.Zero1 != 0)
+                Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero1));
+            if (ean.Header.Zero2 != 0)
+                Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero2));
             result.SetAttributeValueWithDefault("NodeChild", ean.Header.NodeChild);
             result.SetAttributeValueWithDefault("NodeSibling", ean.Header.NodeSibling);
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockRotateX, "RotateX"));
@@ -197,9 +203,12 @@ namespace Mygod.Edge.Tool
                     NodeChild = element.GetAttributeValueWithDefault<AssetHash>("NodeChild"),
                     NodeSibling = element.GetAttributeValueWithDefault<AssetHash>("NodeSibling")
                 },
-                BlockRotateX = ParseKeyframeBlock(element, "RotateX"), BlockRotateY = ParseKeyframeBlock(element, "RotateY"),
-                BlockRotateZ = ParseKeyframeBlock(element, "RotateZ"), BlockScaleX = ParseKeyframeBlock(element, "ScaleX"),
-                BlockScaleY = ParseKeyframeBlock(element, "ScaleY"), BlockScaleZ = ParseKeyframeBlock(element, "ScaleZ"),
+                BlockRotateX = ParseKeyframeBlock(element, "RotateX"),
+                BlockRotateY = ParseKeyframeBlock(element, "RotateY"),
+                BlockRotateZ = ParseKeyframeBlock(element, "RotateZ"),
+                BlockScaleX = ParseKeyframeBlock(element, "ScaleX"),
+                BlockScaleY = ParseKeyframeBlock(element, "ScaleY"),
+                BlockScaleZ = ParseKeyframeBlock(element, "ScaleZ"),
                 BlockTranslateX = ParseKeyframeBlock(element, "TranslateX"),
                 BlockTranslateY = ParseKeyframeBlock(element, "TranslateY"),
                 BlockTranslateZ = ParseKeyframeBlock(element, "TranslateZ")
@@ -216,8 +225,10 @@ namespace Mygod.Edge.Tool
             {
                 var element = new XElement("Keyframe");
                 element.SetAttributeValueWithDefault("Time", keyframe.Time);
-                element.SetAttributeValueWithDefault("Value", isRotate ? keyframe.Value * 180 / Math.PI : keyframe.Value, isScale ? 1 : 0);
-                element.SetAttributeValueWithDefault("Delta", isRotate ? keyframe.Delta * 180 / Math.PI : keyframe.Delta);
+                element.SetAttributeValueWithDefault("Value",
+                    isRotate ? keyframe.Value * 180 / Math.PI : keyframe.Value, isScale ? 1 : 0);
+                element.SetAttributeValueWithDefault("Delta",
+                    isRotate ? keyframe.Delta * 180 / Math.PI : keyframe.Delta);
                 result.Add(element);
             }
             return result;
@@ -234,9 +245,11 @@ namespace Mygod.Edge.Tool
                 result.DefaultValue = element.GetAttributeValueWithDefault<float>("Value", isScale ? 1 : 0);
                 result.Keyframes = element.ElementsCaseInsensitive("Keyframe")
                     .Select(e => new Keyframe(e.GetAttributeValueWithDefault<float>("Time"),
-                            isRotate ? (float)(e.GetAttributeValueWithDefault<double>("Value", isScale ? 1 : 0) * Math.PI / 180)
+                            isRotate ? (float)
+                                    (e.GetAttributeValueWithDefault<double>("Value", isScale ? 1 : 0) * Math.PI / 180)
                                 : e.GetAttributeValueWithDefault<float>("Value", isScale ? 1 : 0),
-                            isRotate ? (float)(e.GetAttributeValueWithDefault<double>("Delta") * Math.PI / 180)
+                            isRotate ? (float)
+                                    (e.GetAttributeValueWithDefault<double>("Delta") * Math.PI / 180)
                                 : e.GetAttributeValueWithDefault<float>("Delta"))).ToArray();
             }
             else if (isScale) result.DefaultValue = 1;
@@ -308,7 +321,8 @@ namespace Mygod.Edge.Tool
                 case "defaulttransform":
                     transforms.Add(new EMADefaultTransform
                     {
-                        ScaleU = e.GetAttributeValueWithDefault("ScaleU", 1F), ScaleV = e.GetAttributeValueWithDefault("ScaleV", 1F),
+                        ScaleU = e.GetAttributeValueWithDefault("ScaleU", 1F),
+                        ScaleV = e.GetAttributeValueWithDefault("ScaleV", 1F),
                         Rotation = e.GetAttributeValueWithDefault<float>("Rotation"),
                         TranslationU = e.GetAttributeValueWithDefault<float>("TranslationU"),
                         TranslationV = e.GetAttributeValueWithDefault<float>("TranslationV")
@@ -317,23 +331,26 @@ namespace Mygod.Edge.Tool
                 case "animationblock":
                     blocks.Add(new EMAAnimationBlock
                     {
-                        ScaleU = ParseKeyframeBlock(element, "ScaleU"),
-                        ScaleV = ParseKeyframeBlock(element, "ScaleV"),
-                        Rotation = ParseKeyframeBlock(element, "Rotation"),
-                        TranslationU = ParseKeyframeBlock(element, "TranslationU"),
-                        TranslationV = ParseKeyframeBlock(element, "TranslationV")
+                        ScaleU = ParseKeyframeBlock(e, "ScaleU"), ScaleV = ParseKeyframeBlock(e, "ScaleV"),
+                        Rotation = ParseKeyframeBlock(e, "Rotation"),
+                        TranslationU = ParseKeyframeBlock(e, "TranslationU"),
+                        TranslationV = ParseKeyframeBlock(e, "TranslationV")
                     });
                     break;
             }
             return new EMA
             {
                 AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace),
-                Color1 = Helper.Parse(element.GetAttributeValue("Color1")), Color2 = Helper.Parse(element.GetAttributeValue("Color2")),
-                Color3 = Helper.Parse(element.GetAttributeValue("Color3")), Color4 = Helper.Parse(element.GetAttributeValue("Color4")), 
-                Float1 = element.GetAttributeValueWithDefault<float>("Float1"), Int1 = element.GetAttributeValueWithDefault<int>("Int1"),
-                Int2 = element.GetAttributeValueWithDefault<int>("Int2"), Int3 = element.GetAttributeValueWithDefault<int>("Int3"),
-                Footer4 = element.GetAttributeValueWithDefault<int>("Footer4"), Textures = textures.ToArray(), 
-                Footer5 = element.GetAttributeValueWithDefault<int>("Footer5"), DefaultTransforms = transforms.ToArray(),
+                Color1 = Helper.Parse(element.GetAttributeValue("Color1")),
+                Color2 = Helper.Parse(element.GetAttributeValue("Color2")),
+                Color3 = Helper.Parse(element.GetAttributeValue("Color3")),
+                Color4 = Helper.Parse(element.GetAttributeValue("Color4")), 
+                Float1 = element.GetAttributeValueWithDefault<float>("Float1"),
+                Int1 = element.GetAttributeValueWithDefault<int>("Int1"),
+                Int2 = element.GetAttributeValueWithDefault<int>("Int2"), DefaultTransforms = transforms.ToArray(),
+                Int3 = element.GetAttributeValueWithDefault<int>("Int3"), Textures = textures.ToArray(),
+                Footer4 = element.GetAttributeValueWithDefault<int>("Footer4"),
+                Footer5 = element.GetAttributeValueWithDefault<int>("Footer5"),
                 AnimationBlocks = blocks.ToArray(), Name = element.GetAttributeValue("Name")
             };
         }
@@ -392,12 +409,14 @@ namespace Mygod.Edge.Tool
         {
             var element = new XElement("Vertex");
             element.SetAttributeValueWithDefault("Position", model.Vertices[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals)) element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals))
+                element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
             if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
                 element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
             if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
                 element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat)) element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat))
+                element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
             return element;
         }
 
@@ -434,9 +453,9 @@ namespace Mygod.Edge.Tool
                 var vertexCount = triangles.Length * 3;
                 var model = new ESOModel
                 {
-                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"), Colors = new Color[vertexCount],
-                    Normals = new Vec3[vertexCount], TexCoords = new Vec2[vertexCount], Vertices = new Vec3[vertexCount],
-                    Wat = new Vec2[vertexCount]
+                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"),
+                    Normals = new Vec3[vertexCount], TexCoords = new Vec2[vertexCount],
+                    Vertices = new Vec3[vertexCount], Colors = new Color[vertexCount], Wat = new Vec2[vertexCount]
                 };
                 var j = 0;
                 foreach (var triangle in triangles)
@@ -459,7 +478,8 @@ namespace Mygod.Edge.Tool
                         }
                         if (vertex.AttributeCaseInsensitive("Color") != null)
                         {
-                            model.Colors[j] = Helper.Parse(vertex.GetAttributeValueWithDefault("Color", "Transparent"));
+                            model.Colors[j] =
+                                Helper.Parse(vertex.GetAttributeValueWithDefault("Color", "Transparent"));
                             model.TypeFlags |= ESOModel.Flags.Colors;
                         }
                         if (vertex.AttributeCaseInsensitive("TexCoord") != null)
@@ -476,7 +496,8 @@ namespace Mygod.Edge.Tool
                     }
                     if (!autoNormals) continue;
                     var p0 = ConvertVertex(model.Vertices[i]);
-                    var normal = Vector3D.CrossProduct(ConvertVertex(model.Vertices[i + 2]) - p0, ConvertVertex(model.Vertices[i + 1]) - p0);
+                    var normal = Vector3D.CrossProduct(ConvertVertex(model.Vertices[i + 2]) - p0,
+                                                       ConvertVertex(model.Vertices[i + 1]) - p0);
                     var vec3 = new Vec3((float) normal.X, (float) normal.Y, (float) normal.Z);
                     for (var k = i; k < j; k++) if (!normals[k - i]) model.Normals[k] = vec3;
                     model.TypeFlags |= ESOModel.Flags.Normals;
@@ -485,8 +506,8 @@ namespace Mygod.Edge.Tool
             }
             var result = new ESO
             {
-                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace), Models = models.ToArray(), 
-                Header = new ESOHeader
+                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace),
+                Models = models.ToArray(), Header = new ESOHeader
                 {
                     V01 = element.GetAttributeValueWithDefault<int>("V01"), V02 = element.GetAttributeValueWithDefault<int>("V02"),
                     NodeChild = element.GetAttributeValueWithDefault<AssetHash>("NodeChild"),
@@ -499,13 +520,14 @@ namespace Mygod.Edge.Tool
             };
             if (models.Count > 0)
             {
-                result.Header.BoundingMin
-                    = ConvertFromVertex(matrix.Transform(ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMin"))));
-                result.Header.BoundingMax
-                    = ConvertFromVertex(matrix.Transform(ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMax"))));
+                result.Header.BoundingMin = ConvertFromVertex(matrix.Transform(
+                    ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMin"))));
+                result.Header.BoundingMax = ConvertFromVertex(matrix.Transform(
+                    ConvertVertex(element.GetAttributeValueWithDefault<Vec3>("BoundingMax"))));
                 result.Footer = new ESOFooter(element.GetAttributeValueWithDefault<float>("FooterV01"), 
-                    element.GetAttributeValueWithDefault<float>("FooterV02"), element.GetAttributeValueWithDefault<int>("FooterV03"), 
-                    element.GetAttributeValueWithDefault<int>("FooterV04"));
+                                              element.GetAttributeValueWithDefault<float>("FooterV02"),
+                                              element.GetAttributeValueWithDefault<int>("FooterV03"), 
+                                              element.GetAttributeValueWithDefault<int>("FooterV04"));
                 if (Math.Abs(result.Footer.V01) > 1e-4 || Math.Abs(result.Footer.V02) > 1e-4 || result.Footer.V03 != 0
                                                        || result.Footer.V04 != 0) result.HasFooter = true;
             }
@@ -532,7 +554,8 @@ namespace Mygod.Edge.Tool
     
     public enum ApplyTransformMode
     {
-        Copy = 0x000, Remove = 0x001, MultiplicationOnly = 0x010, Multiplication = 0x011, DivisionOnly = 0x100, Division = 0x101
+        Copy = 0x000, Remove = 0x001, MultiplicationOnly = 0x010, Multiplication = 0x011,
+        DivisionOnly = 0x100, Division = 0x101
     }
 
     public static class Compiler
@@ -541,7 +564,8 @@ namespace Mygod.Edge.Tool
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
             if (string.IsNullOrWhiteSpace(directory)) directory = Path.GetDirectoryName(file);
-            string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName), outputPath = Path.Combine(directory, fileName);
+            string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName),
+                   outputPath = Path.Combine(directory, fileName);
             Warning.Start();
             try
             {
@@ -555,11 +579,12 @@ namespace Mygod.Edge.Tool
                                 using (var stream = File.OpenRead(file))
                                 using (var reader = new BinaryReader(stream))
                                     for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
-                                File.WriteAllText(outputPath + ".txt",
-                                                  string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                                File.WriteAllText(outputPath + ".txt", string.Join(Environment.NewLine,
+                                    array.Select(value => value / 256.0)));
                                 break;
                             case "font":
-                                using (var stream = File.OpenRead(file)) File.WriteAllText(outputPath + ".xml", GetFontElement(stream).ToString());
+                                using (var stream = File.OpenRead(file))
+                                    File.WriteAllText(outputPath + ".xml", GetFontElement(stream).ToString());
                                 break;
                             default:
                                 Level.CreateFromCompiled(file).Decompile(outputPath);
@@ -574,8 +599,8 @@ namespace Mygod.Edge.Tool
                                 Level.CreateFromDecompiled(inputPath).Compile(outputPath + ".bin");
                                 break;
                             case "animation":
-                                AssetHelper.ParseEan(root, fileName)
-                                           .Save(Path.Combine(directory, AssetUtil.CRCFullName(fileName, "models") + ".ean"));
+                                AssetHelper.ParseEan(root, fileName).Save(Path.Combine(directory,
+                                    AssetUtil.CRCFullName(fileName, "models") + ".ean"));
                                 break;
                             case "material":
                             {
@@ -614,35 +639,38 @@ namespace Mygod.Edge.Tool
                         using (var bitmap = new Bitmap(file))
                         {
                             var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
-                            (exFormat ? (ETX) ETX1804.CreateFromImage(bitmap, fileName) : ETX1803.CreateFromImage(bitmap, fileName))
-                                .Save(Path.Combine(directory, name));
+                            (exFormat ? (ETX) ETX1804.CreateFromImage(bitmap, fileName)
+                                : ETX1803.CreateFromImage(bitmap, fileName)).Save(Path.Combine(directory, name));
                         }
                         break;
                     case ".ean":
                         var ean = EAN.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ean) + ".xml"),
+                        File.WriteAllText(Path.Combine(directory,
+                                                       Helper.GetDecompiledFileName(fileName, ean) + ".xml"),
                                           AssetHelper.GetEanElement(ean).ToString());
                         break;
                     case ".ema":
                     {
                         var ema = EMA.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
+                        File.WriteAllText(Path.Combine(directory,
+                                                       Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
                                           AssetHelper.GetEmaElement(ema).ToString());
                         break;
                     }
                     case ".eso":
                     {
                         var eso = ESO.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory, Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
+                        File.WriteAllText(Path.Combine(directory,
+                                                       Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
                                           AssetHelper.GetEsoElement(eso).ToString());
                         break;
                     }
                     case ".txt":
                         using (var stream = new FileStream(outputPath + ".bin", FileMode.Create, FileAccess.Write, FileShare.Read))
                         using (var writer = new BinaryWriter(stream))
-                            foreach (var num in File.ReadAllText(file).Split(new[] { '\r', '\n' },
-                                                                             StringSplitOptions.RemoveEmptyEntries).Select(double.Parse))
-                                writer.Write((short) Math.Round(num * 256));
+                            foreach (var num in File.ReadAllText(file)
+                                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(double.Parse)) writer.Write((short) Math.Round(num * 256));
                         break;
                     default:
                         switch (Path.GetFileName(file))
@@ -739,22 +767,20 @@ namespace Mygod.Edge.Tool
                 var chars = element.ElementsCaseInsensitive("Char").ToArray();
                 writer.Write((ushort) chars.Length);
                 var charsLookup = chars.ToLookup(e => e.GetAttributeValue("Character"));
-                for (var i = 0; i < CharLookup.Length; i++)
-                {
-                    var lookupChar = CharLookup[i].ToString(CultureInfo.InvariantCulture);
-                    if (charsLookup.Contains(lookupChar)) WriteCharElement(writer, charsLookup[lookupChar].First());
+                foreach (var ch in CharLookup.Select(ch => ch.ToString(CultureInfo.InvariantCulture)))
+                    if (charsLookup.Contains(ch)) WriteCharElement(writer, charsLookup[ch].First());
                     else    // write an empty char here!
                     {
-                        writer.Write((byte) 0);
-                        writer.Write((byte) 1);
+                        writer.Write((byte)0);
+                        writer.Write((byte)1);
                     }
-                }
                 foreach (var pair in charsLookup)
                 {
                     if (pair.Key != null && pair.Key.Length == 1)   // is a valid char
                     {
                         var i = 0;
-                        foreach (var ch in pair) if (i++ > 0 || !CharSet.Contains(pair.Key[0])) WriteCharElement(writer, ch);
+                        foreach (var ch in pair.Where(ch => i++ > 0 || !CharSet.Contains(pair.Key[0])))
+                            WriteCharElement(writer, ch);
                     }
                     else foreach (var ch in pair) WriteCharElement(writer, ch);
                 }

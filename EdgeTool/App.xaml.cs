@@ -18,9 +18,12 @@ namespace Mygod.Edge.Tool
         static App()
         {
             AppDomain.CurrentDomain.SetData("PRIVATE_BINPATH", "Resources\\Libraries");
-            var m = typeof(AppDomainSetup).GetMethod("UpdateContextProperty", BindingFlags.NonPublic | BindingFlags.Static);
-            var fusion = typeof(AppDomain).GetMethod("GetFusionContext", BindingFlags.NonPublic | BindingFlags.Instance);
-            m.Invoke(null, new[] { fusion.Invoke(AppDomain.CurrentDomain, null), "PRIVATE_BINPATH", "Resources\\Libraries" });
+            var m = typeof(AppDomainSetup).GetMethod("UpdateContextProperty",
+                                                     BindingFlags.NonPublic | BindingFlags.Static);
+            var fusion = typeof(AppDomain).GetMethod("GetFusionContext",
+                                                     BindingFlags.NonPublic | BindingFlags.Instance);
+            m.Invoke(null, new[] { fusion.Invoke(AppDomain.CurrentDomain, null), "PRIVATE_BINPATH",
+                                   "Resources\\Libraries" });
         }
 
         public static readonly List<string> EdgeMods = new List<string>();
@@ -60,7 +63,8 @@ namespace Mygod.Edge.Tool
                     Console.WriteLine("------ (反)编译 {0} ------", file);
                     var result = Compiler.Compile(exFormat, file, directory);
                     if (result.Item1 != null) Console.WriteLine("错误：" + result.Item1.GetMessage());
-                    if (!string.IsNullOrWhiteSpace(result.Item2)) Console.WriteLine("警告：{0}{1}", Environment.NewLine, result.Item2);
+                    if (!string.IsNullOrWhiteSpace(result.Item2))
+                        Console.WriteLine("警告：{0}{1}", Environment.NewLine, result.Item2);
                     if (result.Item1 == null) Console.WriteLine("(反)编译成功。");
                 }
                 if (!forceStart.HasValue && GamePath == null && EdgeMods.Count == 0) Shutdown();
@@ -78,7 +82,7 @@ namespace Mygod.Edge.Tool
 
         private void OnError(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            TaskDialog.Show(mainInstruction: "哇靠崩溃啦！", footerText: e.Exception.GetMessage(), type: TaskDialogType.Error,
+            TaskDialog.Show(null, "哇靠崩溃啦！", footerText: e.Exception.GetMessage(), type: TaskDialogType.Error,
                             content: "你这个混账东西干了什么？赶紧向 Mygod工作室™ 报告错误信息和你的不当行径。");
             e.Handled = true;
             Shutdown();

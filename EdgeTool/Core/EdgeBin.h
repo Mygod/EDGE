@@ -164,8 +164,9 @@ struct button {
                 // visibility == 0: invisible
                 // visibility == 1: visible, solid
                 // visibility == 2: visible, ghosted
-        char disable_count; // after a button has been pressed `disable_count` times, it cannot be re-enabled by an event.
-                            // press_count = 0 can be re-enabled as many times as you like.
+        char disable_count;
+				// after a button has been pressed `disable_count` times, it cannot be re-enabled by an event.
+				// disable_count = 0 can be re-enabled as many times as you like.
         char mode;
                 // mode == 0: reverses the event when the button is released
                 // mode == 1: event is permanent, button stays up when released

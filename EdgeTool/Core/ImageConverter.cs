@@ -10,7 +10,8 @@ namespace Mygod.Edge.Tool
         {
             using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
             {
-                var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                                           PixelFormat.Format32bppArgb);
                 var pointer = (byte*)data.Scan0;
                 for (var i = 0; i < greyPixels.Length; i++)
                 {
@@ -31,7 +32,8 @@ namespace Mygod.Edge.Tool
                 {
                     size = new Size2D((ushort)org.Width, (ushort)org.Height);
                     clone = new Bitmap(org.Width, org.Height, PixelFormat.Format32bppArgb);
-                    using (var g = Graphics.FromImage(clone)) g.DrawImage(org, new Rectangle(0, 0, clone.Width, clone.Height));
+                    using (var g = Graphics.FromImage(clone))
+                        g.DrawImage(org, new Rectangle(0, 0, clone.Width, clone.Height));
                 }
                 var result = new BitArray(clone.Width * clone.Height);
                 var data = clone.LockBits(new Rectangle(0, 0, clone.Width, clone.Height), 

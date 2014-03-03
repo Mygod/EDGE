@@ -67,7 +67,8 @@ namespace Mygod.Edge.Tool
         {
             Current = new Achievements();
             foreach (var a in from a in XDocument.Parse(File.ReadAllText(AchievementsPath))
-                                  .ElementCaseInsensitive("achievements").ElementsCaseInsensitive("achievement") select new Achievement(a))
+                                  .ElementCaseInsensitive("achievements").ElementsCaseInsensitive("achievement")
+                              select new Achievement(a))
                 Current.Add(a);
             RefreshGlobalPercents();
         }
@@ -89,8 +90,9 @@ namespace Mygod.Edge.Tool
                 {
                     try
                     {
-                        GlobalPercents = XDocument.Parse(new WebClient().DownloadString("http://api.steampowered.com/ISteamUserStats/" +
-                            "GetGlobalAchievementPercentagesForApp/v0002/?gameid=38740&format=xml")).Root.Element("achievements")
+                        GlobalPercents = XDocument.Parse(new WebClient().DownloadString(
+                            "http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/" +
+                            "v0002/?gameid=38740&format=xml")).Root.Element("achievements")
                             .Elements("achievement").ToDictionary(element => element.Element("name").Value,
                                                                   element => element.Element("percent").Value);
                         foreach (var achievement in Current)
@@ -162,7 +164,8 @@ namespace Mygod.Edge.Tool
         {
             get
             {
-                return new Uri(Path.Combine(CurrentApp.Directory, string.Format("Resources/Achievements/{0}.jpg", ApiName)), UriKind.Absolute);
+                return new Uri(Path.Combine(CurrentApp.Directory,
+                    string.Format("Resources/Achievements/{0}.jpg", ApiName)), UriKind.Absolute);
             }
         }
         public int Points { get; private set; }
@@ -172,8 +175,8 @@ namespace Mygod.Edge.Tool
 
     public sealed class Users : ObservableKeyedCollection<string, User>
     {
-        public static readonly string Root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                                          "OUTLAWS");
+        public static readonly string Root =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OUTLAWS");
         public static readonly Users Current = new Users();
 
         private Users()
@@ -193,16 +196,20 @@ namespace Mygod.Edge.Tool
 
         public void Refresh()
         {
-            HashSet<string> users = Directory.Exists(Root) ? new HashSet<string>(from info in new DirectoryInfo(Root).EnumerateDirectories()
-                                                                                 select info.Name) : new HashSet<string>(),
-                            removing = new HashSet<string>(from user in this select user.Name);
+            HashSet<string> users = Directory.Exists(Root)
+                ? new HashSet<string>(from info in new DirectoryInfo(Root).EnumerateDirectories() select info.Name)
+                : new HashSet<string>(), removing = new HashSet<string>(from user in this select user.Name);
             foreach (var user in users) removing.Remove(user);
             foreach (var user in removing) Remove(user);
             foreach (var user in users) if (Contains(user)) base[user].Refresh(); else Add(new User(user));
         }
 
         private User currentUser;
-        public User CurrentUser { get { return currentUser; } set { currentUser = value; OnPropertyChanged("CurrentUser"); } } 
+        public User CurrentUser
+        {
+            get { return currentUser; }
+            set { currentUser = value; OnPropertyChanged("CurrentUser"); }
+        } 
     }
     public sealed class User
     {
@@ -212,16 +219,17 @@ namespace Mygod.Edge.Tool
 
         internal User(string name)
         {
-            achievementsFile = new IniFile(Path.Combine(Users.GetStatsDirectory(Name = name), AchievementsIniFileName));
+            achievementsFile = new IniFile(Path.Combine(Users.GetStatsDirectory(Name = name), 
+                                                        AchievementsIniFileName));
             Refresh();
         }
         
         public void Refresh()
         {
             sections = new AchievementSections();
-            foreach (var section in from a in Achievements.Current select new AchievementSection(achievementsFile, a.ApiName))
-                sections.Add(section);
-            var source = (from section in sections where section.Achieved select section).ToArray<AchievementSection>();
+            foreach (var section in from a in Achievements.Current
+                                    select new AchievementSection(achievementsFile, a.ApiName)) sections.Add(section);
+            var source = (from section in sections where section.Achieved select section).ToArray();
             AchievedAchievementsCount = source.Count(section => section.Achieved);
             Points = sections.Sum(section => Achievements.Current[section.Name].Points);
             AchievedPoints = source.Sum(section => Achievements.Current[section.Name].Points);

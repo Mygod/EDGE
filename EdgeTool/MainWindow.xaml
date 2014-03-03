@@ -26,6 +26,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Target="{Binding ElementName=GamePath}" Effect="{DynamicResource GlowingEffect}">
                 <StackPanel Orientation="Horizontal">
@@ -33,10 +35,12 @@
                     <AccessText>你的 _EDGE 游戏 exe 路径：</AccessText>
                 </StackPanel>
             </Label>
-            <ComboBox Grid.Column="1" Name="GamePath" x:FieldModifier="private" VerticalAlignment="Center" IsEditable="True" />
+            <ComboBox Grid.Column="1" Name="GamePath" x:FieldModifier="private" VerticalAlignment="Center"
+                      IsEditable="True" />
             <Button Grid.Column="3" Content="加载(_L)" VerticalAlignment="Center" Click="Load" />
             <Button Grid.Column="5" Content="运行游戏(_R)" VerticalAlignment="Center" Click="RunGame"
                     Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
+            <Button Grid.Column="7" Content="检查 Edge_Tool 更新" VerticalAlignment="Center" Click="CheckForUpdates" />
         </Grid>
         <TabControl Name="Tabs" x:FieldModifier="private" Grid.Row="2">
             <TabItem Header="浏览成就">
@@ -76,8 +80,8 @@
                     </ComboBox>
                     <Button Name="SwitchProfileButton" x:FieldModifier="private" Content="切换到当前存档(_D)"
                             Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center" IsEnabled="False" />
-                    <Button Content="刷新全球玩家进度(_G)" Click="RefreshGlobalPercent" Grid.Column="5" VerticalAlignment="Center"
-                            ToolTip="此功能需要联网。" />
+                    <Button Content="刷新全球玩家进度(_G)" Click="RefreshGlobalPercent" Grid.Column="5"
+                            VerticalAlignment="Center" ToolTip="此功能需要联网。" />
                     <Button Content="排序(_S)...." ContextMenuService.Placement="Bottom" Click="PopContextMenu"
                             Grid.Column="7" VerticalAlignment="Center">
                         <Button.ContextMenu>
@@ -92,8 +96,9 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                    <ListBox Name="AchievementsList" x:FieldModifier="private"  Grid.Row="2" Grid.ColumnSpan="8"
-                             ItemsSource="{x:Static local:Achievements.Current}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    <ListBox Name="AchievementsList" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="8"
+                             ItemsSource="{x:Static local:Achievements.Current}" VirtualizingPanel.ScrollUnit="Pixel"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              HorizontalContentAlignment="Stretch" MouseRightButtonUp="ForceUnlockAchievement">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type local:Achievement}">
@@ -109,7 +114,8 @@
                                     <Image Height="64" Source="{Binding PictureUri}" />
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                         <TextBlock TextWrapping="Wrap" ToolTip="{Binding ApiName}">
-                                            <Run Text="{Binding Title, Mode=OneWay}" FontSize="18" FontWeight="Bold" />
+                                            <Run Text="{Binding Title, Mode=OneWay}" FontSize="18"
+                                                 FontWeight="Bold" />
                                             (<Run Text="{Binding Points, Mode=OneWay}" /> 点)
                                         </TextBlock>
                                         <TextBlock Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap"
@@ -118,23 +124,26 @@
                                         <Grid Margin="0,3,0,0">
                                             <m:AnimatedProgressBar Value="{Binding GlobalPercent, Mode=OneWay}" />
                                             <TextBlock Margin="5,0" VerticalAlignment="Center">
-                                                <Run Text="全球玩家进度：" /><Run Text="{Binding GlobalPercentText, Mode=OneWay,
-                                                    Converter={StaticResource GlobalPercentText}}" />
+                                                <Run Text="全球玩家进度：" /><Run
+                                                    Text="{Binding GlobalPercentText, Mode=OneWay,
+                                                                   Converter={StaticResource GlobalPercentText}}" />
                                             </TextBlock>
                                         </Grid>
                                     </StackPanel>
-                                    <ContentControl Grid.Column="4" Content="{Binding Converter={StaticResource AchievementStatus}}" />
+                                    <ContentControl Content="{Binding Converter={StaticResource AchievementStatus}}"
+                                                    Grid.Column="4" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <TextBlock Name="AchievementsTip" x:FieldModifier="private" Grid.Row="3" Grid.ColumnSpan="4"
-                               Visibility="Collapsed"
-                               Text="提示：右击可强制(取消)获得成就。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。" Margin="0,5,0,0" />
+                               Visibility="Collapsed" Margin="0,5,0,0"
+                               Text="提示：右击可强制(取消)获得成就。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。" />
                 </Grid>
             </TabItem>
-            <TabItem Header="EdgeMod 管理" AllowDrop="True" PreviewDragEnter="OnEdgeModDragEnter" PreviewDragOver="OnDragOver"
-                     PreviewDragLeave="OnDragLeave" PreviewDrop="OnEdgeModDrop" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
+            <TabItem Header="EdgeMod 管理" AllowDrop="True" PreviewDragEnter="OnEdgeModDragEnter"
+                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave" PreviewDrop="OnEdgeModDrop"
+                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" />
@@ -143,8 +152,9 @@
                         <RowDefinition Height="5" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <m:DataGridEx x:Name="EdgeModGrid" x:FieldModifier="private" AutoGenerateColumns="False" SelectionMode="Single"
-                                  SelectionChanged="UpdateDescription">
+                    <m:DataGridEx x:Name="EdgeModGrid" x:FieldModifier="private" AutoGenerateColumns="False"
+                                  SelectionMode="Single" SelectionChanged="UpdateDescription"
+                                  VirtualizingPanel.ScrollUnit="Pixel">
                         <m:DataGridEx.Columns>
                             <DataGridTextColumn Header="名称" Binding="{Binding Name}" IsReadOnly="True" />
                             <DataGridTextColumn Header="版本" Binding="{Binding Version}" IsReadOnly="True" />
@@ -152,8 +162,9 @@
                             <DataGridCheckBoxColumn Header="启用" Binding="{Binding Enabled}" />
                         </m:DataGridEx.Columns>
                     </m:DataGridEx>
-                    <TextBox Name="DescriptionBlock" x:FieldModifier="private" Grid.Row="2" TextWrapping="Wrap" IsReadOnly="True"
-                             IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto" Text="要开始，请点击这里的什么东西。如果想要安装 EdgeMod，请把要安装的 EdgeMod 拖动到游戏目录下的 mods 文件夹中后按下刷新，或更简单地，把它拖动到这里。" />
+                    <TextBox Name="DescriptionBlock" x:FieldModifier="private" Grid.Row="2" TextWrapping="Wrap"
+                             IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto"
+                             Text="要开始，请点击这里的什么东西。如果想要安装 EdgeMod，请把要安装的 EdgeMod 拖动到游戏目录下的 mods 文件夹中后按下刷新，或更简单地，把它拖动到这里。" />
                     <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal">
                         <Button Margin="0,0,2,0" Content="刷新(_F)" Click="RefreshEdgeMods" />
                         <Button Margin="2,0" Content="删除当前选中的 EdgeMo_d" Click="DeleteCurrentEdgeMod" />
@@ -171,23 +182,25 @@
                         <RowDefinition Height="5" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <DataGrid Name="LevelList" x:FieldModifier="private" AutoGenerateColumns="False" IsReadOnly="True" Sorting="OnSort"
-                              Initialized="OnGridInitialized">
+                    <DataGrid Name="LevelList" x:FieldModifier="private" AutoGenerateColumns="False" IsReadOnly="True"
+                              Sorting="OnSort" Initialized="OnGridInitialized" VirtualizingPanel.ScrollUnit="Pixel">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Binding="{Binding Mapping}" />
                             <DataGridTextColumn Header="关卡名" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="ID" Binding="{Binding ID}" ElementStyle="{StaticResource AlignRight}" />
-                            <DataGridTextColumn Header="路径" Binding="{Binding FilePath, Converter={StaticResource BinFilePath}}" />
-                            <DataGridTextColumn Header="S+ 标准" Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}"
+                            <DataGridTextColumn Header="ID" Binding="{Binding ID}"
                                                 ElementStyle="{StaticResource AlignRight}" />
-                            <DataGridTextColumn Header="S 标准" Binding="{Binding STime, Converter={StaticResource Seconds}}"
-                                                ElementStyle="{StaticResource AlignRight}" />
-                            <DataGridTextColumn Header="A 标准" Binding="{Binding ATime, Converter={StaticResource Seconds}}"
-                                                ElementStyle="{StaticResource AlignRight}" />
-                            <DataGridTextColumn Header="B 标准" Binding="{Binding BTime, Converter={StaticResource Seconds}}"
-                                                ElementStyle="{StaticResource AlignRight}" />
-                            <DataGridTextColumn Header="C 标准" Binding="{Binding CTime, Converter={StaticResource Seconds}}"
-                                                ElementStyle="{StaticResource AlignRight}" />
+                            <DataGridTextColumn Binding="{Binding FilePath, Converter={StaticResource BinFilePath}}"
+                                                Header="路径" />
+                            <DataGridTextColumn Header="S+ 标准" ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}" />
+                            <DataGridTextColumn Header="S 标准" ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding STime, Converter={StaticResource Seconds}}" />
+                            <DataGridTextColumn Header="A 标准" ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding ATime, Converter={StaticResource Seconds}}" />
+                            <DataGridTextColumn Header="B 标准" ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding BTime, Converter={StaticResource Seconds}}" />
+                            <DataGridTextColumn Header="C 标准" ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding CTime, Converter={StaticResource Seconds}}" />
                             <DataGridTextColumn Header="Java版音乐" Binding="{Binding MusicJavaName}" />
                             <DataGridTextColumn Header="音乐" Binding="{Binding MusicName}" />
                             <DataGridTextColumn Header="大小" Binding="{Binding Size}" />
@@ -204,13 +217,15 @@
                         </DataGrid.ContextMenu>
                     </DataGrid>
                     <TextBlock Grid.Row="2" TextWrapping="Wrap">
-                        提示：右击选中关卡即可显示更多操作。<Hyperlink Click="ModifyMappingXml">你可以点击这里手动修改关卡索引</Hyperlink>。
+                        提示：右击选中关卡即可显示更多操作。
+                        <Hyperlink Click="ModifyMappingXml">你可以点击这里手动修改关卡索引。</Hyperlink>
                         <Hyperlink Click="ShowMappingXmlHelp">如何修改关卡索引？</Hyperlink>
                     </TextBlock>
                 </Grid>
             </TabItem>
-            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True" PreviewDrop="OnBinaryDrop"
-                     PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave">
+            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True"
+                     PreviewDrop="OnBinaryDrop" PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver"
+                     PreviewDragLeave="OnDragLeave">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -223,8 +238,9 @@
                         <LineBreak />
                         支持的格式：localization 文件夹中的 text.loc 文件；根目录及 level 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；audio 文件夹；其对应的反编译产物。
                     </TextBlock>
-                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True" IsReadOnlyCaretVisible="True" Grid.Row="1"
-                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True"
+                             IsReadOnlyCaretVisible="True" Grid.Row="1" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" />
                 </Grid>
             </TabItem>
             <TabItem Header="绘制模型树" Name="DrawModelTreeTab" x:FieldModifier="private" AllowDrop="True"
@@ -242,7 +258,8 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Label Content="请输入模型名：（无需 .r_mdl 扩展名）" Target="{Binding ElementName=ModelNameBox}" />
-                    <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center" IsEditable="True" />
+                    <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center"
+                              IsEditable="True" />
                     <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Content="绘制(_D)" Click="DrawModelTree" Margin="2" IsDefault="True" />
                         <Button Content="将选中模型添加到模型查看器(_S)" Margin="2" Click="ViewModel" />
@@ -250,16 +267,17 @@
                         <Button Content="帮助(_H)" Click="GetModelTreeHelp" Margin="2" />
                     </WrapPanel>
                     <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <CheckBox Name="DrawChildModelsBox" x:FieldModifier="private" Content="同时绘制子模型(_C)" Margin="2"
-                                  ToolTip="如果分别绘制，子模型的变换可能显示不正常。" />
-                        <CheckBox Name="EnableDebugModeBox" x:FieldModifier="private" Content="启用调试模式(_N)" Margin="2"
-                                  ToolTip="启用调试模式后你可以看到所有三角形的三边。" />
+                        <CheckBox Name="DrawChildModelsBox" x:FieldModifier="private" Content="同时绘制子模型(_C)"
+                                  Margin="2" ToolTip="如果分别绘制，子模型的变换可能显示不正常。" />
+                        <CheckBox Name="EnableDebugModeBox" x:FieldModifier="private" Content="启用调试模式(_N)"
+                                  Margin="2" ToolTip="启用调试模式后你可以看到所有三角形的三边。" />
                     </WrapPanel>
                     <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="3" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
-            <TabItem Header="绘制动画树" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}" PreviewDragEnter="OnAnimationDragEnter"
-                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave" PreviewDrop="OnAnimationDrop" AllowDrop="True">
+            <TabItem Header="绘制动画树" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}"
+                     PreviewDragEnter="OnAnimationDragEnter" PreviewDragOver="OnDragOver"
+                     PreviewDragLeave="OnDragLeave" PreviewDrop="OnAnimationDrop" AllowDrop="True">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -270,9 +288,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Content="请输入动画名：（无需 .r_cha 扩展名）" Target="{Binding ElementName=AnimationNameBox}" />
-                    <ComboBox Name="AnimationNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center"
-                              IsEditable="True" />
+                    <Label Content="请输入动画名：（无需 .r_cha 扩展名）"
+                           Target="{Binding ElementName=AnimationNameBox}" />
+                    <ComboBox Name="AnimationNameBox" x:FieldModifier="private" Grid.Column="1"
+                              VerticalAlignment="Center" IsEditable="True" />
                     <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Content="绘制(_D)" Click="DrawAnimationTree" Margin="2" IsDefault="True" />
                         <Button Content="对模型查看器中的全部模型应用选中动画，右击不循环(_A)" Margin="2"
