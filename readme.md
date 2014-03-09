@@ -6,9 +6,10 @@ Command line arguments description can be found here: http://edgefans.tk/edgetoo
 
 EdgeTool used third party libraries & utilities
 -----------------------------------------------
-* MygodLibrary:                                 https://github.com/Mygod/MygodLibrary/
-* LibTwoTribes: (modified)                      https://github.com/WillKirkby/LibTwoTribes/
-* SevenZipSharp:                                http://sevenzipsharp.codeplex.com/
-* ExcelLibrary:                                 https://code.google.com/p/excellibrary/
-* Debug.exe from World of Goo Console Debugger: http://goofans.com/download/utility/world-of-goo-console-debugger
-* XactInterop3: (modified)                      Microsoft Cross-Platform Audio Creation Tool 3 (XACT3)
+* [MygodLibrary](https://github.com/Mygod/MygodLibrary/)
+* [LibTwoTribes](https://github.com/WillKirkby/LibTwoTribes/) (modified)
+* [SevenZipSharp](http://sevenzipsharp.codeplex.com/)
+* [ExcelLibrary](https://code.google.com/p/excellibrary/)
+* [Windows API Code Pack](http://archive.msdn.microsoft.com/WindowsAPICodePack)
+* Debug.exe from [World of Goo Console Debugger](http://goofans.com/download/utility/world-of-goo-console-debugger)
+* XactInterop3.dll from Microsoft Cross-Platform Audio Creation Tool 3 (XACT3) (modified)
