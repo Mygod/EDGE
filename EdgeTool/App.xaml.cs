@@ -8,8 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Mygod.Windows;
-using Mygod.Windows.Dialogs;
 
 namespace Mygod.Edge.Tool
 {
@@ -82,8 +82,8 @@ namespace Mygod.Edge.Tool
 
         private void OnError(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            TaskDialog.Show(null, "哇靠崩溃啦！", footerText: e.Exception.GetMessage(), type: TaskDialogType.Error,
-                            content: "你这个混账东西干了什么？赶紧向 Mygod工作室™ 报告错误信息和你的不当行径。");
+            TaskDialog.Show(null, "严重错误", "哇靠崩溃啦！", "你这个混账东西干了什么？赶紧向 Mygod工作室™ 报告错误信息" +
+                            "和你的不当行径。", TaskDialogType.Error, e.Exception.GetMessage());
             e.Handled = true;
             Shutdown();
         }

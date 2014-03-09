@@ -368,15 +368,16 @@ namespace Mygod.Edge.Tool
             var advanced = true;
             if (ValueIsAngle = element.AttributeCaseInsensitive("Angle") != null)
             {
-                Value = element.GetAttributeValueWithDefault<short>("Angle");
+                Value = element.GetAttributeValueWithDefault<short>("Angle", 22);
                 if (element.AttributeCaseInsensitive("FieldOfView") != null)
                     Warning.WriteLine("Level 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。");
             }
             else if (element.AttributeCaseInsensitive("FieldOfView") != null)
-                Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
+                Value = element.GetAttributeValueWithDefault<short>("FieldOfView", 22);
+            else if (Zoom < 0) Value = 22;
             else advanced = false;
-            if (Zoom > 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被" +
-                                                        "忽略。要启用请将 @Zoom 删去或设为负值。");
+            if (Zoom >= 0 && advanced) Warning.WriteLine("Level 元素：高级相机模式被禁用！@Angle 或 @FieldOfView 将被" +
+                                                         "忽略。要启用请将 @Zoom 删去或设为负值。");
             Buttons = new Buttons(this);
             foreach (var e in element.Elements())
                 switch (e.Name.LocalName.ToLower())
@@ -505,7 +506,8 @@ namespace Mygod.Edge.Tool
             set
             {
                 theme = value;
-                if (theme > 3) Warning.WriteLine("Level 元素：@Theme 超出范围！在实际游戏中的显示效果将使用白色主题（0）。");
+                if (theme > 3)
+                    Warning.WriteLine("Level 元素：@Theme 超出范围！在实际游戏中的显示效果将使用白色主题（0）。");
             }
         }
         public byte MusicJava
@@ -569,7 +571,7 @@ namespace Mygod.Edge.Tool
             get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; }
         }
 
-        public void Compile(string path)
+        public IEnumerable<string> Compile(string path)
         {
             FilePath = path;
             var level = this;
@@ -620,15 +622,25 @@ namespace Mygod.Edge.Tool
                         if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
                     }
             }
-            if (GenerateModel != null) new ModelGenerator(level, GenerateModel).Generate(path);
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
-                using (var writer = new BinaryWriter(stream)) level.Write(writer);
+            using (var writer = new BinaryWriter(stream)) level.Write(writer);
+            yield return path;
+            if (GenerateModel != null) yield return new ModelGenerator(level, GenerateModel).Generate(path);
         }
-        public void Decompile(string path)
+        public IEnumerable<string> Decompile(string path)
         {
-            File.WriteAllText(path + ".xml", GetXElement().ToString());
-            LegacyMinimap.SaveToImage(path + ".png");
-            for (var z = 0; z < Size.Height; z++) CollisionMap[z].SaveToImage(path + '.' + z + ".png");
+            var temp = path + ".xml";
+            File.WriteAllText(temp, GetXElement().ToString());
+            yield return temp;
+            temp = path + ".png";
+            LegacyMinimap.SaveToImage(temp);
+            yield return temp;
+            for (var z = 0; z < Size.Height; z++)
+            {
+                temp = path + '.' + z + ".png";
+                CollisionMap[z].SaveToImage(temp);
+                yield return path + '.' + z + ".png";
+            }
         }
 
         public void Write(BinaryWriter writer)
@@ -1564,26 +1576,16 @@ namespace Mygod.Edge.Tool
         {
             element.GetAttributeValue(out Position, "Position");
             element.GetAttributeValueWithDefault(out Radius, "Radius");
-            var advanced = true;
-            if (Reset = element.GetAttributeValueWithDefault<bool>("Reset"))
+            if (ValueIsAngle = element.AttributeCaseInsensitive("Angle") != null)
             {
-                if (element.AttributeCaseInsensitive("FieldOfView") != null)
-                    Warning.WriteLine("CameraTrigger 元素：@Reset 被设为 True！@FieldOfView 将会被忽略。");
-                if (element.AttributeCaseInsensitive("Angle") != null)
-                    Warning.WriteLine("CameraTrigger 元素：@Reset 被设为 True！@Angle 将会被忽略。");
-            }
-            else if (ValueIsAngle = element.AttributeCaseInsensitive("Angle") != null)
-            {
-                Value = element.GetAttributeValueWithDefault<short>("Angle");
+                Value = element.GetAttributeValueWithDefault<short>("Angle", 22);
                 if (element.AttributeCaseInsensitive("FieldOfView") != null)
                     Warning.WriteLine("CameraTrigger 元素：@Angle 与 @FieldOfView 被同时设置！" +
                                       "@FieldOfView 将会被忽略。");
             }
-            else if (element.AttributeCaseInsensitive("FieldOfView") != null)
-                Value = element.GetAttributeValueWithDefault<short>("FieldOfView");
-            else advanced = false;
-            Zoom = element.GetAttributeValueWithDefault("Zoom", (short)-1);
-            if (Zoom < 0)
+            else if (!(Reset = element.AttributeCaseInsensitive("FieldOfView") == null))
+                Value = element.GetAttributeValueWithDefault<short>("FieldOfView", 22);
+            if ((Zoom = element.GetAttributeValueWithDefault("Zoom", (short)-1)) < 0)
             {
                 Zoom = -1;
                 element.GetAttributeValueWithDefault(out StartDelay, "StartDelay");
@@ -1591,21 +1593,19 @@ namespace Mygod.Edge.Tool
                 element.GetAttributeValueWithDefault(out SingleUse, "SingleUse");
                 if (Duration == 0)
                     Warning.WriteLine("CameraTrigger 元素：由于 @Duration 当前为 0，该元素将在实际游戏中被禁用。");
+                return;
             }
-            else
-            {
-                if (advanced) Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Reset、@Angle 或 " +
-                                                "@FieldOfView 将会被忽略。要启用请将 @Zoom 删去或设为负值。");
-                if (element.AttributeCaseInsensitive("StartDelay") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@StartDelay 将会被忽略。" +
-                                      "要启用请将 @Zoom 删去或设为负值。");
-                if (element.AttributeCaseInsensitive("Duration") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Duration 将会被忽略。" +
-                                      "要启用请将 @Zoom 删去或设为负值。");
-                if (element.AttributeCaseInsensitive("SingleUse") != null)
-                    Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@SingleUse 将会被忽略。" +
-                                      "要启用请将 @Zoom 删去或设为负值。");
-            }
+            if (!Reset) Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Reset、@Angle 或 @FieldOfView " +
+                                          "将会被忽略。要启用请将 @Zoom 删去或设为负值。");
+            if (element.AttributeCaseInsensitive("StartDelay") != null)
+                Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@StartDelay 将会被忽略。" +
+                                  "要启用请将 @Zoom 删去或设为负值。");
+            if (element.AttributeCaseInsensitive("Duration") != null)
+                Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@Duration 将会被忽略。" +
+                                  "要启用请将 @Zoom 删去或设为负值。");
+            if (element.AttributeCaseInsensitive("SingleUse") != null)
+                Warning.WriteLine("CameraTrigger 元素：高级相机模式被禁用！@SingleUse 将会被忽略。" +
+                                  "要启用请将 @Zoom 删去或设为负值。");
         }
 
         private short zoom, value;
@@ -1657,8 +1657,7 @@ namespace Mygod.Edge.Tool
             result.SetAttributeValueWithDefault("Radius", Radius);
             if (Zoom == -1)
             {
-                result.SetAttributeValueWithDefault("Reset", Reset);
-                result.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value);
+                if (!Reset) result.SetAttributeValueWithDefault(ValueIsAngle ? "Angle" : "FieldOfView", Value, 22);
                 result.SetAttributeValueWithDefault("StartDelay", StartDelay);
                 result.SetAttributeValueWithDefault("Duration", Duration);
                 result.SetAttributeValueWithDefault("SingleUse", SingleUse);
@@ -2276,6 +2275,9 @@ namespace Mygod.Edge.Tool
             set
             {
                 position = value;
+                if (value.Equals(parent.ExitPoint))
+                    Warning.WriteLine("Resizer" + Direction + " 元素：@Position 与 /Level/@ExitPoint 相同！" +
+                                      "终点将被腐蚀，关卡将无法过关！");
                 if (value.Z > parent.Size.Height || value.Z <= 0)
                     Warning.WriteLine("Resizer" + Direction + " 元素：Z 坐标超出范围！这会导致游戏崩溃。");
                 if (value.X >= parent.Size.Width || value.X < 0 || value.Y >= parent.Size.Length || value.Y < 0)

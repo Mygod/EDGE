@@ -558,10 +558,23 @@ namespace Mygod.Edge.Tool
         DivisionOnly = 0x100, Division = 0x101
     }
 
+    public struct FileEntry
+    {
+        public FileEntry(string fileName, string type)
+        {
+            FileName = fileName;
+            Type = type;
+        }
+
+        public string FileName, Type;
+    }
+
     public static class Compiler
     {
-        public static Tuple<Exception, string> Compile(bool exFormat, string file, string directory = null)
+        public static Tuple<Exception, string, List<FileEntry>> Compile(bool exFormat, string file,
+                                                                        string directory = null)
         {
+            var list = new List<FileEntry>();
             var fileName = Path.GetFileNameWithoutExtension(file);
             if (string.IsNullOrWhiteSpace(directory)) directory = Path.GetDirectoryName(file);
             string inputPath = Path.Combine(Path.GetDirectoryName(file), fileName),
@@ -579,16 +592,26 @@ namespace Mygod.Edge.Tool
                                 using (var stream = File.OpenRead(file))
                                 using (var reader = new BinaryReader(stream))
                                     for (var i = 0; i <= 180; i++) array[i] = reader.ReadInt16();
-                                File.WriteAllText(outputPath + ".txt", string.Join(Environment.NewLine,
-                                    array.Select(value => value / 256.0)));
+                                File.WriteAllText(outputPath += ".txt",
+                                    string.Join(Environment.NewLine, array.Select(value => value / 256.0)));
+                                list.Add(new FileEntry(outputPath, "cos.txt"));
                                 break;
                             case "font":
                                 using (var stream = File.OpenRead(file))
-                                    File.WriteAllText(outputPath + ".xml", GetFontElement(stream).ToString());
+                                    File.WriteAllText(outputPath += ".xml", GetFontElement(stream).ToString());
+                                list.Add(new FileEntry(outputPath, "font.xml"));
                                 break;
                             default:
-                                Level.CreateFromCompiled(file).Decompile(outputPath);
+                            {
+                                var index = 0;
+                                foreach (var path in Level.CreateFromCompiled(file).Decompile(outputPath))
+                                {
+                                    list.Add(new FileEntry(path, index == 0 ? "level.xml"
+                                                               : index == 1 ? "level.png" : "level.z.png"));
+                                    index++;
+                                }
                                 break;
+                            }
                         }
                         break;
                     case ".xml":
@@ -596,88 +619,113 @@ namespace Mygod.Edge.Tool
                         switch (root.Name.LocalName.ToLowerInvariant())
                         {
                             case "level":
-                                Level.CreateFromDecompiled(inputPath).Compile(outputPath + ".bin");
+                            {
+                                var index = 0;
+                                foreach (var path in Level.CreateFromDecompiled(inputPath)
+                                                          .Compile(outputPath + ".bin"))
+                                {
+                                    list.Add(new FileEntry(path, index == 0 ? "level.bin" : "model.eso"));
+                                    index++;
+                                }
                                 break;
+                            }
                             case "animation":
-                                AssetHelper.ParseEan(root, fileName).Save(Path.Combine(directory,
+                                AssetHelper.ParseEan(root, fileName).Save(outputPath = Path.Combine(directory,
                                     AssetUtil.CRCFullName(fileName, "models") + ".ean"));
+                                list.Add(new FileEntry(outputPath, "animation.ean"));
                                 break;
                             case "material":
                             {
-                                string name, compiledFileName;
-                                Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                string name;
+                                Helper.AnalyzeFileName(out name, out outputPath, fileName);
                                 var ema = AssetHelper.ParseEma(root, name);
-                                ema.Save(Path.Combine(directory, compiledFileName + ".ema"));
+                                ema.Save(Path.Combine(directory, outputPath += ".ema"));
+                                list.Add(new FileEntry(outputPath, "material.ema"));
                                 break;
                             }
                             case "models":
                             {
-                                string name, compiledFileName;
-                                Helper.AnalyzeFileName(out name, out compiledFileName, fileName);
+                                string name;
+                                Helper.AnalyzeFileName(out name, out outputPath, fileName);
                                 var eso = AssetHelper.ParseEso(root, name);
-                                eso.Save(Path.Combine(directory, compiledFileName + ".eso"));
+                                eso.Save(Path.Combine(directory, outputPath += ".eso"));
+                                list.Add(new FileEntry(outputPath, "model.eso"));
                                 break;
                             }
                             case "font":
                             {
-                                using (var stream = File.Create(inputPath + ".bin")) WriteFontElement(stream, root);
+                                using (var stream = File.Create(outputPath = inputPath + ".bin"))
+                                    WriteFontElement(stream, root);
+                                list.Add(new FileEntry(outputPath, "font.bin"));
                                 break;
                             }
                         }
                         break;
                     case ".loc":
-                        LOC.FromFile(file).SaveXsl(outputPath + ".xls");
+                        LOC.FromFile(file).SaveXsl(outputPath += ".xls");
+                        list.Add(new FileEntry(outputPath, "text.xls"));
                         break;
                     case ".xls":
-                        LocHelper.FromXsl(file).Save(outputPath + ".loc");
+                        LocHelper.FromXsl(file).Save(outputPath += ".loc");
+                        list.Add(new FileEntry(outputPath, "text.loc"));
                         break;
                     case ".etx":
                         var etx = ETX.FromFile(file);
-                        etx.GetBitmap().Save(Path.Combine(directory, etx.AssetHeader.Name + ".png"));
+                        etx.GetBitmap().Save(outputPath = Path.Combine(directory, etx.AssetHeader.Name + ".png"));
+                        list.Add(new FileEntry(outputPath, "texture.png"));
                         break;
                     case ".png":
                         using (var bitmap = new Bitmap(file))
                         {
                             var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
                             (exFormat ? (ETX) ETX1804.CreateFromImage(bitmap, fileName)
-                                : ETX1803.CreateFromImage(bitmap, fileName)).Save(Path.Combine(directory, name));
+                                : ETX1803.CreateFromImage(bitmap, fileName))
+                                .Save(outputPath = Path.Combine(directory, name));
+                            list.Add(new FileEntry(outputPath, "texture.etx"));
                         }
                         break;
                     case ".ean":
                         var ean = EAN.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory,
-                                                       Helper.GetDecompiledFileName(fileName, ean) + ".xml"),
+                        File.WriteAllText(outputPath = Path.Combine(directory,
+                                              Helper.GetDecompiledFileName(fileName, ean) + ".xml"),
                                           AssetHelper.GetEanElement(ean).ToString());
+                        list.Add(new FileEntry(outputPath, "animation.xml"));
                         break;
                     case ".ema":
                     {
                         var ema = EMA.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory,
-                                                       Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
+                        File.WriteAllText(outputPath = Path.Combine(directory,
+                                              Helper.GetDecompiledFileName(fileName, ema) + ".xml"),
                                           AssetHelper.GetEmaElement(ema).ToString());
+                        list.Add(new FileEntry(outputPath, "material.xml"));
                         break;
                     }
                     case ".eso":
                     {
                         var eso = ESO.FromFile(file);
-                        File.WriteAllText(Path.Combine(directory,
-                                                       Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
+                        File.WriteAllText(outputPath = Path.Combine(directory,
+                                              Helper.GetDecompiledFileName(fileName, eso) + ".xml"),
                                           AssetHelper.GetEsoElement(eso).ToString());
+                        list.Add(new FileEntry(outputPath, "model.xml"));
                         break;
                     }
                     case ".txt":
-                        using (var stream = new FileStream(outputPath + ".bin", FileMode.Create, FileAccess.Write, FileShare.Read))
-                        using (var writer = new BinaryWriter(stream))
+                        using (var stream = new FileStream(outputPath += ".bin", FileMode.Create,
+                                                           FileAccess.Write, FileShare.Read))
+                        {
+                            var writer = new BinaryWriter(stream);
                             foreach (var num in File.ReadAllText(file)
                                 .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                                 .Select(double.Parse)) writer.Write((short) Math.Round(num * 256));
+                        }
+                        list.Add(new FileEntry(outputPath, "cos.bin"));
                         break;
                     default:
                         switch (Path.GetFileName(file))
                         {
                             case "audio":
-                                outputPath = Path.Combine(directory, "sfx");
-                                if (Directory.Exists(outputPath)) Directory.Delete(outputPath, true);
+                                if (Directory.Exists(outputPath = Path.Combine(directory, "sfx")))
+                                    Directory.Delete(outputPath, true);
                                 Directory.CreateDirectory(outputPath);
                                 string xsb = Path.Combine(file, "sfx.xsb"), xwb = Path.Combine(file, "sfx.xwb");
                                 int offset;
@@ -687,15 +735,15 @@ namespace Mygod.Edge.Tool
                                     using (var reader = new BinaryReader(stream)) offset = reader.ReadInt32();
                                 }
                                 var unxwb = new Process { StartInfo = new ProcessStartInfo(
-                                    Path.Combine(CurrentApp.Directory, "Resources/Tools/unxwb.exe"),
+                                    Path.Combine(CurrentApp.Directory, "Resources/Libraries/unxwb.exe"),
                                     string.Format("-d \"{0}\" -b \"{1}\" {2} \"{3}\"", outputPath, xsb, offset, xwb))
                                         { UseShellExecute = false, CreateNoWindow = true } };
                                 unxwb.Start();
                                 unxwb.WaitForExit();
+                                list.Add(new FileEntry(outputPath, "sfx"));
                                 break;
                             case "sfx":
-                                outputPath = Path.Combine(directory, "audio");
-                                Directory.CreateDirectory(outputPath);
+                                Directory.CreateDirectory(outputPath = Path.Combine(directory, "audio"));
                                 var tempOutputPath = Helper.GetRandomDirectory();
                                 Directory.CreateDirectory(tempOutputPath);
                                 var projectPath = GenerateXactProject(file);
@@ -713,17 +761,18 @@ namespace Mygod.Edge.Tool
                                     Directory.Delete(tempOutputPath, true);
                                 }
                                 catch { }   // ignore any error that may have caused
+                                list.Add(new FileEntry(outputPath, "audio"));
                                 break;
                             default:
                                 throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
                         }
                         break;
                 }
-                return new Tuple<Exception, string>(null, Warning.Fetch());
+                return new Tuple<Exception, string, List<FileEntry>>(null, Warning.Fetch(), list);
             }
             catch (Exception exc)
             {
-                return new Tuple<Exception, string>(exc, Warning.Fetch());
+                return new Tuple<Exception, string, List<FileEntry>>(exc, Warning.Fetch(), list);
             }
             finally
             {

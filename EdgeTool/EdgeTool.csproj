@@ -116,6 +116,9 @@
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
     <Compile Include="Core\ModelGenerator.cs" />
+    <Compile Include="KeyEventRecorder.xaml.cs">
+      <DependentUpon>KeyEventRecorder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="[3DTools]\MathUtils.cs" />
     <Compile Include="[3DTools]\Matrix3DStack.cs" />
     <Compile Include="[3DTools]\ScreenSpaceLines3D.cs" />
@@ -155,6 +158,10 @@
       <DependentUpon>ModelWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Page Include="KeyEventRecorder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ModelWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -192,12 +199,6 @@
     <None Include="app.manifest" />
     <None Include="Mygod.cer" />
     <None Include="Mygod.pfx" />
-    <None Include="Resources\Tools\Source\easycrt.o" />
-    <None Include="Resources\Tools\Source\easycrt.pas" />
-    <None Include="Resources\Tools\Source\easycrt.ppu" />
-    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lpi" />
-    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lpr" />
-    <None Include="Resources\Tools\Source\EdgeMobiPCConverter.lps" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\EdgeBin.h" />
@@ -218,6 +219,14 @@
     <ProjectReference Include="..\..\..\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj">
       <Project>{4960dd14-3431-47ec-b9d9-9d2730a98dc3}</Project>
       <Name>SevenZip2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj">
+      <Project>{2E1FB0DF-F9BB-4909-9F32-2D9D022A8E57}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj">
+      <Project>{aa0c00cb-8699-4f37-bfae-40ca87acc06d}</Project>
+      <Name>Shell</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -398,15 +407,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="Resources\Tools\toMobi.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Tools\toPC.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tools\unxwb.exe">
+    <None Include="Resources\Libraries\unxwb.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -421,6 +422,12 @@
     <PostBuildEvent>"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetDir)$(TargetFileName)"
 move /y %25TargetDir%25ExcelLibrary.dll %25TargetDir%25Resources\Libraries\ExcelLibrary.dll
 move /y %25TargetDir%25ExcelLibrary.pdb %25TargetDir%25Resources\Libraries\ExcelLibrary.pdb
+move /y %25TargetDir%25Microsoft.WindowsAPICodePack.dll %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.dll
+move /y %25TargetDir%25Microsoft.WindowsAPICodePack.pdb %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.pdb
+del /f /q %25TargetDir%25Microsoft.WindowsAPICodePack.xml
+move /y %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.dll %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.dll
+move /y %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.pdb %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.pdb
+del /f /q %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.xml
 move /y %25TargetDir%25MygodLibrary.dll %25TargetDir%25Resources\Libraries\MygodLibrary.dll
 move /y %25TargetDir%25MygodLibrary.pdb %25TargetDir%25Resources\Libraries\MygodLibrary.pdb
 del /f /q %25TargetDir%25MygodLibrary.xml

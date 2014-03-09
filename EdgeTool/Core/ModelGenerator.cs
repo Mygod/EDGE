@@ -63,7 +63,7 @@ namespace Mygod.Edge.Tool
             return (value - Translates[currentTheme] - new Vec3(0, 0, level.Size.Length)) * 10;
         }
 
-        public void Generate(string path)
+        public string Generate(string path)
         {
             List<Vec3> vertices = new List<Vec3>(), normals = new List<Vec3>();
             var texCoords = new List<Vec2>();
@@ -134,7 +134,7 @@ namespace Mygod.Edge.Tool
                         texCoords.Add(new Vec2(0.24F, texY1));
                     }
                 }
-            var fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl";
+            string fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl", result;
             new ESO
             {
                 AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, fileName, "models"),
@@ -154,7 +154,9 @@ namespace Mygod.Edge.Tool
                         MaterialAsset = AssetHash.Parse(Materials[currentTheme] + ModelsNamespace)
                     }
                 }
-            }.Save(Path.Combine(Path.GetDirectoryName(path), AssetUtil.CRCFullName(fileName, "models") + ".eso"));
+            }.Save(result = Path.Combine(Path.GetDirectoryName(path),
+                                         AssetUtil.CRCFullName(fileName, "models") + ".eso"));
+            return result;
         }
     }
 }

@@ -9,6 +9,7 @@
             <local:SecondsConverter x:Key="Seconds" />
             <local:BinFilePathConverter x:Key="BinFilePath" />
             <local:GlobalPercentTextConverter x:Key="GlobalPercentText" />
+            <local:FilesConverter x:Key="Files" />
             <Style x:Key="AlignRight" TargetType="{x:Type TextBlock}">
                 <Setter Property="HorizontalAlignment" Value="Right" />
             </Style>
@@ -40,7 +41,18 @@
             <Button Grid.Column="3" Content="加载(_L)" VerticalAlignment="Center" Click="Load" />
             <Button Grid.Column="5" Content="运行游戏(_R)" VerticalAlignment="Center" Click="RunGame"
                     Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
-            <Button Grid.Column="7" Content="检查 Edge_Tool 更新" VerticalAlignment="Center" Click="CheckForUpdates" />
+            <Button Grid.Column="7" Content="工具箱(_T)..." VerticalAlignment="Center"
+                    Click="PopContextMenu" ContextMenuService.Placement="Bottom">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" />
+                        <MenuItem Header="转换手机版关卡文件(_C)..." Click="ConvertMobiLevel" />
+                        <Separator />
+                        <MenuItem Header="检查 _EdgeTool 更新" Click="CheckForUpdates" />
+                        <MenuItem Header="帮助(_H)" Click="Help" />
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
         </Grid>
         <TabControl Name="Tabs" x:FieldModifier="private" Grid.Row="2">
             <TabItem Header="浏览成就">
@@ -229,18 +241,102 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="5" TextWrapping="Wrap">
-                        要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
-                        <Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
-                        <Hyperlink Click="ShowCommandLineHelp">使用命令行(反)编译帮助</Hyperlink>
+                    <TextBlock Margin="5,0" TextWrapping="Wrap">
+                        要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里，或者从左下角的历史记录里选中要反编译的文件就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
                         <LineBreak />
-                        支持的格式：localization 文件夹中的 text.loc 文件；根目录及 level 文件夹中的 .bin 文件；models 文件夹中的 .ean, .ema 和 .eso 文件；textures 文件夹中的 .etx 文件；audio 文件夹；其对应的反编译产物。
+                        帮助：<Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
+                        <Hyperlink Click="ShowCommandLineHelp">命令行(反)编译帮助</Hyperlink>
+                        或 右击下面任意一种文件格式打开该格式的说明
                     </TextBlock>
-                    <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True"
-                             IsReadOnlyCaretVisible="True" Grid.Row="1" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" />
+                    <Grid Row="2" Margin="5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="(反)编译完成后打开：" VerticalAlignment="Top" />
+                        <WrapPanel Name="CheckBoxPanel" x:FieldModifier="private" Grid.Column="1">
+                            <WrapPanel.Resources>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Margin" Value="5,0,0,0" />
+                                    <EventSetter Event="MouseRightButtonUp" Handler="OpenReference" />
+                                </Style>
+                            </WrapPanel.Resources>
+                            <CheckBox Content="text.loc" Tag="text-loc" />
+                            <CheckBox Content="text.xls" Tag="text-loc" />
+                            <CheckBox Content="cos.bin" Tag="cos-bin" />
+                            <CheckBox Content="cos.txt" Tag="cos-bin" />
+                            <CheckBox Content="font.bin" Tag="font-bin" />
+                            <CheckBox Content="font.xml" Tag="font-bin" />
+                            <CheckBox Content="level.bin" Tag="level-bin" />
+                            <CheckBox Content="level.png" Tag="level-bin" />
+                            <CheckBox Content="level.z.png" Tag="level-bin" />
+                            <CheckBox Content="level.xml" Tag="level-bin" />
+                            <CheckBox Content="animation.ean" Tag="asset/ean" />
+                            <CheckBox Content="animation.xml" Tag="asset/ean" />
+                            <CheckBox Content="material.ema" Tag="asset/ema" />
+                            <CheckBox Content="material.xml" Tag="asset/ema" />
+                            <CheckBox Content="model.eso" Tag="asset/eso" />
+                            <CheckBox Content="model.xml" Tag="asset/eso" />
+                            <CheckBox Content="texture.etx" Tag="asset/etx" />
+                            <CheckBox Content="texture.png" Tag="asset/etx" />
+                            <CheckBox Content="audio" Tag="audio" />
+                            <CheckBox Content="sfx" Tag="audio" />
+                        </WrapPanel>
+                    </Grid>
+                    <Grid Row="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <ListBox Name="DecompileHistoryBox" x:FieldModifier="private" SelectionMode="Extended">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource Files}}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <Button Grid.Row="2" Content="(反)编译(_C)" Click="DecompileHistory">
+                            <Button.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger Value="-1" Binding="{Binding SelectedIndex,
+                                                                                  ElementName=DecompileHistoryBox}">
+                                            <Setter Property="Button.IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Grid.Row="4" Content="清空历史记录(_H)" Click="ClearHistory">
+                            <Button.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger Value="0" Binding="{Binding Items.Count,
+                                                                                 ElementName=DecompileHistoryBox}">
+                                            <Setter Property="Button.IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <GridSplitter Width="5" Grid.RowSpan="5" Grid.Column="1" />
+                        <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True"
+                                 IsReadOnlyCaretVisible="True" Grid.RowSpan="5" Grid.Column="2" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" />
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="绘制模型树" Name="DrawModelTreeTab" x:FieldModifier="private" AllowDrop="True"

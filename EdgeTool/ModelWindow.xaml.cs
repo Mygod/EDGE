@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using LibTwoTribes;
 using LibTwoTribes.Util;
-using Mygod.Windows.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using _3DTools;
 
 namespace Mygod.Edge.Tool
@@ -54,7 +54,7 @@ namespace Mygod.Edge.Tool
                     }
                     else image = new BitmapImage();
                     if (!parentMatrix.HasValue && model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
-                        TaskDialog.Show(this, "对不起，EdgeTool 无法完全支持此模型。",
+                        TaskDialog.Show(this, "警告", "对不起，EdgeTool 无法完全支持此模型。",
                             "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。",
                             TaskDialogType.Warning);
                     for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);

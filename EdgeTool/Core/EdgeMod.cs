@@ -285,7 +285,8 @@ namespace Mygod.Edge.Tool
         public Edge(string gamePath)
         {
             var versionInfo = FileVersionInfo.GetVersionInfo(GamePath = gamePath);
-            EngineVersion = new Version(versionInfo.FileVersion.Replace(", ", "."));
+            EngineVersion = new Version(versionInfo.FileMajorPart, versionInfo.FileMinorPart,
+                                        versionInfo.FileBuildPart, versionInfo.FilePrivatePart);
             GameDirectory = Path.GetDirectoryName(GamePath);
             Directory.CreateDirectory(ModsDirectory = Path.Combine(GameDirectory, "mods"));
             AudioDirectory = Path.Combine(GameDirectory, "audio");
