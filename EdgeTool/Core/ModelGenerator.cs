@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using LibTwoTribes;
-using LibTwoTribes.Util;
+using Mygod.Edge.Tool.LibTwoTribes;
+using Mygod.Edge.Tool.LibTwoTribes.Util;
 using Mygod.Xml.Linq;
 
 namespace Mygod.Edge.Tool
@@ -137,7 +137,7 @@ namespace Mygod.Edge.Tool
             string fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl", result;
             new ESO
             {
-                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, fileName, "models"),
+                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, fileName, "models"),
                 Header = new ESOHeader
                 {
                     V01 = 1, V02 = 4096, V20 = 1, NumModels = 1, ScaleXYZ = 1, Scale = new Vec3(0.1F, 0.1F, 0.1F),
@@ -155,7 +155,7 @@ namespace Mygod.Edge.Tool
                     }
                 }
             }.Save(result = Path.Combine(Path.GetDirectoryName(path),
-                                         AssetUtil.CRCFullName(fileName, "models") + ".eso"));
+                                         AssetUtil.CrcFullName(fileName, "models") + ".eso"));
             return result;
         }
     }

@@ -10,7 +10,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using LibTwoTribes;
+using Mygod.Edge.Tool.LibTwoTribes;
 using Mygod.IO;
 using Mygod.Xml.Linq;
 using SevenZip;

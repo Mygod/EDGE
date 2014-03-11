@@ -14,15 +14,13 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using LibTwoTribes;
-using LibTwoTribes.Util;
+using Mygod.Edge.Tool.LibTwoTribes;
+using Mygod.Edge.Tool.LibTwoTribes.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using Mygod.Net;
 using Mygod.Windows;
 using Mygod.Windows.Dialogs;
-using ContextMenu = System.Windows.Forms.ContextMenu;
-using MenuItem = System.Windows.Forms.MenuItem;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
@@ -36,16 +34,13 @@ namespace Mygod.Edge.Tool
 
         public MainWindow()
         {
-            notifyIcon = new NotifyIcon { Icon = CurrentApp.DrawingIcon, Visible = true, Text = "EdgeTool", 
-                ContextMenu = new ContextMenu(new[] { new MenuItem("启动游戏(&S)", RunGame),
-                                                      new MenuItem("安装 &EdgeMod", InstallEdgeMods),
-                                                      new MenuItem("关闭(&C)", (sender, e) => Close()) }) };
+            notifyIcon = new NotifyIcon { Icon = CurrentApp.DrawingIcon, Text = "EdgeTool" };
             notifyIcon.MouseClick += OnHideWindow;
             notifyIcon.BalloonTipClicked += OnBalloonClosed;
             notifyIcon.BalloonTipClosed += OnBalloonClosed;
             exeSelector.Filters.Add(new CommonFileDialogFilter("可执行程序 (*.exe)", "*.exe"));
-            levelSelector.Filters.Add(new CommonFileDialogFilter("EDGE 关卡文件 (*.bin)", "*.bin"));
-            levelSelector.Controls.Add(new CommonFileDialogCheckBox("转换到 P&C 版 (不选中表示转换到移动版)"));
+            LevelSelector.Filters.Add(new CommonFileDialogFilter("EDGE 关卡文件 (*.bin)", "*.bin"));
+            LevelSelector.Controls.Add(new CommonFileDialogCheckBox("转换到 P&C 版 (不选中表示转换到移动版)"));
             InitializeComponent();
             DecompileHistoryBox.ItemsSource = decompileHistory;
             checkBoxes = CheckBoxPanel.Children.OfType<CheckBox>().ToDictionary(box => box.Content as string);
@@ -110,10 +105,10 @@ namespace Mygod.Edge.Tool
         private Thread searcher;
         private readonly CommonOpenFileDialog
             exeSelector = new CommonOpenFileDialog { Title = "请选择 edge.exe", DefaultFileName = "edge.exe" },
-            levelSelector = new CommonOpenFileDialog
-                { Title = "请选择要处理的 .bin 文件", Multiselect = true, AddToMostRecentlyUsedList = false },
             outputSelector = new CommonOpenFileDialog
                 { Title = "请选择要保存的位置", IsFolderPicker = true, AddToMostRecentlyUsedList = false };
+        private static readonly CommonOpenFileDialog LevelSelector = new CommonOpenFileDialog
+            { Title = "请选择要处理的 .bin 文件", Multiselect = true, AddToMostRecentlyUsedList = false };
 
         private void Browse(object sender, RoutedEventArgs e)
         {
@@ -202,14 +197,19 @@ namespace Mygod.Edge.Tool
 
         private void RecordKeyEvent(object sender, RoutedEventArgs e)
         {
-            new KeyEventRecorder().Show();
+            new KeyEventRecorder((App) Application.Current).Show();
         }
+
         private void ConvertMobiLevel(object sender, RoutedEventArgs e)
         {
-            if (levelSelector.ShowDialog(this) != CommonFileDialogResult.Ok) return;
-            var pc = ((CommonFileDialogCheckBox)levelSelector.Controls[0]).IsChecked;
+            ConvertMobiLevel(this);
+        }
+        public static void ConvertMobiLevel(Window window = null)
+        {
+            if (LevelSelector.ShowDialog(window) != CommonFileDialogResult.Ok) return;
+            var pc = ((CommonFileDialogCheckBox)LevelSelector.Controls[0]).IsChecked;
             var count = 0;
-            foreach (var file in levelSelector.FileNames)
+            foreach (var file in LevelSelector.FileNames)
                 try
                 {
                     using (var stream = new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
@@ -229,17 +229,21 @@ namespace Mygod.Edge.Tool
                 }
                 catch (Exception exc)
                 {
-                    TaskDialog.Show(this, "错误", "转换失败。", "文件名：" + file, TaskDialogType.Error,
+                    TaskDialog.Show(window, "错误", "转换失败。", "文件名：" + file, TaskDialogType.Error,
                                     exc.GetMessage());
                 }
-            if (count > 0) TaskDialog.Show(this, "完成", "转换完毕。", string.Format("成功转换了 {0} 个文件。", count),
+            if (count > 0) TaskDialog.Show(window, "完成", "转换完毕。", string.Format("成功转换了 {0} 个文件。", count),
                                            TaskDialogType.Information);
         }
         private void CheckForUpdates(object sender, RoutedEventArgs e)
         {
-            WebsiteManager.CheckForUpdates(222,
-                () => TaskDialog.Show(this, "检查完毕", "没有可用更新。", type: TaskDialogType.Information),
-                exc => TaskDialog.Show(this, "错误", "检查更新失败。", type: TaskDialogType.Error,
+            CheckForUpdates(this);
+        }
+        public static void CheckForUpdates(Window window = null)
+        {
+            WebsiteManager.CheckForUpdates(
+                () => TaskDialog.Show(window, "检查完毕", "没有可用更新。", type: TaskDialogType.Information),
+                exc => TaskDialog.Show(window, "错误", "检查更新失败。", type: TaskDialogType.Error,
                                        expandedInfo: exc.GetMessage()));
         }
         private void Help(object sender, RoutedEventArgs e)
@@ -352,6 +356,7 @@ namespace Mygod.Edge.Tool
                 !achievedBefore.Contains(achievement.ApiName) && Users.Current.CurrentUser.GetAchieved(achievement)))
             {
                 while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
+                notifyIcon.Visible = true;
                 notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！",
                     "恭喜你获得了一个成就！快去 EdgeTool 看看吧！" + Environment.NewLine
                     + "说明：" + achievement.Description, ToolTipIcon.Info);
@@ -377,10 +382,6 @@ namespace Mygod.Edge.Tool
             decompileHistory = new ObservableCollection<List<string>>();
         private readonly Dictionary<string, CheckBox> checkBoxes;
 
-        private void ShowReferenceGuide(object sender, RoutedEventArgs e)
-        {
-            Process.Start("http://edgefans.tk/developers");
-        }
         private void ShowCommandLineHelp(object sender, RoutedEventArgs e)
         {
             Process.Start("http://edgefans.tk/edgetool/command-line-arguments");
@@ -616,13 +617,13 @@ namespace Mygod.Edge.Tool
         private void DrawAnimationTree(object sender, RoutedEventArgs e)
         {
             AnimationTreeView.Items.Clear();
-            DrawEan(AnimationTreeView.Items, AssetUtil.CRCFullName(AnimationNameBox.Text, "models", false));
+            DrawEan(AnimationTreeView.Items, AssetUtil.CrcFullName(AnimationNameBox.Text, "models", false));
         }
 
         private void DrawModelTree(object sender, RoutedEventArgs e)
         {
             ModelTreeView.Items.Clear();
-            DrawEso(ModelTreeView.Items, AssetUtil.CRCFullName(ModelNameBox.Text, "models", false));
+            DrawEso(ModelTreeView.Items, AssetUtil.CrcFullName(ModelNameBox.Text, "models", false));
         }
 
         private static void DrawEan(IList parent, string fileName)

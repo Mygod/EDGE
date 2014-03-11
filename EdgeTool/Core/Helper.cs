@@ -13,8 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 using ExcelLibrary.SpreadSheet;
-using LibTwoTribes;
-using LibTwoTribes.Util;
+using Mygod.Edge.Tool.LibTwoTribes;
+using Mygod.Edge.Tool.LibTwoTribes.Util;
 using Mygod.Windows;
 using Mygod.Xml.Linq;
 using SevenZip;
@@ -87,19 +87,19 @@ namespace Mygod.Edge.Tool
             if (match.Success)
             {
                 name = match.Groups[1].Value;
-                compiledFileName = match.Groups[2].Value + AssetUtil.CRCNamespace(nameSpace).ToString("X8");
+                compiledFileName = match.Groups[2].Value + AssetUtil.CrcNamespace(nameSpace).ToString("X8");
             }
             else
             {
                 name = fileName;
-                compiledFileName = AssetUtil.CRCFullName(fileName, nameSpace);
+                compiledFileName = AssetUtil.CrcFullName(fileName, nameSpace);
             }
         }
 
         public static string GetDecompiledFileName(string fileName, Asset asset)
         {
             var correctHash = fileName.Substring(0, 8);
-            if (correctHash == AssetUtil.CRCName(asset.AssetHeader.Name).ToString("X8"))
+            if (correctHash == AssetUtil.CrcName(asset.AssetHeader.Name).ToString("X8"))
                 return asset.AssetHeader.Name;
             return asset.AssetHeader.Name + '.' + correctHash;
         }
@@ -195,7 +195,7 @@ namespace Mygod.Edge.Tool
         {
             return new EAN
             {
-                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace),
+                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, name, nameSpace),
                 Header = new EANHeader
                 {
                     Unknown1 = element.GetAttributeValueWithDefault<float>("Unknown"),
@@ -340,7 +340,7 @@ namespace Mygod.Edge.Tool
             }
             return new EMA
             {
-                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace),
+                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, name, nameSpace),
                 Color1 = Helper.Parse(element.GetAttributeValue("Color1")),
                 Color2 = Helper.Parse(element.GetAttributeValue("Color2")),
                 Color3 = Helper.Parse(element.GetAttributeValue("Color3")),
@@ -506,7 +506,7 @@ namespace Mygod.Edge.Tool
             }
             var result = new ESO
             {
-                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804_Edge, name, nameSpace),
+                AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, name, nameSpace),
                 Models = models.ToArray(), Header = new ESOHeader
                 {
                     V01 = element.GetAttributeValueWithDefault<int>("V01"), V02 = element.GetAttributeValueWithDefault<int>("V02"),
@@ -631,7 +631,7 @@ namespace Mygod.Edge.Tool
                             }
                             case "animation":
                                 AssetHelper.ParseEan(root, fileName).Save(outputPath = Path.Combine(directory,
-                                    AssetUtil.CRCFullName(fileName, "models") + ".ean"));
+                                    AssetUtil.CrcFullName(fileName, "models") + ".ean"));
                                 list.Add(new FileEntry(outputPath, "animation.ean"));
                                 break;
                             case "material":
@@ -675,15 +675,13 @@ namespace Mygod.Edge.Tool
                         list.Add(new FileEntry(outputPath, "texture.png"));
                         break;
                     case ".png":
-                        using (var bitmap = new Bitmap(file))
-                        {
-                            var name = AssetUtil.CRCFullName(fileName, "textures") + ".etx";
-                            (exFormat ? (ETX) ETX1804.CreateFromImage(bitmap, fileName)
-                                : ETX1803.CreateFromImage(bitmap, fileName))
-                                .Save(outputPath = Path.Combine(directory, name));
-                            list.Add(new FileEntry(outputPath, "texture.etx"));
-                        }
+                    {
+                        var name = AssetUtil.CrcFullName(fileName, "textures") + ".etx";
+                        (exFormat ? (ETX)ETX1804.CreateFromImage(file) : ETX1803.CreateFromImage(file))
+                            .Save(outputPath = Path.Combine(directory, name));
+                        list.Add(new FileEntry(outputPath, "texture.etx"));
                         break;
+                    }
                     case ".ean":
                         var ean = EAN.FromFile(file);
                         File.WriteAllText(outputPath = Path.Combine(directory,
@@ -744,23 +742,24 @@ namespace Mygod.Edge.Tool
                                 break;
                             case "sfx":
                                 Directory.CreateDirectory(outputPath = Path.Combine(directory, "audio"));
-                                var tempOutputPath = Helper.GetRandomDirectory();
-                                Directory.CreateDirectory(tempOutputPath);
-                                var projectPath = GenerateXactProject(file);
+                                var tempInputPath = Helper.GetRandomDirectory();
+                                Directory.CreateDirectory(tempInputPath);
+                                var projectPath = GenerateXactProject(file, tempInputPath);
                                 using (var project = new CXACTMasterProject())
                                 {
                                     project.Create();
                                     project.Load(projectPath, new CXACTMasterProjectCallback(), 0);
-                                    project.Build(new CXACTMasterProjectCallback(), tempOutputPath, false, false);
+                                    project.Build(new CXACTMasterProjectCallback(), outputPath, false, false);
                                 }
-                                foreach (var stuff in Directory.EnumerateFiles(tempOutputPath))
-                                    File.Move(stuff, Path.Combine(outputPath, Path.GetFileName(stuff)));
                                 File.Delete(projectPath);
                                 try
                                 {
-                                    Directory.Delete(tempOutputPath, true);
+                                    Directory.Delete(tempInputPath, true);
                                 }
-                                catch { }   // ignore any error that may have caused
+                                catch
+                                {
+                                    Trace.WriteLine(tempInputPath, "Delete tempInputPath failed");
+                                }
                                 list.Add(new FileEntry(outputPath, "audio"));
                                 break;
                             default:
@@ -851,14 +850,15 @@ namespace Mygod.Edge.Tool
         private static readonly HashSet<char> CharSet = new HashSet<char>(CharLookup);
 
         #region GenerateXactProject
-        private static string GenerateXactProject(string outputPath)
+        private static string GenerateXactProject(string inputPath, string outputPath)
         {
             StringBuilder waves = new StringBuilder(), sounds = new StringBuilder(), cues = new StringBuilder();
             var i = 0;
-            foreach (var info in new DirectoryInfo(outputPath).EnumerateFiles("*.wav"))
+            foreach (var wavPath in Directory.EnumerateFiles(inputPath, "*.wav"))
             {
-                var id = Path.GetFileNameWithoutExtension(info.Name);
-                waves.AppendFormat(Wave, id, info.Name);
+                string name = Path.GetFileName(wavPath), id = Path.GetFileNameWithoutExtension(wavPath);
+                File.Copy(wavPath, Path.Combine(outputPath, name));
+                waves.AppendFormat(Wave, id, name);
                 sounds.AppendFormat(Sound, id, i);
                 cues.AppendFormat(Cue, id, i++);
             }

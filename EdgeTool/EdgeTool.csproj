@@ -122,38 +122,30 @@
     <Compile Include="[3DTools]\MathUtils.cs" />
     <Compile Include="[3DTools]\Matrix3DStack.cs" />
     <Compile Include="[3DTools]\ScreenSpaceLines3D.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Asset.cs" />
-    <Compile Include="Core\[LibTwoTribes]\AssetHash.cs" />
-    <Compile Include="Core\[LibTwoTribes]\AssetHeader.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EAN.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EANHeader.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EMA.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EMAAnimationBlock.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EMADefaultTransform.cs" />
-    <Compile Include="Core\[LibTwoTribes]\EMATexture.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ESO.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ESOFooter.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ESOHeader.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ESOModel.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ETX.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ETX0004.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ETX0004Header.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ETX1803.cs" />
-    <Compile Include="Core\[LibTwoTribes]\ETX1804.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Glyph.cs" />
-    <Compile Include="Core\[LibTwoTribes]\GlyphEntry.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Keyframe.cs" />
-    <Compile Include="Core\[LibTwoTribes]\KeyframeBlock.cs" />
-    <Compile Include="Core\[LibTwoTribes]\LOC.cs" />
-    <Compile Include="Core\[LibTwoTribes]\SPRT.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\AssetUtil.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\BinaryUtil.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\CRC32.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\FastLZ.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\TTBinaryReader.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\TTBinaryWriter.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\Vec2.cs" />
-    <Compile Include="Core\[LibTwoTribes]\Util\Vec3.cs" />
+    <Compile Include="Core\LibTwoTribes\Asset.cs" />
+    <Compile Include="Core\LibTwoTribes\AssetHash.cs" />
+    <Compile Include="Core\LibTwoTribes\AssetHeader.cs" />
+    <Compile Include="Core\LibTwoTribes\EAN.cs" />
+    <Compile Include="Core\LibTwoTribes\EANHeader.cs" />
+    <Compile Include="Core\LibTwoTribes\EMA.cs" />
+    <Compile Include="Core\LibTwoTribes\EMAAnimationBlock.cs" />
+    <Compile Include="Core\LibTwoTribes\EMADefaultTransform.cs" />
+    <Compile Include="Core\LibTwoTribes\EMATexture.cs" />
+    <Compile Include="Core\LibTwoTribes\ESO.cs" />
+    <Compile Include="Core\LibTwoTribes\ESOFooter.cs" />
+    <Compile Include="Core\LibTwoTribes\ESOHeader.cs" />
+    <Compile Include="Core\LibTwoTribes\ESOModel.cs" />
+    <Compile Include="Core\LibTwoTribes\ETX.cs" />
+    <Compile Include="Core\LibTwoTribes\ETX1803.cs" />
+    <Compile Include="Core\LibTwoTribes\ETX1804.cs" />
+    <Compile Include="Core\LibTwoTribes\Keyframe.cs" />
+    <Compile Include="Core\LibTwoTribes\KeyframeBlock.cs" />
+    <Compile Include="Core\LibTwoTribes\LOC.cs" />
+    <Compile Include="Core\LibTwoTribes\Util\AssetUtil.cs" />
+    <Compile Include="Core\LibTwoTribes\Util\BinaryUtil.cs" />
+    <Compile Include="Core\LibTwoTribes\Util\CRC32.cs" />
+    <Compile Include="Core\LibTwoTribes\Util\Vec2.cs" />
+    <Compile Include="Core\LibTwoTribes\Util\Vec3.cs" />
     <Compile Include="ModelWindow.xaml.cs">
       <DependentUpon>ModelWindow.xaml</DependentUpon>
     </Compile>
@@ -221,7 +213,7 @@
       <Name>SevenZip2010</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj">
-      <Project>{2E1FB0DF-F9BB-4909-9F32-2D9D022A8E57}</Project>
+      <Project>{2e1fb0df-f9bb-4909-9f32-2d9d022a8e57}</Project>
       <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj">
@@ -405,13 +397,20 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\Libraries\unxwb.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Main.ico" />
+    <None Include="Resources\Icons\EDGE.ico" />
+    <None Include="Resources\InsertIcons.exe" />
+    <None Include="Resources\Icons\Arrows.ico" />
+    <None Include="Resources\Icons\Code.ico" />
+    <None Include="Resources\Icons\Help.ico" />
+    <None Include="Resources\Icons\Mobile.ico" />
+    <None Include="Resources\Icons\Update.ico" />
     <Content Include="Resources\Libraries\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -419,24 +418,25 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetDir)$(TargetFileName)"
-move /y %25TargetDir%25ExcelLibrary.dll %25TargetDir%25Resources\Libraries\ExcelLibrary.dll
-move /y %25TargetDir%25ExcelLibrary.pdb %25TargetDir%25Resources\Libraries\ExcelLibrary.pdb
-move /y %25TargetDir%25Microsoft.WindowsAPICodePack.dll %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.dll
-move /y %25TargetDir%25Microsoft.WindowsAPICodePack.pdb %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.pdb
-del /f /q %25TargetDir%25Microsoft.WindowsAPICodePack.xml
-move /y %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.dll %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.dll
-move /y %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.pdb %25TargetDir%25Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.pdb
-del /f /q %25TargetDir%25Microsoft.WindowsAPICodePack.Shell.xml
-move /y %25TargetDir%25MygodLibrary.dll %25TargetDir%25Resources\Libraries\MygodLibrary.dll
-move /y %25TargetDir%25MygodLibrary.pdb %25TargetDir%25Resources\Libraries\MygodLibrary.pdb
-del /f /q %25TargetDir%25MygodLibrary.xml
-move /y %25TargetDir%25SevenZipSharp.dll %25TargetDir%25Resources\Libraries\SevenZipSharp.dll
-move /y %25TargetDir%25SevenZipSharp.pdb %25TargetDir%25Resources\Libraries\SevenZipSharp.pdb
-del /f /q %25TargetDir%25SevenZipSharp.xml
-move /y %25TargetDir%25WPFToolkit.Extended.dll %25TargetDir%25Resources\Libraries\WPFToolkit.Extended.dll
-move /y %25TargetDir%25WPFToolkit.Extended.pdb %25TargetDir%25Resources\Libraries\WPFToolkit.Extended.pdb
-move /y %25TargetDir%25XactInterop3.dll %25TargetDir%25Resources\Libraries\XactInterop3.dll</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)Resources\InsertIcons.exe $(TargetPath) $(ProjectDir)Resources\Icons
+"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetDir)$(TargetFileName)"
+move /y $(TargetDir)ExcelLibrary.dll $(TargetDir)Resources\Libraries\ExcelLibrary.dll
+move /y $(TargetDir)ExcelLibrary.pdb $(TargetDir)Resources\Libraries\ExcelLibrary.pdb
+move /y $(TargetDir)Microsoft.WindowsAPICodePack.dll $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.dll
+move /y $(TargetDir)Microsoft.WindowsAPICodePack.pdb $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.pdb
+del /f /q $(TargetDir)Microsoft.WindowsAPICodePack.xml
+move /y $(TargetDir)Microsoft.WindowsAPICodePack.Shell.dll $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.dll
+move /y $(TargetDir)Microsoft.WindowsAPICodePack.Shell.pdb $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.pdb
+del /f /q $(TargetDir)Microsoft.WindowsAPICodePack.Shell.xml
+move /y $(TargetDir)MygodLibrary.dll $(TargetDir)Resources\Libraries\MygodLibrary.dll
+move /y $(TargetDir)MygodLibrary.pdb $(TargetDir)Resources\Libraries\MygodLibrary.pdb
+del /f /q $(TargetDir)MygodLibrary.xml
+move /y $(TargetDir)SevenZipSharp.dll $(TargetDir)Resources\Libraries\SevenZipSharp.dll
+move /y $(TargetDir)SevenZipSharp.pdb $(TargetDir)Resources\Libraries\SevenZipSharp.pdb
+del /f /q $(TargetDir)SevenZipSharp.xml
+move /y $(TargetDir)WPFToolkit.Extended.dll $(TargetDir)Resources\Libraries\WPFToolkit.Extended.dll
+move /y $(TargetDir)WPFToolkit.Extended.pdb $(TargetDir)Resources\Libraries\WPFToolkit.Extended.pdb
+move /y $(TargetDir)XactInterop3.dll $(TargetDir)Resources\Libraries\XactInterop3.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

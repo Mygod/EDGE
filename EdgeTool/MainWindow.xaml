@@ -45,7 +45,7 @@
                     Click="PopContextMenu" ContextMenuService.Placement="Bottom">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" />
+                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" InputGestureText="F10" />
                         <MenuItem Header="转换手机版关卡文件(_C)..." Click="ConvertMobiLevel" />
                         <Separator />
                         <MenuItem Header="检查 _EdgeTool 更新" Click="CheckForUpdates" />
@@ -249,8 +249,7 @@
                     <TextBlock Margin="5,0" TextWrapping="Wrap">
                         要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里，或者从左下角的历史记录里选中要反编译的文件就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
                         <LineBreak />
-                        帮助：<Hyperlink Click="ShowReferenceGuide">开发者帮助</Hyperlink>
-                        <Hyperlink Click="ShowCommandLineHelp">命令行(反)编译帮助</Hyperlink>
+                        帮助：<Hyperlink Click="ShowCommandLineHelp">命令行(反)编译帮助</Hyperlink>
                         或 右击下面任意一种文件格式打开该格式的说明
                     </TextBlock>
                     <Grid Row="2" Margin="5,0">
@@ -332,7 +331,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <GridSplitter Width="5" Grid.RowSpan="5" Grid.Column="1" />
+                        <GridSplitter Width="5" Grid.RowSpan="5" Grid.Column="1" HorizontalAlignment="Center" />
                         <TextBox Name="WarningBox" x:FieldModifier="private" IsReadOnly="True"
                                  IsReadOnlyCaretVisible="True" Grid.RowSpan="5" Grid.Column="2" TextWrapping="Wrap"
                                  VerticalScrollBarVisibility="Auto" />

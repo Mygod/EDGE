@@ -17,7 +17,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Label Grid.ColumnSpan="2" Content="录制已开始，按 F12 退出。" />
+        <Label Grid.ColumnSpan="2" Content="录制已开始，按 F11 保存并退出，按 F12 退出。" />
         <Label Grid.Row="1" Content="初始时刻：(_I)" Target="{Binding ElementName=OffsetBox}" />
         <m:IntegerUpDown Name="OffsetBox" x:FieldModifier="private" Grid.Row="1" Grid.Column="1"
                          Value="0" Maximum="65535" />

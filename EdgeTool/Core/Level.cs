@@ -263,7 +263,11 @@ namespace Mygod.Edge.Tool
 
     public sealed class Level : IXElement
     {
-        private Level(BinaryReader reader)
+        private Level()
+        {
+            Bumpers = new Bumpers(this);
+        }
+        private Level(BinaryReader reader) : this()
         {
             ID = reader.ReadInt32();
             var nameLength = reader.ReadInt32();
@@ -273,6 +277,7 @@ namespace Mygod.Edge.Tool
             ATime = reader.ReadUInt16();
             BTime = reader.ReadUInt16();
             CTime = reader.ReadUInt16();
+            CheckTime();
             var prismsCount = reader.ReadInt16();
             Size = new Size3D(reader);
             #region Boring verifying
@@ -345,18 +350,20 @@ namespace Mygod.Edge.Tool
                 if (cube.DarkCubeMovingBlockSync != null) cube.DarkCubeMovingBlockSync.Name.DoNothing();
             }
         }
-        private Level(string path)
+        private Level(string path) : this()
         {
             LegacyMinimap = Flat.LoadFromImage(path + ".png");
             var element = XHelper.Load(path + ".xml").GetElement("Level");
             ID = element.GetAttributeValue<int>("ID");
             Name = element.GetAttributeValue("Name");
-            var thresholds = element.GetAttributeValue("TimeThresholds").Split(',').Select(str => ushort.Parse(str.Trim())).ToArray();
+            var thresholds = element.GetAttributeValue("TimeThresholds").Split(',')
+                                    .Select(str => ushort.Parse(str.Trim())).ToArray();
             SPlusTime = thresholds[0];
             STime = thresholds[1];
             ATime = thresholds[2];
             BTime = thresholds[3];
             CTime = thresholds[4];
+            CheckTime();
             Size = element.GetAttributeValue<Size3D>("Size");
             CollisionMap = new Cube(path + ".{0}.png", Size);
             SpawnPoint = element.GetAttributeValue<Point3D16>("SpawnPoint");
@@ -449,6 +456,12 @@ namespace Mygod.Edge.Tool
             return FilePath.GetRelativePath(levelsDir).RemoveExtension().ToCorrectPath();
         }
 
+        private void CheckTime()
+        {
+            if (SPlusTime >= STime || STime >= ATime || ATime >= BTime || BTime >= CTime)
+                Warning.WriteLine("Level 元素：达到 S+、S、A、B、C 所需的时间必须严格递增，否则将无法获得部分评级。");
+        }
+
         public int ID { get; set; }
         public string Name { get; set; }
         public ushort SPlusTime { get; set; }
@@ -538,7 +551,7 @@ namespace Mygod.Edge.Tool
         public Flat LegacyMinimap;
         public Cube CollisionMap;
         public MovingPlatforms MovingPlatforms = new MovingPlatforms();
-        public Bumpers Bumpers = new Bumpers();
+        public Bumpers Bumpers;
         public XElementObjectList<FallingPlatform> FallingPlatforms = new XElementObjectList<FallingPlatform>();
         public XElementObjectList<Checkpoint> Checkpoints = new XElementObjectList<Checkpoint>();
         public XElementObjectList<CameraTrigger> CameraTriggers = new XElementObjectList<CameraTrigger>();
@@ -1345,6 +1358,13 @@ namespace Mygod.Edge.Tool
 
     public sealed class Bumpers : XElementObjectListWithID<Bumper>
     {
+        public Bumpers(Level parent)
+        {
+            Parent = parent;
+        }
+
+        public readonly Level Parent;
+
         protected override string RequestIDCore()
         {
             return "Bumper" + base.RequestIDCore();
@@ -1370,7 +1390,7 @@ namespace Mygod.Edge.Tool
             id = element.GetAttributeValue("ID");
             if (id != null) id = id.Trim();
             element.GetAttributeValueWithDefault(out Enabled, "Enabled", true);
-            element.GetAttributeValue(out Position, "Position");
+            Position = element.GetAttributeValue<Point3D16>("Position");
             North = new BumperSide(element.ElementCaseInsensitive("North"));
             East = new BumperSide(element.ElementCaseInsensitive("East"));
             South = new BumperSide(element.ElementCaseInsensitive("South"));
@@ -1378,7 +1398,19 @@ namespace Mygod.Edge.Tool
         }
 
         public bool Enabled = true;
-        public Point3D16 Position;
+        private Point3D16 position;
+        public Point3D16 Position
+        {
+            get { return position; }
+            set
+            {
+                position = value;
+                if (value.X <= 0 && value.Y < parent.Parent.Size.Length
+                    || value.Y <= 0 && value.X < parent.Parent.Size.Width)
+                    Warning.WriteLine("Bumper 元素：该 Bumper 的 X/Y 坐标 <= 0 且 Y/X 坐标小于关卡长/宽度！" +
+                                      "这会导致该 Bumper 及其附近不正常地多或缺方块。");
+            }
+        }
         public BumperSide North, East, South, West; // assuming north as -Y in blockspace, top-right in screenspace
 
         private readonly Bumpers parent;

@@ -10,8 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using LibTwoTribes;
-using LibTwoTribes.Util;
+using Mygod.Edge.Tool.LibTwoTribes;
+using Mygod.Edge.Tool.LibTwoTribes.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using _3DTools;
 
