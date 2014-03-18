@@ -1,6 +1,6 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Mygod.Edge.Tool"
-               xmlns:m="http://schemas.mygodstudio.tk/wpf" Title="{x:Static m:CurrentApp.Title}"
+               xmlns:m="http://schemas.mygod.tk/wpf" Title="{x:Static m:CurrentApp.Title}"
                Icon="{x:Static m:CurrentApp.MainIcon}" Closing="OnClosing" Height="500" Width="800">
     <Grid>
         <Grid.Resources>

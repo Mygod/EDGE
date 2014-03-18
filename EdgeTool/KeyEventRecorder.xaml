@@ -1,7 +1,7 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.KeyEventRecorder" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Title="KeyEvent 录制器"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="{x:Static m:CurrentApp.MainIcon}"
-               xmlns:m="http://schemas.mygodstudio.tk/wpf" Closed="OnClosed">
+               xmlns:m="http://schemas.mygod.tk/wpf" Closed="OnClosed">
     <m:GlassWindow.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Effect" Value="{DynamicResource GlowingEffect}" />

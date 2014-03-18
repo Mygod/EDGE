@@ -176,10 +176,11 @@ namespace Mygod.Edge.Tool
 
         private void RunGame(object sender, EventArgs e)
         {
-            if (Edge != null && (!isDirty || TaskDialog.Show(this, "询问", "确定要继续吗？", "您对要安装的 edgemod " +
-                "的修改还没有应用，启动游戏后你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 " +
-                "edgemod 的修改。", TaskDialogType.OKCancelQuestion, defaultButtonId: 2) == TaskDialogResult.Ok))
-                Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
+            if (Edge == null || (isDirty && TaskDialog.Show(this, "询问", "确定要继续吗？", "您对要安装的 edgemod " +
+                "的修改还没有应用，启动游戏后你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 "
+                + "edgemod 的修改。", TaskDialogType.OKCancelQuestion) != TaskDialogResult.Ok)) return;
+            Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
+            isDirty = false;
         }
 
         private void OnDragOver(object sender, DragEventArgs e)
@@ -335,8 +336,8 @@ namespace Mygod.Edge.Tool
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null && TaskDialog.Show(this, "询问", "确定要(取消)获得该成就吗？",
-                                                type: TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes)
+            if (item != null && Users.Current.CurrentUser != null && TaskDialog.Show(this, "询问",
+                "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes)
                 Users.Current.CurrentUser.SetAchieved(item, !Users.Current.CurrentUser.GetAchieved(item));
         }
 

@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -23,53 +22,86 @@ namespace _3DTools
     /// <summary>
     ///     ScreenSpaceLines3D are a 3D line primitive whose thickness
     ///     is constant in 2D space post projection.
-    /// 
     ///     This means that the lines do not become foreshortened as
     ///     they receed from the camera as other 3D primitives do under
     ///     a typical perspective projection.
-    /// 
     ///     Example Usage:
-    /// 
     ///     &lt;tools:ScreenSpaceLines3D
-    ///         Points="0,0,0 0,1,0 0,1,0 1,1,0 1,1,0 0,0,1"
-    ///         Thickness="5" Color="Red"&gt;
-    /// 
+    ///     Points="0,0,0 0,1,0 0,1,0 1,1,0 1,1,0 0,0,1"
+    ///     Thickness="5" Color="Red"&gt;
     ///     "Screen space" is a bit of a misnomer as the line thickness
     ///     is specified in the 2D coordinate system of the container
     ///     Viewport3D, not the screen.
     /// </summary>
     public class ScreenSpaceLines3D : ModelVisual3D
     {
-        public ScreenSpaceLines3D()
-        {
-            _mesh = new MeshGeometry3D();
-            _model = new GeometryModel3D();
-            _model.Geometry = _mesh;
-            SetColor(this.Color);
-
-            this.Content = _model;
-            this.Points = new Point3DCollection();
-
-            CompositionTarget.Rendering += OnRender;
-        }
-
         public static readonly DependencyProperty ColorProperty =
             DependencyProperty.Register(
-                "Color",
+                                        "Color",
                 typeof(Color),
                 typeof(ScreenSpaceLines3D),
                 new PropertyMetadata(
                     Colors.White,
                     OnColorChanged));
 
+        public static readonly DependencyProperty ThicknessProperty =
+            DependencyProperty.Register(
+                                        "Thickness",
+                typeof(double),
+                typeof(ScreenSpaceLines3D),
+                new PropertyMetadata(
+                    1.0,
+                    OnThicknessChanged));
+
+        public static readonly DependencyProperty PointsProperty =
+            DependencyProperty.Register(
+                                        "Points",
+                typeof(Point3DCollection),
+                typeof(ScreenSpaceLines3D),
+                new PropertyMetadata(
+                    null,
+                    OnPointsChanged));
+
+        private readonly MeshGeometry3D _mesh;
+        private readonly GeometryModel3D _model;
+        private Matrix3D _screenToVisual;
+        private Matrix3D _visualToScreen;
+
+        public ScreenSpaceLines3D()
+        {
+            _mesh = new MeshGeometry3D();
+            _model = new GeometryModel3D();
+            _model.Geometry = _mesh;
+            SetColor(Color);
+
+            Content = _model;
+            Points = new Point3DCollection();
+
+            CompositionTarget.Rendering += OnRender;
+        }
+
+        public Color Color { get { return (Color) GetValue(ColorProperty); } set { SetValue(ColorProperty, value); } }
+
+        public double Thickness
+        {
+            get { return (double) GetValue(ThicknessProperty); }
+            set { SetValue(ThicknessProperty, value); }
+        }
+
+        public Point3DCollection Points
+        {
+            get { return (Point3DCollection) GetValue(PointsProperty); }
+            set { SetValue(PointsProperty, value); }
+        }
+
         private static void OnColorChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((ScreenSpaceLines3D)sender).SetColor((Color) args.NewValue);
+            ((ScreenSpaceLines3D) sender).SetColor((Color) args.NewValue);
         }
 
         private void SetColor(Color color)
         {
-            MaterialGroup unlitMaterial = new MaterialGroup();
+            var unlitMaterial = new MaterialGroup();
             unlitMaterial.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
             unlitMaterial.Children.Add(new EmissiveMaterial(new SolidColorBrush(color)));
             unlitMaterial.Freeze();
@@ -78,63 +110,23 @@ namespace _3DTools
             _model.BackMaterial = unlitMaterial;
         }
 
-        public Color Color
-        {
-            get { return (Color) GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
-        }
-
-        public static readonly DependencyProperty ThicknessProperty =
-            DependencyProperty.Register(
-                "Thickness",
-                typeof(double),
-                typeof(ScreenSpaceLines3D),
-                new PropertyMetadata(
-                    1.0,
-                    OnThicknessChanged));
-
         private static void OnThicknessChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((ScreenSpaceLines3D)sender).GeometryDirty();
+            ((ScreenSpaceLines3D) sender).GeometryDirty();
         }
-
-        public double Thickness
-        {
-            get { return (double)GetValue(ThicknessProperty); }
-            set { SetValue(ThicknessProperty, value); }
-        }
-
-        public static readonly DependencyProperty PointsProperty =
-            DependencyProperty.Register(
-                "Points",
-                typeof(Point3DCollection),
-                typeof(ScreenSpaceLines3D),
-                new PropertyMetadata(
-                    null,
-                    OnPointsChanged));
 
         private static void OnPointsChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((ScreenSpaceLines3D)sender).GeometryDirty();
-        }
-
-        public Point3DCollection Points
-        {
-            get { return (Point3DCollection)GetValue(PointsProperty); }
-            set { SetValue(PointsProperty, value); }
+            ((ScreenSpaceLines3D) sender).GeometryDirty();
         }
 
         private void OnRender(object sender, EventArgs e)
         {
             if (Points.Count == 0 && _mesh.Positions.Count == 0)
-            {
                 return;
-            }
 
             if (UpdateTransforms())
-            {
                 RebuildGeometry();
-            }
         }
 
         private void GeometryDirty()
@@ -148,7 +140,7 @@ namespace _3DTools
             double halfThickness = Thickness / 2.0;
             int numLines = Points.Count / 2;
 
-            Point3DCollection positions = new Point3DCollection(numLines * 4);
+            var positions = new Point3DCollection(numLines * 4);
 
             for (int i = 0; i < numLines; i++)
             {
@@ -163,7 +155,7 @@ namespace _3DTools
             positions.Freeze();
             _mesh.Positions = positions;
 
-            Int32Collection indices = new Int32Collection(Points.Count * 3);
+            var indices = new Int32Collection(Points.Count * 3);
 
             for (int i = 0; i < Points.Count / 2; i++)
             {
@@ -189,7 +181,7 @@ namespace _3DTools
             lineDirection.Normalize();
 
             // NOTE: Implicit Rot(90) during construction to get a perpendicular vector.
-            Vector delta = new Vector(-lineDirection.Y, lineDirection.X);
+            var delta = new Vector(-lineDirection.Y, lineDirection.X);
             delta *= halfThickness;
 
             Point3D pOut1, pOut2;
@@ -207,7 +199,7 @@ namespace _3DTools
 
         private void Widen(Point3D pIn, Vector delta, out Point3D pOut1, out Point3D pOut2)
         {
-            Point4D pIn4 = (Point4D)pIn;
+            var pIn4 = (Point4D) pIn;
             Point4D pOut41 = pIn4 * _visualToScreen;
             Point4D pOut42 = pOut41;
 
@@ -247,9 +239,7 @@ namespace _3DTools
             }
 
             if (visualToScreen == _visualToScreen)
-            {
                 return false;
-            }
 
             _visualToScreen = _screenToVisual = visualToScreen;
             _screenToVisual.Invert();
@@ -261,14 +251,12 @@ namespace _3DTools
 
         public void MakeWireframe(Model3D model)
         {
-            this.Points.Clear();
+            Points.Clear();
 
             if (model == null)
-            {
                 return;
-            }
 
-            Matrix3DStack transform = new Matrix3DStack();
+            var transform = new Matrix3DStack();
             transform.Push(Matrix3D.Identity);
 
             WireframeHelper(model, transform);
@@ -279,13 +267,11 @@ namespace _3DTools
             Transform3D transform = model.Transform;
 
             if (transform != null && transform != Transform3D.Identity)
-            {
                 matrixStack.Prepend(model.Transform.Value);
-            }
 
             try
             {
-                Model3DGroup group = model as Model3DGroup;
+                var group = model as Model3DGroup;
 
                 if (group != null)
                 {
@@ -293,39 +279,32 @@ namespace _3DTools
                     return;
                 }
 
-                GeometryModel3D geometry = model as GeometryModel3D;
+                var geometry = model as GeometryModel3D;
 
                 if (geometry != null)
-                {
                     WireframeHelper(geometry, matrixStack);
-                    return;
-                }
             }
             finally
             {
                 if (transform != null && transform != Transform3D.Identity)
-                {
                     matrixStack.Pop();
-                }
             }
         }
 
         private void WireframeHelper(Model3DGroup group, Matrix3DStack matrixStack)
         {
             foreach (Model3D child in group.Children)
-            {
                 WireframeHelper(child, matrixStack);
-            }
         }
 
         private void WireframeHelper(GeometryModel3D model, Matrix3DStack matrixStack)
         {
             Geometry3D geometry = model.Geometry;
-            MeshGeometry3D mesh = geometry as MeshGeometry3D;
+            var mesh = geometry as MeshGeometry3D;
 
             if (mesh != null)
             {
-                Point3D[] positions = new Point3D[mesh.Positions.Count];
+                var positions = new Point3D[mesh.Positions.Count];
                 mesh.Positions.CopyTo(positions, 0);
                 matrixStack.Peek().Transform(positions);
 
@@ -346,15 +325,12 @@ namespace _3DTools
                         if ((0 > i0 || i0 > limit)
                             || (0 > i1 || i1 > limit)
                             || (0 > i2 || i2 > limit))
-                        {
                             break;
-                        }
 
                         AddTriangle(positions, i0, i1, i2);
                     }
                 }
                 else
-                {
                     for (int i = 2, count = positions.Length; i < count; i += 3)
                     {
                         int i0 = i - 2;
@@ -363,7 +339,6 @@ namespace _3DTools
 
                         AddTriangle(positions, i0, i1, i2);
                     }
-                }
             }
         }
 
@@ -378,10 +353,5 @@ namespace _3DTools
         }
 
         #endregion MakeWireframe
-
-        private Matrix3D _visualToScreen;
-        private Matrix3D _screenToVisual;
-        private readonly GeometryModel3D _model;
-        private readonly MeshGeometry3D _mesh;
     }
 }

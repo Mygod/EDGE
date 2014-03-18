@@ -18,8 +18,8 @@ namespace Mygod.Edge.Tool
             ZNormals = new[] { z, z, z, z, z, z };
         }
         private const string ModelsNamespace = "050DB82A";
-        private static readonly string[] ChildModels = { "073A8F44", "1DE2AE87", "936DA964", "451F8839" },
-                                         Materials = { "4F34C26E", "55ECE3AD", "DB63E44E", "0D11C513" };
+        private static readonly string[] ChildModels = { "073A8F44", "1DE2AE87", "8A7DBFAE", "451F8839" },
+                                         Materials = { "4F34C26E", "55ECE3AD", "C273F284", "0D11C513" };
         private static readonly Vec3[] Translates = { new Vec3(102.5F, 2.25F, -54.5F), new Vec3(89.5F, 2.25F, -90),
                                                       new Vec3(70.5F, 2.25F, -22.5F), new Vec3(30, 2.25F, -74.5F) };
         private static readonly Vec3[] XNormals, YNormals, ZNormals;    // normals for two triangles

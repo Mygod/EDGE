@@ -1,5 +1,5 @@
 ﻿<Window x:Class="Mygod.Edge.Tool.MinimapWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:m="http://schemas.mygodstudio.tk/wpf"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:m="http://schemas.mygod.tk/wpf"
         Height="400" SizeToContent="Width" Icon="{x:Static m:CurrentApp.MainIcon}">
     <Grid>
         <Grid.RowDefinitions>
