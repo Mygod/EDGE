@@ -1555,7 +1555,7 @@ namespace Mygod.Edge.Tool
         public Checkpoint(BinaryReader reader)
         {
             Position = new Point3D16(reader);
-            RespawnZ = reader.ReadUInt16();
+            RespawnZ = reader.ReadInt16();
             Radius = new Point2D8(reader);
         }
         public Checkpoint(XElement element)
@@ -1566,7 +1566,7 @@ namespace Mygod.Edge.Tool
         }
 
         public Point3D16 Position;
-        public ushort RespawnZ;
+        public short RespawnZ;
         public Point2D8 Radius;
 
         public void Write(BinaryWriter writer)
