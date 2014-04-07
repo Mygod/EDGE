@@ -116,8 +116,9 @@ namespace Mygod.Edge.Tool
                 if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行" +
                                                            "修改！请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
                 var xslBuilder = new StringBuilder();
-                foreach (var item in mappings) xslBuilder.AppendLine("      " + item.GetXElement());
-                xslBuilder.AppendLine("    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
+                foreach (var item in mappings)
+                    xslBuilder.Append("      </xsl:text>" + item.GetXElement() + "<xsl:text>\r\n");
+                xslBuilder.AppendLine("      </xsl:text>\r\n    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
                 Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
                 XslCracked = XslHead + xslBuilder;
             }
@@ -131,7 +132,7 @@ namespace Mygod.Edge.Tool
             set = string.IsNullOrWhiteSpace(value) ? new HashSet<string>() : new HashSet<string>(value.Split(','));
         }
 
-        private const string XslHead = "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n";
+        private const string XslHead = "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n      <xsl:text>";
 
         private readonly Edge parent;
         public readonly uint FilesCount;

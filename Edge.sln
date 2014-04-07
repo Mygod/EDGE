@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeTool", "EdgeTool\EdgeTool.csproj", "{C718F9F3-2AF6-44A0-AA69-DB58C12363ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZip2010", "..\..\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj", "{4960DD14-3431-47EC-B9D9-9D2730A98DC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZip2010", "..\..\DotNet\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj", "{4960DD14-3431-47EC-B9D9-9D2730A98DC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MygodLibrary", "..\MygodLibrary\MygodLibrary\MygodLibrary.csproj", "{D915CED8-AC3F-40D6-8C95-4D176C924A61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelLibrary", "..\..\Other\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj", "{0716F257-72DD-41EF-8E79-54BA388E3AB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelLibrary", "..\..\DotNet\Other\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj", "{0716F257-72DD-41EF-8E79-54BA388E3AB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shell", "..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj", "{AA0C00CB-8699-4F37-BFAE-40CA87ACC06D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shell", "..\..\DotNet\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj", "{AA0C00CB-8699-4F37-BFAE-40CA87ACC06D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj", "{2E1FB0DF-F9BB-4909-9F32-2D9D022A8E57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\DotNet\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj", "{2E1FB0DF-F9BB-4909-9F32-2D9D022A8E57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

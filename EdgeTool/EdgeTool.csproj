@@ -196,23 +196,23 @@
     <None Include="Core\EdgeBin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\DotNet\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj">
+      <Project>{4960dd14-3431-47ec-b9d9-9d2730a98dc3}</Project>
+      <Name>SevenZip2010</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\GitHub\MygodLibrary\MygodLibrary\MygodLibrary.csproj">
       <Project>{d915ced8-ac3f-40d6-8c95-4d176c924a61}</Project>
       <Name>MygodLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Other\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj">
+    <ProjectReference Include="..\..\..\DotNet\Other\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj">
       <Project>{0716f257-72dd-41ef-8e79-54ba388e3ab1}</Project>
       <Name>ExcelLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj">
-      <Project>{4960dd14-3431-47ec-b9d9-9d2730a98dc3}</Project>
-      <Name>SevenZip2010</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj">
+    <ProjectReference Include="..\..\..\DotNet\Windows API Code Pack 1.1\source\WindowsAPICodePack\Core\Core.csproj">
       <Project>{2e1fb0df-f9bb-4909-9f32-2d9d022a8e57}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj">
+    <ProjectReference Include="..\..\..\DotNet\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj">
       <Project>{aa0c00cb-8699-4f37-bfae-40ca87acc06d}</Project>
       <Name>Shell</Name>
     </ProjectReference>
