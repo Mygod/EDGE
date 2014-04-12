@@ -742,23 +742,35 @@ namespace Mygod.Edge.Tool
                                 break;
                             case "sfx":
                                 Directory.CreateDirectory(outputPath = Path.Combine(directory, "audio"));
-                                var tempInputPath = Helper.GetRandomDirectory();
+                                string tempPath = Helper.GetRandomDirectory(),
+                                       tempInputPath = Path.Combine(tempPath, "sfx"),
+                                       tempOutputPath = Path.Combine(tempPath, "audio");
+                                /************************************************************************************
+                                 *     create temp input dir because it's still occupied for unknown reason;        *
+                                 *     create temp output dir because COMException will be thrown if output dir and *
+                                 * temp input dir is not under the same drive.                                      *
+                                 ************************************************************************************/
                                 Directory.CreateDirectory(tempInputPath);
                                 var projectPath = GenerateXactProject(file, tempInputPath);
                                 using (var project = new CXACTMasterProject())
                                 {
                                     project.Create();
                                     project.Load(projectPath, new CXACTMasterProjectCallback(), 0);
-                                    project.Build(new CXACTMasterProjectCallback(), outputPath, false, false);
+                                    project.Build(new CXACTMasterProjectCallback(), tempOutputPath, false, false);
                                 }
-                                File.Delete(projectPath);
+                                foreach (var path in Directory.EnumerateFiles(tempOutputPath))
+                                {
+                                    var target = Path.Combine(outputPath, Path.GetFileName(path));
+                                    File.Delete(target);
+                                    File.Move(path, target);
+                                }
                                 try
                                 {
-                                    Directory.Delete(tempInputPath, true);
+                                    Directory.Delete(tempPath, true);
                                 }
                                 catch
                                 {
-                                    Trace.WriteLine(tempInputPath, "Delete tempInputPath failed");
+                                    Trace.WriteLine(tempPath, "Delete tempPath failed");
                                 }
                                 list.Add(new FileEntry(outputPath, "audio"));
                                 break;
