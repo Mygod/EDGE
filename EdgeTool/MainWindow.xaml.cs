@@ -132,7 +132,10 @@ namespace Mygod.Edge.Tool
                 {
                     MappingLevels.Current = new MappingLevels(Edge.LevelsDirectory);
                 }
-                catch { }
+                catch
+                {
+                    Trace.WriteLine("加载 mappings.xml 失败！");
+                }
                 levels.Clear();
                 searcher = new Thread(Load);
                 searcher.Start();
@@ -258,6 +261,22 @@ namespace Mygod.Edge.Tool
             button.ContextMenu.Placement = PlacementMode.Bottom;
             button.ContextMenu.PlacementTarget = button;
             button.ContextMenu.IsOpen = true;
+        }
+
+        private static string GetPath(object parameter)
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                "Two Tribes", parameter.ToString(), "settings.ini");
+        }
+
+        private void OpenSettingsIni(object sender, ExecutedRoutedEventArgs e)
+        {
+            Process.Start(GetPath(e.Parameter));
+        }
+
+        private void SettingsIniCanOpen(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = File.Exists(GetPath(e.Parameter));
         }
 
         #endregion

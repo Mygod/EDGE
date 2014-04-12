@@ -2,6 +2,13 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Mygod.Edge.Tool"
                xmlns:m="http://schemas.mygod.tk/wpf" Title="{x:Static m:CurrentApp.Title}"
                Icon="{x:Static m:CurrentApp.MainIcon}" Closing="OnClosing" Height="500" Width="800">
+    <m:GlassWindow.Resources>
+        <RoutedCommand x:Key="OpenSettingsIni" />
+    </m:GlassWindow.Resources>
+    <m:GlassWindow.CommandBindings>
+        <CommandBinding Command="{StaticResource OpenSettingsIni}"
+                        Executed="OpenSettingsIni" CanExecute="SettingsIniCanOpen" />
+    </m:GlassWindow.CommandBindings>
     <Grid>
         <Grid.Resources>
             <local:AchievementStatusConverter x:Key="AchievementStatus" />
@@ -47,6 +54,13 @@
                     <ContextMenu>
                         <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" InputGestureText="F10" />
                         <MenuItem Header="转换手机版关卡文件(_C)..." Click="ConvertMobiLevel" />
+                        <Separator />
+                        <MenuItem Header="打开 ED_GE 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
+                                  CommandParameter="EDGE" />
+                        <MenuItem Header="打开 EDGE _Demo 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
+                                  CommandParameter="EDGE Demo" />
+                        <MenuItem Header="打开 EDGE E_pic 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
+                                  CommandParameter="EDGE Epic" />
                         <Separator />
                         <MenuItem Header="检查 _EdgeTool 更新" Click="CheckForUpdates" />
                         <MenuItem Header="帮助(_H)" Click="Help" />
