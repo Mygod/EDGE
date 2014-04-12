@@ -6,16 +6,18 @@ namespace Mygod.Edge.Tool
 {
     public static class ImageConverter
     {
-        public static unsafe void Save(BitArray greyPixels, int width, int height, string path)
+        public static unsafe void Save(BitArray greyPixels, int width, int height, string path, bool half = false)
         {
             using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
             {
                 var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                                            PixelFormat.Format32bppArgb);
                 var pointer = (byte*)data.Scan0;
+                var n = half ? 205 : 255;
                 for (var i = 0; i < greyPixels.Length; i++)
                 {
-                    pointer[0] = pointer[1] = pointer[2] = (byte)(greyPixels[i] ? 255 : 0);
+                    pointer[0] = (byte)(greyPixels[i] ? n : 0);
+                    pointer[1] = pointer[2] = (byte) (greyPixels[i] ? 255 : 0);
                     pointer[3] = 255;
                     pointer += 4;
                 }
@@ -23,7 +25,19 @@ namespace Mygod.Edge.Tool
                 bitmap.Save(path);
             }
         }
-        public static unsafe BitArray Load(string path, out Size2D size)
+        public static unsafe void Save(Color[] pixels, int width, int height, string path)
+        {
+            using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            {
+                var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                                           PixelFormat.Format32bppArgb);
+                var pointer = (int*)data.Scan0;
+                for (var i = 0; i < pixels.Length; i++) *pointer++ = pixels[i].ToArgb();
+                bitmap.UnlockBits(data);
+                bitmap.Save(path);
+            }
+        }
+        public static unsafe Color[] Load(string path, out Size2D size)
         {
             Bitmap clone = null;
             try
@@ -35,15 +49,11 @@ namespace Mygod.Edge.Tool
                     using (var g = Graphics.FromImage(clone))
                         g.DrawImage(org, new Rectangle(0, 0, clone.Width, clone.Height));
                 }
-                var result = new BitArray(clone.Width * clone.Height);
+                var result = new Color[clone.Width * clone.Height];
                 var data = clone.LockBits(new Rectangle(0, 0, clone.Width, clone.Height), 
                                           ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                var pointer = (byte*)data.Scan0;
-                for (var i = 0; i < result.Length; i++)
-                {
-                    result[i] = pointer[0] != 0 || pointer[1] != 0 || pointer[2] != 0;
-                    pointer += 4;
-                }
+                var pointer = (int*)data.Scan0;
+                for (var i = 0; i < result.Length; i++) result[i] = Color.FromArgb(*pointer++);
                 clone.UnlockBits(data);
                 return result;
             }
@@ -52,7 +62,7 @@ namespace Mygod.Edge.Tool
                 if (clone != null) clone.Dispose();
             }
         }
-        public static BitArray Load(string path)
+        public static Color[] Load(string path)
         {
             Size2D temp;
             return Load(path, out temp);

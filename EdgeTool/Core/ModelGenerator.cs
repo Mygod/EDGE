@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Xml.Linq;
+using System.Linq;
 using Mygod.Edge.Tool.LibTwoTribes;
 using Mygod.Edge.Tool.LibTwoTribes.Util;
-using Mygod.Xml.Linq;
 
 namespace Mygod.Edge.Tool
 {
@@ -24,54 +23,59 @@ namespace Mygod.Edge.Tool
                                                       new Vec3(70.5F, 2.25F, -22.5F), new Vec3(30, 2.25F, -74.5F) };
         private static readonly Vec3[] XNormals, YNormals, ZNormals;    // normals for two triangles
 
-        public ModelGenerator(Level level, XElement element)
+        public ModelGenerator(Level level, byte defaultTheme)
         {
             this.level = level;
-            currentTheme = element.GetAttributeValueWithDefault("Theme", level.Theme);
-            if (currentTheme > 3) currentTheme = 0;
-            heights = new Dictionary<Point3D16, float>();
-            for (short x = 0; x < level.Size.Width; x++)
-                for (short y = 0; y < level.Size.Length; y++) heights.Add(new Point3D16(x, y, 0), 0.5F);
-            foreach (var e in element.ElementsCaseInsensitive("SetBlocks"))
+            themes = new int[4];
+            themes[0] = defaultTheme;
+            var temp = new bool[4];
+            temp[themes[0]] = true;
+            var j = 0;
+            for (var i = 1; i <= 3; ++i)
             {
-                Point3D16 min = e.GetAttributeValue<Point3D16>("Min"),
-                          max = e.GetAttributeValueWithDefault("Max", min);
-                var height = e.GetAttributeValueWithDefault("Height", -1F);
-                for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++)
-                    for (var z = min.Z; z <= max.Z; z++)
-                    {
-                        var point = new Point3D16(x, y, z);
-                        if (Math.Abs(height - 1) < 1e-4) heights.Remove(point); else heights[point] = height;
-                    }
+                while (temp[j]) ++j;
+                temp[themes[i] = j] = true;
             }
         }
 
         private readonly Level level;
-        private readonly int currentTheme;
-        private readonly Dictionary<Point3D16, float> heights;
+        private readonly int[] themes;
 
-        private float GetHeight(short x, short y, short z)
+        private struct ColorInformation
         {
-            var point = new Point3D16(x, y, z);
-            if (!level.CollisionMap[x, y, z]) return 0;
-            if (!heights.ContainsKey(point)) return 1;
-            var result = heights[point];
-            return result > 1 ? 1 : result;
+            public ColorInformation(Color color)
+            {
+                Theme = 3 - (color.G >> 6);
+                Height = (color.R < 128 || color.R == 255) && color.B >= 155 ? (color.B - 155) / 100F : -1;
+            }
+
+            public readonly float Height;
+            public readonly int Theme;
         }
         private Vec3 Transform(Vec3 value)
         {
-            return (value - Translates[currentTheme] - new Vec3(0, 0, level.Size.Length)) * 10;
+            return (value - Translates[themes[0]] - new Vec3(0, 0, level.Size.Length)) * 10;
+        }
+        private ColorInformation GetInformation(short x, short y, short z)
+        {
+            return new ColorInformation(level.CollisionMap.GetColor(x, y, z));
         }
 
         public string Generate(string path)
         {
-            List<Vec3> vertices = new List<Vec3>(), normals = new List<Vec3>();
-            var texCoords = new List<Vec2>();
+            var models = new ESOModel[4];
             for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
+                for (short z = 0; z < level.Size.Height; z++)
                 {
-                    var height = GetHeight(x, y, z);
-                    if (height < 0) continue;
+                    var info = GetInformation(x, y, z);
+                    if (info.Height < 0) continue;
+                    var theme = themes[info.Theme];
+                    if (models[theme] == null) models[theme] = new ESOModel
+                    {
+                        TypeFlags = ESOModel.Flags.Normals | ESOModel.Flags.TexCoords,
+                        MaterialAsset = AssetHash.Parse(Materials[theme] + ModelsNamespace)
+                    };
+                    var model = models[theme];
                     short x1 = (short)(x + 1), y1 = (short)(y + 1), z1 = (short)(z + 1);
                     float texY, texY1;
                     if (z > 3) texY = texY1 = 0;
@@ -80,79 +84,72 @@ namespace Mygod.Edge.Tool
                         texY1 = 1 - (z > 3 ? 3 : z) * 0.25F;
                         texY = texY1 - 0.25F;
                     }
-                    if (GetHeight(x, y, z1) < 1F && (Math.Abs(x - level.ExitPoint.X) > 1
+                    if (GetInformation(x, y, z1).Height < 1 && (Math.Abs(x - level.ExitPoint.X) > 1
                         || Math.Abs(y - level.ExitPoint.Y) > 1 || z1 != level.ExitPoint.Z))
                     {
-                        vertices.Add(Transform(new Vec3(x, z1, y)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y)));
-                        vertices.Add(Transform(new Vec3(x, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
-                        normals.AddRange(YNormals);
+                        model.Vertices.Add(Transform(new Vec3(x, z1, y)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        model.Vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y1)));
+                        model.Normals.AddRange(YNormals);
                         float texX = ((x + y) & 1) == 0 ? 0.51F : 0.76F, texX1 = texX + 0.23F;
-                        texCoords.Add(new Vec2(texX, texY));
-                        texCoords.Add(new Vec2(texX1, texY));
-                        texCoords.Add(new Vec2(texX, texY1));
-                        texCoords.Add(new Vec2(texX, texY1));
-                        texCoords.Add(new Vec2(texX1, texY));
-                        texCoords.Add(new Vec2(texX1, texY1));
+                        model.TexCoords.Add(new Vec2(texX, texY));
+                        model.TexCoords.Add(new Vec2(texX1, texY));
+                        model.TexCoords.Add(new Vec2(texX, texY1));
+                        model.TexCoords.Add(new Vec2(texX, texY1));
+                        model.TexCoords.Add(new Vec2(texX1, texY));
+                        model.TexCoords.Add(new Vec2(texX1, texY1));
                     }
-                    if (height <= 0) continue;
-                    var zB = z1 - height;
-                    if (z <= 3) texY1 -= 0.25F * (1 - height);
-                    if (GetHeight(x1, y, z) < height)
+                    if (info.Height <= 0) continue;
+                    var zB = z1 - info.Height;
+                    if (z <= 3) texY1 -= 0.25F * (1 - info.Height);
+                    if (GetInformation(x1, y, z).Height < info.Height)
                     {
-                        vertices.Add(Transform(new Vec3(x1, zB, y)));
-                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y)));
-                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y)));
-                        normals.AddRange(XNormals);
-                        texCoords.Add(new Vec2(0.49F, texY1));
-                        texCoords.Add(new Vec2(0.26F, texY1));
-                        texCoords.Add(new Vec2(0.49F, texY));
-                        texCoords.Add(new Vec2(0.26F, texY1));
-                        texCoords.Add(new Vec2(0.26F, texY));
-                        texCoords.Add(new Vec2(0.49F, texY));
+                        model.Vertices.Add(Transform(new Vec3(x1, zB, y)));
+                        model.Vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        model.Vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y)));
+                        model.Normals.AddRange(XNormals);
+                        model.TexCoords.Add(new Vec2(0.49F, texY1));
+                        model.TexCoords.Add(new Vec2(0.26F, texY1));
+                        model.TexCoords.Add(new Vec2(0.49F, texY));
+                        model.TexCoords.Add(new Vec2(0.26F, texY1));
+                        model.TexCoords.Add(new Vec2(0.26F, texY));
+                        model.TexCoords.Add(new Vec2(0.49F, texY));
                     }
-                    if (GetHeight(x, y1, z) < height)
+                    if (GetInformation(x, y1, z).Height < info.Height)
                     {
-                        vertices.Add(Transform(new Vec3(x, zB, y1)));
-                        vertices.Add(Transform(new Vec3(x, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
-                        vertices.Add(Transform(new Vec3(x, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x1, z1, y1)));
-                        vertices.Add(Transform(new Vec3(x1, zB, y1)));
-                        normals.AddRange(ZNormals);
-                        texCoords.Add(new Vec2(0.01F, texY1));
-                        texCoords.Add(new Vec2(0.01F, texY));
-                        texCoords.Add(new Vec2(0.24F, texY1));
-                        texCoords.Add(new Vec2(0.01F, texY));
-                        texCoords.Add(new Vec2(0.24F, texY));
-                        texCoords.Add(new Vec2(0.24F, texY1));
+                        model.Vertices.Add(Transform(new Vec3(x, zB, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, z1, y1)));
+                        model.Vertices.Add(Transform(new Vec3(x1, zB, y1)));
+                        model.Normals.AddRange(ZNormals);
+                        model.TexCoords.Add(new Vec2(0.01F, texY1));
+                        model.TexCoords.Add(new Vec2(0.01F, texY));
+                        model.TexCoords.Add(new Vec2(0.24F, texY1));
+                        model.TexCoords.Add(new Vec2(0.01F, texY));
+                        model.TexCoords.Add(new Vec2(0.24F, texY));
+                        model.TexCoords.Add(new Vec2(0.24F, texY1));
                     }
                 }
             string fileName = Path.GetFileNameWithoutExtension(path) + ".rmdl", result;
+            models = models.Where(model => model != null).ToArray();
             new ESO
             {
                 AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, fileName, "models"),
-                Header = new ESOHeader
+                Models = models, Header = new ESOHeader
                 {
-                    V01 = 1, V02 = 4096, V20 = 1, NumModels = 1, ScaleXYZ = 1, Scale = new Vec3(0.1F, 0.1F, 0.1F),
-                    NodeChild = AssetHash.Parse(ChildModels[currentTheme] + ModelsNamespace),
-                    Translate = Translates[currentTheme], BoundingMin = Transform(new Vec3()), 
+                    V01 = 1, V02 = 4096, V20 = 1, NumModels = models.Length, ScaleXYZ = 1,
+                    Scale = new Vec3(0.1F, 0.1F, 0.1F), Translate = Translates[themes[0]],
+                    NodeChild = AssetHash.Parse(ChildModels[themes[0]] + ModelsNamespace),
+                    BoundingMin = Transform(new Vec3()), 
                     BoundingMax = Transform(new Vec3(level.Size.Width, level.Size.Height, level.Size.Length))
-                },
-                Models = new[]
-                {
-                    new ESOModel
-                    {
-                        TypeFlags = ESOModel.Flags.Normals | ESOModel.Flags.TexCoords, Vertices = vertices.ToArray(),
-                        Normals = normals.ToArray(), TexCoords = texCoords.ToArray(),
-                        MaterialAsset = AssetHash.Parse(Materials[currentTheme] + ModelsNamespace)
-                    }
                 }
             }.Save(result = Path.Combine(Path.GetDirectoryName(path),
                                          AssetUtil.CrcFullName(fileName, "models") + ".eso"));

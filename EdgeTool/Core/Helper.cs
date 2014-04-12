@@ -389,7 +389,7 @@ namespace Mygod.Edge.Tool
                 {
                     var element = new XElement("Model");
                     element.SetAttributeValueWithDefault("MaterialAsset", model.MaterialAsset);
-                    var trianglesCount = model.Vertices.Length / 3;
+                    var trianglesCount = model.Vertices.Count / 3;
                     var j = 0;
                     for (var i = 0; i < trianglesCount; i++)
                     {
@@ -454,52 +454,51 @@ namespace Mygod.Edge.Tool
                 var model = new ESOModel
                 {
                     MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"),
-                    Normals = new Vec3[vertexCount], TexCoords = new Vec2[vertexCount],
-                    Vertices = new Vec3[vertexCount], Colors = new Color[vertexCount], Wat = new Vec2[vertexCount]
+                    Normals = new List<Vec3>(vertexCount), TexCoords = new List<Vec2>(vertexCount),
+                    Vertices = new List<Vec3>(vertexCount), Colors = new List<Color>(vertexCount),
+                    Wat = new List<Vec2>(vertexCount)
                 };
-                var j = 0;
                 foreach (var triangle in triangles)
                 {
                     var autoNormals = triangle.GetAttributeValueWithDefault("AutoNormals", modelAutoNormals);
                     var normals = new bool[3];
-                    var i = j;
+                    var i = model.Vertices.Count;
                     var vertices = triangle.ElementsCaseInsensitive("Vertex").ToArray();
                     if (vertices.Length != 3) throw new FormatException("一个 Triangle 元素必须要有三个 Vertex 元素！");
                     foreach (var vertex in vertices)
                     {
-                        vertex.GetAttributeValueWithDefault(out model.Vertices[j], "Position");
-                        model.Vertices[j] = ConvertFromVertex(matrix.Transform(ConvertVertex(model.Vertices[j])));
+                        model.Vertices.Add(ConvertFromVertex(matrix.Transform
+                            (ConvertVertex(vertex.GetAttributeValueWithDefault<Vec3>("Position")))));
                         if (vertex.AttributeCaseInsensitive("Normal") != null)
                         {
-                            vertex.GetAttributeValueWithDefault(out model.Normals[j], "Normal");
-                            model.Normals[j] = ConvertFromVector(matrix.Transform(ConvertVector(model.Normals[j])));
+                            normals[model.Normals.Count - i] = true;
+                            model.Normals.Add(ConvertFromVector(matrix.Transform
+                                (ConvertVector(vertex.GetAttributeValueWithDefault<Vec3>("Normal")))));
                             model.TypeFlags |= ESOModel.Flags.Normals;
-                            normals[j - i] = true;
                         }
                         if (vertex.AttributeCaseInsensitive("Color") != null)
                         {
-                            model.Colors[j] =
-                                Helper.Parse(vertex.GetAttributeValueWithDefault("Color", "Transparent"));
+                            model.Colors.Add(Helper.Parse
+                                (vertex.GetAttributeValueWithDefault("Color", "Transparent")));
                             model.TypeFlags |= ESOModel.Flags.Colors;
                         }
                         if (vertex.AttributeCaseInsensitive("TexCoord") != null)
                         {
-                            vertex.GetAttributeValueWithDefault(out model.TexCoords[j], "TexCoord");
+                            model.TexCoords.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoord"));
                             model.TypeFlags |= ESOModel.Flags.TexCoords;
                         }
                         if (vertex.AttributeCaseInsensitive("Unknown") != null)
                         {
-                            vertex.GetAttributeValueWithDefault(out model.Wat[j], "Unknown");
+                            model.Wat.Add(vertex.GetAttributeValueWithDefault<Vec2>("Unknown"));
                             model.TypeFlags |= ESOModel.Flags.Wat;
                         }
-                        j++;
                     }
                     if (!autoNormals) continue;
                     var p0 = ConvertVertex(model.Vertices[i]);
                     var normal = Vector3D.CrossProduct(ConvertVertex(model.Vertices[i + 2]) - p0,
                                                        ConvertVertex(model.Vertices[i + 1]) - p0);
                     var vec3 = new Vec3((float) normal.X, (float) normal.Y, (float) normal.Z);
-                    for (var k = i; k < j; k++) if (!normals[k - i]) model.Normals[k] = vec3;
+                    for (var j = i; j < model.Vertices.Count; j++) if (!normals[j - i]) model.Normals[j] = vec3;
                     model.TypeFlags |= ESOModel.Flags.Normals;
                 }
                 models.Add(model);
@@ -509,13 +508,16 @@ namespace Mygod.Edge.Tool
                 AssetHeader = new AssetHeader(AssetUtil.EngineVersion.Version1804Edge, name, nameSpace),
                 Models = models.ToArray(), Header = new ESOHeader
                 {
-                    V01 = element.GetAttributeValueWithDefault<int>("V01"), V02 = element.GetAttributeValueWithDefault<int>("V02"),
+                    V01 = element.GetAttributeValueWithDefault<int>("V01"),
+                    V02 = element.GetAttributeValueWithDefault<int>("V02"),
                     NodeChild = element.GetAttributeValueWithDefault<AssetHash>("NodeChild"),
                     NodeSibling = element.GetAttributeValueWithDefault<AssetHash>("NodeSibling"),
-                    V07 = element.GetAttributeValueWithDefault<int>("V07"), V08 = element.GetAttributeValueWithDefault<int>("V08"),
-                    V09 = element.GetAttributeValueWithDefault<int>("V09"), V21 = element.GetAttributeValueWithDefault<int>("V21"),
-                    ScaleXYZ = scaleXYZ, Scale = scale, Translate = translate, Rotate = rotate, NumModels = models.Count, 
-                    V20 = element.GetAttributeValueWithDefault<float>("V20")
+                    V07 = element.GetAttributeValueWithDefault<int>("V07"),
+                    V08 = element.GetAttributeValueWithDefault<int>("V08"),
+                    V09 = element.GetAttributeValueWithDefault<int>("V09"),
+                    V21 = element.GetAttributeValueWithDefault<int>("V21"),
+                    ScaleXYZ = scaleXYZ, Scale = scale, Translate = translate, Rotate = rotate,
+                    NumModels = models.Count, V20 = element.GetAttributeValueWithDefault<float>("V20")
                 }
             };
             if (models.Count > 0)
@@ -566,7 +568,7 @@ namespace Mygod.Edge.Tool
             Type = type;
         }
 
-        public string FileName, Type;
+        public readonly string FileName, Type;
     }
 
     public static class Compiler

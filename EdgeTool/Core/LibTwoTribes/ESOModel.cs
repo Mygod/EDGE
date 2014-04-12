@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -17,14 +18,14 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             Wat = 0x00000008
         }
 
-        private Color[] m_Colors;
+        private List<Color> m_Colors = new List<Color>();
 
         private AssetHash m_MaterialAsset;
-        private Vec3[] m_Normals;
-        private Vec2[] m_TexCoords;
+        private List<Vec3> m_Normals = new List<Vec3>();
+        private List<Vec2> m_TexCoords = new List<Vec2>();
         private Flags m_TypeFlags;
-        private Vec3[] m_Vertices;
-        private Vec2[] m_Wat;
+        private List<Vec3> m_Vertices = new List<Vec3>();
+        private List<Vec2> m_Wat = new List<Vec2>();
 
         public ESOModel()
         {
@@ -43,45 +44,38 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 int unknown = br.ReadInt32(); // not a clue. seems to be always zero.
                 if (unknown != 0) Warning.WriteLine("Unknown1 != 0!");
 
-                m_Vertices = new Vec3[numVerts];
-                for (int i = 0; i < numVerts; i++)
-                    m_Vertices[i] = Vec3.FromStream(stream);
+                m_Vertices.Capacity = numVerts;
+                for (var i = 0; i < numVerts; i++)
+                    m_Vertices.Add(Vec3.FromStream(stream));
 
                 if (m_TypeFlags.HasFlag(Flags.Normals))
                 {
-                    m_Normals = new Vec3[numVerts];
-                    for (int i = 0; i < numVerts; i++)
-                        m_Normals[i] = Vec3.FromStream(stream);
+                    m_Normals.Capacity = numVerts;
+                    m_Normals = new List<Vec3>(numVerts);
+                    for (var i = 0; i < numVerts; i++)
+                        m_Normals.Add(Vec3.FromStream(stream));
                 }
-                else
-                    m_Normals = new Vec3[0];
 
                 if (m_TypeFlags.HasFlag(Flags.Colors))
                 {
-                    m_Colors = new Color[numVerts];
+                    m_Colors.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         m_Colors[i] = Color.FromArgb(br.ReadInt32());
                 }
-                else
-                    m_Colors = new Color[0];
 
                 if (m_TypeFlags.HasFlag(Flags.TexCoords))
                 {
-                    m_TexCoords = new Vec2[numVerts];
+                    m_TexCoords.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
-                        m_TexCoords[i] = Vec2.FromStream(stream);
+                        m_TexCoords.Add(Vec2.FromStream(stream));
                 }
-                else
-                    m_TexCoords = new Vec2[0];
 
                 if (m_TypeFlags.HasFlag(Flags.Wat))
                 {
-                    m_Wat = new Vec2[numVerts];
+                    m_Wat.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
-                        m_Wat[i] = Vec2.FromStream(stream);
+                        m_Wat.Add(Vec2.FromStream(stream));
                 }
-                else
-                    m_Wat = new Vec2[0];
 
                 br.BaseStream.Position += numVerts << 1;
                 /*
@@ -98,11 +92,11 @@ namespace Mygod.Edge.Tool.LibTwoTribes
 
         public AssetHash MaterialAsset { get { return m_MaterialAsset; } set { m_MaterialAsset = value; } }
         public Flags TypeFlags { get { return m_TypeFlags; } set { m_TypeFlags = value; } }
-        public Vec3[] Vertices { get { return m_Vertices; } set { m_Vertices = value; } }
-        public Vec3[] Normals { get { return m_Normals; } set { m_Normals = value; } }
-        public Color[] Colors { get { return m_Colors; } set { m_Colors = value; } }
-        public Vec2[] TexCoords { get { return m_TexCoords; } set { m_TexCoords = value; } }
-        public Vec2[] Wat { get { return m_Wat; } set { m_Wat = value; } }
+        public List<Vec3> Vertices { get { return m_Vertices; } set { m_Vertices = value; } }
+        public List<Vec3> Normals { get { return m_Normals; } set { m_Normals = value; } }
+        public List<Color> Colors { get { return m_Colors; } set { m_Colors = value; } }
+        public List<Vec2> TexCoords { get { return m_TexCoords; } set { m_TexCoords = value; } }
+        public List<Vec2> Wat { get { return m_Wat; } set { m_Wat = value; } }
         //public ushort[] Indices { get { return m_Indices; } set { m_Indices = value; } }
 
         public static ESOModel FromStream(Stream stream)
@@ -117,38 +111,30 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 m_MaterialAsset.Save(stream);
 
                 bw.Write((uint) m_TypeFlags);
-                bw.Write(m_Vertices.Length);
-                bw.Write(m_Vertices.Length / 3);
+                bw.Write(m_Vertices.Count);
+                bw.Write(m_Vertices.Count / 3);
                 bw.Write(0);
 
-                for (int i = 0; i < m_Vertices.Length; i++)
+                for (var i = 0; i < m_Vertices.Count; i++)
                     m_Vertices[i].Save(stream);
 
                 if (m_TypeFlags.HasFlag(Flags.Normals))
-                    for (int i = 0; i < m_Vertices.Length; i++)
+                    for (int i = 0; i < m_Vertices.Count; i++)
                         m_Normals[i].Save(stream);
-                else
-                    m_Normals = new Vec3[0];
 
                 if (m_TypeFlags.HasFlag(Flags.Colors))
-                    for (int i = 0; i < m_Vertices.Length; i++)
+                    for (int i = 0; i < m_Vertices.Count; i++)
                         bw.Write(m_Colors[i].ToArgb());
-                else
-                    m_Colors = new Color[0];
 
                 if (m_TypeFlags.HasFlag(Flags.TexCoords))
-                    for (int i = 0; i < m_Vertices.Length; i++)
+                    for (int i = 0; i < m_Vertices.Count; i++)
                         m_TexCoords[i].Save(stream);
-                else
-                    m_TexCoords = new Vec2[0];
 
                 if (m_TypeFlags.HasFlag(Flags.Wat))
-                    for (int i = 0; i < m_Vertices.Length; i++)
+                    for (int i = 0; i < m_Vertices.Count; i++)
                         m_Wat[i].Save(stream);
-                else
-                    m_Wat = new Vec2[0];
 
-                for (ushort i = 0; i < m_Vertices.Length; i++)
+                for (ushort i = 0; i < m_Vertices.Count; i++)
                     //bw.Write(m_Indices[i]);
                     bw.Write(i);
             }

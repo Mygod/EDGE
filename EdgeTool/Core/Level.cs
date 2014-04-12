@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -336,7 +337,7 @@ namespace Mygod.Edge.Tool
             for (var i = 0; i < count; i++) Resizers.Add(new Resizer(this, reader));
             if ((count = reader.ReadUInt16()) > 0) Warning.WriteLine("MiniBlock 元素：已过时，请勿使用。");
             for (var i = 0; i < count; i++) MiniBlocks.Add(new MiniBlock(reader));
-            Theme = reader.ReadByte();
+            ModelTheme = Theme = reader.ReadByte();
             MusicJava = reader.ReadByte();
             Music = reader.ReadByte();
             foreach (var button in Buttons)
@@ -369,6 +370,7 @@ namespace Mygod.Edge.Tool
             SpawnPoint = element.GetAttributeValue<Point3D16>("SpawnPoint");
             ExitPoint = element.GetAttributeValue<Point3D16>("ExitPoint");
             Theme = element.GetAttributeValueWithDefault<byte>("Theme");
+            ModelTheme = element.GetAttributeValueWithDefault("ModelTheme", Theme);
             MusicJava = element.GetAttributeValueWithDefault<byte>("MusicJava");
             Music = element.GetAttributeValueWithDefault("Music", (byte)6);
             Zoom = element.GetAttributeValueWithDefault("Zoom", (short)-1);
@@ -426,12 +428,6 @@ namespace Mygod.Edge.Tool
                     case "miniblock":
                         MiniBlocks.Add(new MiniBlock(e));
                         Warning.WriteLine("MiniBlock 元素：已过时，请勿使用。");
-                        break;
-                    case "staticmovingplatforms":
-                        StaticMovingPlatforms = e;
-                        break;
-                    case "generatemodel":
-                        GenerateModel = e;
                         break;
                     default:
                         Warning.WriteLine(e.Name + " 元素：无法识别在 Level 元素下的该子元素，它将被忽略。");
@@ -546,7 +542,7 @@ namespace Mygod.Edge.Tool
         private short zoom, value;
         private byte theme, musicJava, music;
 
-        public XElement StaticMovingPlatforms, GenerateModel;
+        public byte ModelTheme { get; private set; }
         public bool ValueIsAngle;
         public Flat LegacyMinimap;
         public Cube CollisionMap;
@@ -564,19 +560,18 @@ namespace Mygod.Edge.Tool
         [Obsolete]
         public XElementObjectList<MiniBlock> MiniBlocks = new XElementObjectList<MiniBlock>();
 
-        private static readonly string[]
-            Musics =
-            {
-                "00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", "07_Dark",
-                "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", "13_Debrief", "14_Space",
-                "15_Voyage_geometrique", "16_Mzone", "17_R2", "18_Mystery_cube", "19_Duty", "20_PerfectCell",
-                "21_fun", "22_lol", "23_lostway",  "24_wall_street"
-            },
-            MusicsJava =
-            {
-                "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", "05_test",
-                "06_mysterycube", "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
-            };
+        private static readonly string[] Musics =
+        {
+            "00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", "07_Dark",
+            "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", "13_Debrief", "14_Space",
+            "15_Voyage_geometrique", "16_Mzone", "17_R2", "18_Mystery_cube", "19_Duty", "20_PerfectCell", "21_fun",
+            "22_lol", "23_lostway", "24_wall_street"
+        },
+        MusicsJava =
+        {
+            "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", "05_test", "06_mysterycube",
+            "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
+        };
 
         public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
         public string MusicJavaName
@@ -587,58 +582,27 @@ namespace Mygod.Edge.Tool
         public IEnumerable<string> Compile(string path)
         {
             FilePath = path;
-            var level = this;
-            if (StaticMovingPlatforms != null)
-            {
-                var clearStaticBlocks = StaticMovingPlatforms.GetAttributeValueWithDefault("ClearStaticBlocks", true);
-                var blocks = new Dictionary<Point3D16, bool>(); // true: skip; false: half; null: full
-                var glowingBlocks = new HashSet<Point3D16>();
-                for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    blocks.Add(new Point3D16(x, y, 0), false);
-                foreach (var e in StaticMovingPlatforms.ElementsCaseInsensitive("SetBlocks"))
+            var level = (Level)MemberwiseClone();
+            level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
+            for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
+                for (short z = 0; z < level.Size.Height; z++)
                 {
-                    Point3D16 min = e.GetAttributeValue<Point3D16>("Min"),
-                              max = e.GetAttributeValueWithDefault("Max", min);
-                    bool? type;
-                    switch (e.GetAttributeValue("Type").ToLowerInvariant())
+                    var color = level.CollisionMap.GetColor(x, y, z);
+                    if (color.R == 255 || color.R < 128 || color.B == 0) continue;
+                    var platform = new MovingPlatform(level.MovingPlatforms);
+                    if ((color.R & 0x40) == 0)
                     {
-                        case "excluded": type = true; break;
-                        case "halfblock": type = false; break;
-                        default: type = null; break;
+                        platform.AutoStart = false;
+                        platform.LoopStartIndex = 0;
                     }
-                    var glowing = e.GetAttributeValueWithDefault<bool>("Glowing");
-                    for (var x = min.X; x <= max.X; x++) for (var y = min.Y; y <= max.Y; y++)
-                        for (var z = min.Z; z <= max.Z; z++)
-                        {
-                            var point = new Point3D16(x, y, z);
-                            if (type.HasValue) blocks[point] = type.Value; else blocks.Remove(point);
-                            if (glowing) glowingBlocks.Add(point);
-                        }
+                    if ((color.R & 0x20) == 0) platform.FullBlock = false;
+                    platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
+                    level.MovingPlatforms.Add(platform);
                 }
-                level = (Level)MemberwiseClone();
-                level.MovingPlatforms = new MovingPlatforms(MovingPlatforms);   // there's no need to copy other stuff
-                for (short x = 0; x < level.Size.Width; x++) for (short y = 0; y < level.Size.Length; y++)
-                    for (short z = 0; z < level.Size.Height; z++) if (level.CollisionMap[x, y, z])
-                    {
-                        var point = new Point3D16(x, y, z);
-                        var type = blocks.ContainsKey(point) ? (bool?) blocks[point] : null;
-                        if (type == true) continue;
-                        var platform = new MovingPlatform(level.MovingPlatforms);
-                        if (!glowingBlocks.Contains(point))
-                        {
-                            platform.AutoStart = false;
-                            platform.LoopStartIndex = 0;
-                        }
-                        platform.Waypoints.Add(new Waypoint { Position = new Point3D16(x, y, (short)(z + 1)) });
-                        if (type == false) platform.FullBlock = false;
-                        level.MovingPlatforms.Add(platform);
-                        if (clearStaticBlocks) level.CollisionMap[x, y, z] = false;
-                    }
-            }
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
             using (var writer = new BinaryWriter(stream)) level.Write(writer);
             yield return path;
-            if (GenerateModel != null) yield return new ModelGenerator(level, GenerateModel).Generate(path);
+            if (ModelTheme <= 3) yield return new ModelGenerator(level, ModelTheme).Generate(path);
         }
         public IEnumerable<string> Decompile(string path)
         {
@@ -651,7 +615,7 @@ namespace Mygod.Edge.Tool
             for (var z = 0; z < Size.Height; z++)
             {
                 temp = path + '.' + z + ".png";
-                CollisionMap[z].SaveToImage(temp);
+                CollisionMap[z].SaveToImage(temp, z == 0);
                 yield return path + '.' + z + ".png";
             }
         }
@@ -1123,23 +1087,38 @@ namespace Mygod.Edge.Tool
             return result;
         }
 
-        public void SaveToImage(string path)
+        public void SaveToImage(string path, bool half = false)
         {
-            if (IsEmpty) return;
+            if (detailedInformation != null)
+            {
+                ImageConverter.Save(detailedInformation, Width, Length, path);
+                return;
+            }
             var array = new BitArray(Width * Length);
             var pos = 0;
-            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++) array[pos++] = this[x, y];
-            ImageConverter.Save(array, Width, Length, path);
+            var hasBlock = false;
+            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++)
+            {
+                array[pos++] = this[x, y];
+                hasBlock = true;
+            }
+            if (hasBlock) ImageConverter.Save(array, Width, Length, path, half);
         }
 
-        private void InitFromBitmapData(BitArray array, Size2D size)
+        private void InitFromBitmapData(Color[] array, Size2D size)
         {
+            detailedInformation = array;
             var pos = 0;
-            for (var y = 0; y < size.Length; y++) for (var x = 0; x < size.Width; x++) this[x, y] = array[pos++];
+            for (var y = 0; y < size.Length; y++) for (var x = 0; x < size.Width; x++, pos++)
+            {
+                var color = array[pos];
+                this[x, y] = color.R == 255 && color.B > 0;
+            }
         }
 
         private readonly BitArray data;
         public readonly int Width, Length;
+        private Color[] detailedInformation;
 
         public static int GetBytes(int width, int length)
         {
@@ -1148,21 +1127,17 @@ namespace Mygod.Edge.Tool
 
         public int Bytes { get { return GetBytes(Width, Length); } }
 
-        public bool IsEmpty
-        {
-            get
-            {
-                for (var x = 0; x < Width; x++) for (var y = 0; y < Length; y++) if (this[x, y]) return false;
-                return true;
-            }
-        }
-
         private int GetPosition(int x, int y)
         {
             int pos = y * Width + x, posBit = pos & 7;  // posBase = pos & ~7 = pos - posBit
             return pos + 7 - posBit - posBit;           // return posBase + (7 - posBit);
         }
 
+        public Color GetColor(int x, int y)
+        {
+            return detailedInformation == null ? this[x, y] ? Color.White : Color.Black
+                                               : detailedInformation[y * Width + x];
+        }
         public bool this[int x, int y]
         {
             get { return data[GetPosition(x, y)]; }
@@ -1192,6 +1167,10 @@ namespace Mygod.Edge.Tool
 
         public Size3D Size;
 
+        public Color GetColor(int x, int y, int z)
+        {
+            return Size.IsBlockInArea(x, y, z) ? this[z].GetColor(x, y) : Color.Black;
+        }
         public bool this[Point3D16 point]
         {
             get { return this[point.X, point.Y, point.Z]; }
@@ -1201,11 +1180,6 @@ namespace Mygod.Edge.Tool
         {
             get { return Size.IsBlockInArea(x, y, z) && this[z][x, y]; }
             set { this[z][x, y] = value; }
-        }
-
-        public void SaveToImages(string pathFormat)
-        {
-            for (var z = 0; z < Size.Height; z++) this[z].SaveToImage(string.Format(pathFormat, z));
         }
 
         public void Write(BinaryWriter writer)

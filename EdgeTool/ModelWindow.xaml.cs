@@ -57,20 +57,16 @@ namespace Mygod.Edge.Tool
                         TaskDialog.Show(this, "警告", "对不起，EdgeTool 无法完全支持此模型。",
                             "EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。",
                             TaskDialogType.Warning);
-                    for (var i = model.Vertices.Length - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
+                    for (var i = model.Vertices.Count - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
                     var transform = new MatrixTransform3D(matrix);
                     Model.Children.Add(new Viewport2DVisual3D
-                    {
-                        Geometry = geom,
-                        Material = material,
-                        Visual = new Image { Source = image },
-                        Transform = transform
-                    });
+                                            { Geometry = geom, Material = material,
+                                              Visual = new Image { Source = image }, Transform = transform });
                     if (!DebugMode) continue;
                     var lines = new ScreenSpaceLines3D { Color = Colors.Red, Transform = transform };
                     Model.Children.Add(lines);
                     var k = 0;
-                    while (k < model.Vertices.Length)
+                    while (k < model.Vertices.Count)
                     {
                         lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k]));
                         lines.Points.Add(AssetHelper.ConvertVertex(model.Vertices[k + 1]));
