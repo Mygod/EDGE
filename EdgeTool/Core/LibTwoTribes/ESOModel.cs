@@ -60,7 +60,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 {
                     m_Colors.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
-                        m_Colors[i] = Color.FromArgb(br.ReadInt32());
+                        m_Colors.Add(Color.FromArgb(br.ReadInt32()));
                 }
 
                 if (m_TypeFlags.HasFlag(Flags.TexCoords))
