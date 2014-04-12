@@ -415,7 +415,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(ProjectDir)Resources\InsertIcons.exe $(TargetPath) $(ProjectDir)Resources\Icons
-"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetDir)$(TargetFileName)"
+"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" "$(TargetDir)$(TargetFileName)"
 move /y $(TargetDir)ExcelLibrary.dll $(TargetDir)Resources\Libraries\ExcelLibrary.dll
 move /y $(TargetDir)ExcelLibrary.pdb $(TargetDir)Resources\Libraries\ExcelLibrary.pdb
 move /y $(TargetDir)Microsoft.WindowsAPICodePack.dll $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.dll
