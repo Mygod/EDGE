@@ -12,7 +12,7 @@
         </Viewbox>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock VerticalAlignment="Center">
-                <Run Name="Coordinates" x:FieldModifier="private" Text="(0, 0)" />
+                <Run Name="Coordinates" x:FieldModifier="private" Text="移动鼠标查看坐标" />
                 普通方块颜色越淡高度越高
             </TextBlock>
             <ToggleButton Name="SpawnPoint" x:FieldModifier="private" Content="起点" IsChecked="True"

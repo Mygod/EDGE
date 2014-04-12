@@ -21,10 +21,12 @@ namespace Mygod.Edge.Tool
         }
 
         private readonly bool initialized;
+        private int[,] heightMap;
 
         private void Redraw(object sender = null, EventArgs e = null)
         {
             if (!initialized) return;
+            heightMap = new int[level.Size.Length, level.Size.Width];
             var array = new byte[level.Size.Length * level.Size.Width << 2];
             var pos = 0;
             for (var y = 0; y < level.Size.Length; y++) for (var x = 0; x < level.Size.Width; x++)
@@ -35,6 +37,7 @@ namespace Mygod.Edge.Tool
                     if (level.CollisionMap[x, y, z]) break;
                     z--;
                 }
+                heightMap[y, x] = z;
                 array[pos] = array[pos + 1] = array[pos + 2] = (byte)(255.0 * (z + 1) / (level.Size.Height + 1));
                 array[pos + 3] = 255;
                 pos += 4;
@@ -79,7 +82,9 @@ namespace Mygod.Edge.Tool
         private void UpdateCoordinates(object sender, MouseEventArgs e)
         {
             var position = e.GetPosition((IInputElement) sender);
-            Coordinates.Text = string.Format("({0}, {1})", Math.Floor(position.X), Math.Floor(position.Y));
+            int x = (int) Math.Floor(position.X), y = (int) Math.Floor(position.Y);
+            Coordinates.Text = string.Format("({0}, {1}{2})", x, y,
+                                             heightMap[y, x] >= 0 ? ", " + heightMap[y, x] : string.Empty);
         }
     }
 }
