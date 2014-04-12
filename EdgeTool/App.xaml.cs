@@ -6,11 +6,9 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Mygod.Windows;
-using Mygod.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Mygod.Edge.Tool
@@ -31,10 +29,7 @@ namespace Mygod.Edge.Tool
         public static readonly List<string> EdgeMods = new List<string>();
         public static string GamePath;
 
-        private UserActivityHook hook;
         private CommonOpenFileDialog fileSelector;
-        public event EventHandler<bool> OnStop;
-        public event EventHandler<string> OnKeyEvent;
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
@@ -42,8 +37,6 @@ namespace Mygod.Edge.Tool
             AppDomain.CurrentDomain.UnhandledException += OnError;
             fileSelector = new CommonOpenFileDialog
                 { Title = "请选择要(反)编译的文件", Multiselect = true, AddToMostRecentlyUsedList = false };
-            (hook = new UserActivityHook()).KeyDown += OnKeyDown;
-            hook.KeyUp += OnKeyUp;
             string directory = null;
             bool exFormat = false, previousDir = false, shouldNotClose = false, windowShown = false;
             bool? forceStart = null;
@@ -72,7 +65,7 @@ namespace Mygod.Edge.Tool
                 }
                 else if (arg.StartsWith("-rke", true, CultureInfo.InvariantCulture))
                 {
-                    new KeyEventRecorder(this).Show();
+                    KeyEventRecorder.Instance.Show();
                     windowShown = shouldNotClose = true;
                 }
                 else if (arg.StartsWith("-c", true, CultureInfo.InvariantCulture)
@@ -106,7 +99,11 @@ namespace Mygod.Edge.Tool
             }
             if (forceStart == false
                 || shouldNotClose && !forceStart.HasValue && GamePath == null && EdgeMods.Count == 0)
-                if (windowShown) return;
+                if (windowShown)
+                {
+                    KeyEventRecorder.Shutdown();
+                    return;
+                }
                 else Shutdown();
             (MainWindow = new MainWindow()).Show();
         }
@@ -121,7 +118,7 @@ namespace Mygod.Edge.Tool
 
         private void OnError(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            TaskDialog.Show(null, "严重错误", "哇靠崩溃啦！", "你这个混账东西干了什么？赶紧向 Mygod工作室™ 报告错误信息" +
+            TaskDialog.Show(null, "严重错误", "哇靠崩溃啦！", "你这个混账东西干了什么？赶紧向 Mygod 工作室™ 报告错误信息" +
                             "和你的不当行径。", TaskDialogType.Error, e.Exception.GetMessage());
             e.Handled = true;
             Shutdown();
@@ -131,62 +128,6 @@ namespace Mygod.Edge.Tool
         {
             var tag = (string)((Image)sender).Tag;
             if (!string.IsNullOrWhiteSpace(tag)) Process.Start(tag);
-        }
-
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            OnKey(false, e.KeyCode);
-        }
-
-        private void OnKeyUp(object sender, KeyEventArgs e)
-        {
-            OnKey(true, e.KeyCode);
-        }
-
-        private void OnKey(bool up, Keys key)
-        {
-            string name;
-            switch (key)
-            {
-                case Keys.Down:
-                case Keys.S:
-                case Keys.NumPad2:
-                    name = "South";
-                    break;
-                case Keys.Left:
-                case Keys.A:
-                case Keys.NumPad4:
-                    name = "West";
-                    break;
-                case Keys.Right:
-                case Keys.D:
-                case Keys.NumPad6:
-                    name = "East";
-                    break;
-                case Keys.Up:
-                case Keys.W:
-                case Keys.NumPad8:
-                    name = "North";
-                    break;
-                case Keys.F10:
-                    if (up) new KeyEventRecorder(this).Show();
-                    return;
-                case Keys.F11:
-                    if (up && OnStop != null) OnStop(this, true);
-                    return;
-                case Keys.F12:
-                    if (up && OnStop != null) OnStop(this, false);
-                    return;
-                default:
-                    return;
-            }
-            name += up ? "Up" : "Down";
-            if (OnKeyEvent != null) OnKeyEvent(this, name);
-        }
-
-        private void OnExit(object sender, ExitEventArgs e)
-        {
-            hook.Dispose();
         }
     }
 }

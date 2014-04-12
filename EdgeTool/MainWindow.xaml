@@ -52,7 +52,7 @@
                     Click="PopContextMenu" ContextMenuService.Placement="Bottom">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" InputGestureText="F10" />
+                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" />
                         <MenuItem Header="转换手机版关卡文件(_C)..." Click="ConvertMobiLevel" />
                         <Separator />
                         <MenuItem Header="打开 ED_GE 的 settings.ini" Command="{StaticResource OpenSettingsIni}"

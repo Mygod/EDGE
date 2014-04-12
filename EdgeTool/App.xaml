@@ -1,6 +1,6 @@
 ﻿<Application x:Class="Mygod.Edge.Tool.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Startup="OnStartup"
-             DispatcherUnhandledException="OnError" Exit="OnExit">
+             DispatcherUnhandledException="OnError">
     <Application.Resources>
         <Image x:Key="Disabled" x:Shared="False" Source="/Resources/Images/Disabled.png"
                ToolTip="对不起，由于你还没有玩过 V1.0.2483.7086 的破解版游戏，你现在无法浏览当前获得了哪些成就。" />

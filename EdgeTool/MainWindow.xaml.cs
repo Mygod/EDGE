@@ -96,6 +96,7 @@ namespace Mygod.Edge.Tool
         {
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
+            KeyEventRecorder.Shutdown(true);
         }
 
         private readonly NotifyIcon notifyIcon;
@@ -201,7 +202,8 @@ namespace Mygod.Edge.Tool
 
         private void RecordKeyEvent(object sender, RoutedEventArgs e)
         {
-            new KeyEventRecorder((App) Application.Current).Show();
+            KeyEventRecorder.Instance.Show();
+            KeyEventRecorder.Instance.Activate();
         }
 
         private void ConvertMobiLevel(object sender, RoutedEventArgs e)
