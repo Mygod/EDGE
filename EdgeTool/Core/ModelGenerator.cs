@@ -46,7 +46,7 @@ namespace Mygod.Edge.Tool
             public ColorInformation(Color color)
             {
                 Theme = 3 - (color.G >> 6);
-                Height = (color.R < 128 || color.R == 255) && color.B >= 155 ? (color.B - 155) / 100F : -1;
+                Height = (color.B - 1) / 254F;
             }
 
             public readonly float Height;

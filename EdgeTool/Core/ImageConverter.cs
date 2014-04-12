@@ -13,7 +13,7 @@ namespace Mygod.Edge.Tool
                 var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                                            PixelFormat.Format32bppArgb);
                 var pointer = (byte*)data.Scan0;
-                var n = half ? 205 : 255;
+                var n = half ? 128 : 255;
                 for (var i = 0; i < greyPixels.Length; i++)
                 {
                     pointer[0] = (byte)(greyPixels[i] ? n : 0);

@@ -588,7 +588,7 @@ namespace Mygod.Edge.Tool
                 for (short z = 0; z < level.Size.Height; z++)
                 {
                     var color = level.CollisionMap.GetColor(x, y, z);
-                    if (color.R == 255 || color.R < 128 || color.B == 0) continue;
+                    if (color.R == 255 || color.R < 128) continue;
                     var platform = new MovingPlatform(level.MovingPlatforms);
                     if ((color.R & 0x40) == 0)
                     {
@@ -1112,7 +1112,7 @@ namespace Mygod.Edge.Tool
             for (var y = 0; y < size.Length; y++) for (var x = 0; x < size.Width; x++, pos++)
             {
                 var color = array[pos];
-                this[x, y] = color.R == 255 && color.B > 0;
+                this[x, y] = color.R == 255;
             }
         }
 
