@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Mygod.Windows;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Mygod.Edge.Tool
 {
@@ -29,14 +28,13 @@ namespace Mygod.Edge.Tool
         public static readonly List<string> EdgeMods = new List<string>();
         public static string GamePath;
 
-        private CommonOpenFileDialog fileSelector;
+        private readonly CommonOpenFileDialog fileSelector = new CommonOpenFileDialog
+            { Title = Localization.DecompileFileSelectorTitle, Multiselect = true, AddToMostRecentlyUsedList = false };
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
             Environment.CurrentDirectory = CurrentApp.Directory;
             AppDomain.CurrentDomain.UnhandledException += OnError;
-            fileSelector = new CommonOpenFileDialog
-                { Title = "请选择要(反)编译的文件", Multiselect = true, AddToMostRecentlyUsedList = false };
             string directory = null;
             bool exFormat = false, previousDir = false, shouldNotClose = false, windowShown = false;
             bool? forceStart = null;
@@ -88,12 +86,13 @@ namespace Mygod.Edge.Tool
             {
                 foreach (var file in files)
                 {
-                    Console.WriteLine("------ (反)编译 {0} ------", file);
+                    Console.WriteLine(Localization.CommandLineDecompileHeader, file);
                     var result = Compiler.Compile(exFormat, file, directory);
-                    if (result.Item1 != null) Console.WriteLine("错误：" + result.Item1.GetMessage());
-                    if (!string.IsNullOrWhiteSpace(result.Item2))
-                        Console.WriteLine("警告：{0}{1}", Environment.NewLine, result.Item2);
-                    if (result.Item1 == null) Console.WriteLine("(反)编译成功。");
+                    if (result.Item1 != null)
+                        Console.WriteLine(Localization.CommandLineDecompileError + result.Item1.GetMessage());
+                    if (!string.IsNullOrWhiteSpace(result.Item2)) Console.WriteLine
+                        (Localization.CommandLineDecompileWarning + Environment.NewLine + result.Item2);
+                    if (result.Item1 == null) Console.WriteLine(Localization.CommandLineDecompileSuccess);
                 }
                 shouldNotClose = true;
             }
@@ -111,15 +110,14 @@ namespace Mygod.Edge.Tool
         private static void OnError(object sender, UnhandledExceptionEventArgs e)
         {
             var exc = e.ExceptionObject as Exception;
-            if (exc != null) MessageBox.Show(string.Format(
-                "你这个混账东西干了什么？赶紧向 Mygod 工作室™ 报告错误信息和你的不当行径。{0}错误信息：{0}{1}",
-                Environment.NewLine, exc.GetMessage()), "哇靠崩溃啦！", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (exc != null) MessageBox.Show(Localization.FatalMessage + Environment.NewLine + exc.GetMessage(),
+                                             Localization.FatalTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void OnError(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            TaskDialog.Show(null, "严重错误", "哇靠崩溃啦！", "你这个混账东西干了什么？赶紧向 Mygod 工作室™ 报告错误信息" +
-                            "和你的不当行径。", TaskDialogType.Error, e.Exception.GetMessage());
+            TaskDialog.Show(null, Localization.Fatal, Localization.FatalTitle, Localization.FatalMessage,
+                            TaskDialogType.Error, e.Exception.GetMessage());
             e.Handled = true;
             Shutdown();
         }

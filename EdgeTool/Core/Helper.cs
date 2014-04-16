@@ -129,7 +129,7 @@ namespace Mygod.Edge.Tool
 
     public static class LocHelper
     {
-        public static void SaveXsl(this LOC loc, string path)
+        public static void SaveXls(this LOC loc, string path)
         {
             var workbook = new Workbook();
             var worksheet = new Worksheet("localization");
@@ -145,12 +145,12 @@ namespace Mygod.Edge.Tool
             workbook.Save(path);
         }
 
-        public static LOC FromXsl(string path)
+        public static LOC FromXls(string path)
         {
             var loc = new LOC();
             var cells = Workbook.Load(path).Worksheets[0].Cells;
             if (cells[0, 0].StringValue.ToLowerInvariant() != "id")
-                throw new NotSupportedException("第一行第一列必须为 id！");
+                throw new NotSupportedException(Localization.XlsFormatIDError);
             loc.Languages = new string[cells.GetRow(0).LastColIndex];
             for (var i = 0; i < loc.Languages.Length; i++) loc.Languages[i] = cells[0, i + 1].StringValue;
             loc.StringKeys = new uint[cells.Rows.Count - 1];
@@ -464,7 +464,7 @@ namespace Mygod.Edge.Tool
                     var normals = new bool[3];
                     var i = model.Vertices.Count;
                     var vertices = triangle.ElementsCaseInsensitive("Vertex").ToArray();
-                    if (vertices.Length != 3) throw new FormatException("一个 Triangle 元素必须要有三个 Vertex 元素！");
+                    if (vertices.Length != 3) throw new FormatException(Localization.TriangleVertexCountError);
                     foreach (var vertex in vertices)
                     {
                         model.Vertices.Add(ConvertFromVertex(matrix.Transform
@@ -664,11 +664,11 @@ namespace Mygod.Edge.Tool
                         }
                         break;
                     case ".loc":
-                        LOC.FromFile(file).SaveXsl(outputPath += ".xls");
+                        LOC.FromFile(file).SaveXls(outputPath += ".xls");
                         list.Add(new FileEntry(outputPath, "text.xls"));
                         break;
                     case ".xls":
-                        LocHelper.FromXsl(file).Save(outputPath += ".loc");
+                        LocHelper.FromXls(file).Save(outputPath += ".loc");
                         list.Add(new FileEntry(outputPath, "text.loc"));
                         break;
                     case ".etx":
@@ -777,7 +777,7 @@ namespace Mygod.Edge.Tool
                                 list.Add(new FileEntry(outputPath, "audio"));
                                 break;
                             default:
-                                throw new NotSupportedException("对不起，无法识别您要(反)编译的文件！");
+                                throw new NotSupportedException(Localization.DecompileUnrecognizedFile);
                         }
                         break;
                 }

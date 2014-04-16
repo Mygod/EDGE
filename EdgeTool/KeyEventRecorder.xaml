@@ -1,7 +1,8 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.KeyEventRecorder" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Title="KeyEvent 录制器"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Closing="OnClosing"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="{x:Static m:CurrentApp.MainIcon}"
-               xmlns:m="http://schemas.mygod.tk/wpf" Closing="OnClosing">
+               xmlns:m="http://schemas.mygod.tk/wpf" Title="{x:Static local:Localization.KeyEventRecorder}"
+               xmlns:local="clr-namespace:Mygod.Edge.Tool">
     <m:GlassWindow.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Effect" Value="{DynamicResource GlowingEffect}" />
@@ -15,13 +16,15 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Label Grid.ColumnSpan="2" Content="按 F10 开始，按 F11 停止，按 F12 停止并放弃已录制的结果。" />
-        <Label Grid.Row="1" Content="初始时刻：(_I)" Target="{Binding ElementName=OffsetBox}" />
+        <Label Grid.ColumnSpan="2" Content="{x:Static local:Localization.KeyEventRecorderHint}" />
+        <Label Grid.Row="1" Content="{x:Static local:Localization.KeyEventRecorderInitialTime}"
+               Target="{Binding ElementName=OffsetBox}" />
         <m:IntegerUpDown Name="OffsetBox" x:FieldModifier="private" Grid.Row="1" Grid.Column="1"
                          Value="0" Maximum="65535" />
-        <Label Grid.Row="2" Content="播放速度：(_S)" Target="{Binding ElementName=SpeedBox}" />
+        <Label Grid.Row="2" Content="{x:Static local:Localization.KeyEventRecorderPlaybackSpeed}"
+               Target="{Binding ElementName=SpeedBox}" />
         <m:DoubleUpDown Name="SpeedBox" x:FieldModifier="private" Grid.Row="2" Grid.Column="1" Value="0.8" />
     </Grid>
 </m:GlassWindow>

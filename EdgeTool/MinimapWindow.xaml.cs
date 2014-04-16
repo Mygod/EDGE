@@ -6,7 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Mygod.Edge.Tool
 {
@@ -15,7 +15,7 @@ namespace Mygod.Edge.Tool
         public MinimapWindow(Level level)
         {
             InitializeComponent();
-            Title = "小地图 - " + (this.level = level).Name;
+            Title = Localization.Minimap + " - " + (this.level = level).Name;
             initialized = true;
             Redraw();
         }
@@ -66,13 +66,16 @@ namespace Mygod.Edge.Tool
 
         private readonly Level level;
 
-        private readonly SaveFileDialog fileSaver = new SaveFileDialog
-            { Title = "保存小地图", Filter = "PNG 文件 (*.png)|*.png" };
+        private readonly CommonSaveFileDialog fileSaver = new CommonSaveFileDialog
+        {
+            Title = Localization.MinimapSaveDialogTitle,
+            Filters = { new CommonFileDialogFilter(Localization.PngFilter, "*.png") }
+        };
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            fileSaver.FileName = Path.GetFileNameWithoutExtension(level.FilePath) + ".png";
-            if (fileSaver.ShowDialog() != true) return;
+            fileSaver.DefaultFileName = Path.GetFileNameWithoutExtension(level.FilePath) + ".png";
+            if (fileSaver.ShowDialog() != CommonFileDialogResult.Cancel) return;
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create((BitmapSource)Picture.Source));
             using (var stream = new FileStream(fileSaver.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))

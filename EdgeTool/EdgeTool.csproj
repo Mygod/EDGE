@@ -119,6 +119,11 @@
     <Compile Include="KeyEventRecorder.xaml.cs">
       <DependentUpon>KeyEventRecorder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Localization.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="[3DTools]\MathUtils.cs" />
     <Compile Include="[3DTools]\Matrix3DStack.cs" />
     <Compile Include="[3DTools]\ScreenSpaceLines3D.cs" />
@@ -369,7 +374,6 @@
     <Resource Include="Resources\Images\Achieved.png" />
     <Resource Include="Resources\Images\Disabled.png" />
     <Resource Include="Resources\Images\Help.png" />
-    <Resource Include="Resources\Images\HelpUnavailable.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -412,25 +416,28 @@
     </Content>
     <None Include="Resources\Libraries\XactInterop3.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localization.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization.zh-Hans.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(ProjectDir)Resources\InsertIcons.exe $(TargetPath) $(ProjectDir)Resources\Icons
 "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" "$(TargetDir)$(TargetFileName)"
-move /y $(TargetDir)ExcelLibrary.dll $(TargetDir)Resources\Libraries\ExcelLibrary.dll
-move /y $(TargetDir)ExcelLibrary.pdb $(TargetDir)Resources\Libraries\ExcelLibrary.pdb
-move /y $(TargetDir)Microsoft.WindowsAPICodePack.dll $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.dll
-move /y $(TargetDir)Microsoft.WindowsAPICodePack.pdb $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.pdb
-del /f /q $(TargetDir)Microsoft.WindowsAPICodePack.xml
-move /y $(TargetDir)Microsoft.WindowsAPICodePack.Shell.dll $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.dll
-move /y $(TargetDir)Microsoft.WindowsAPICodePack.Shell.pdb $(TargetDir)Resources\Libraries\Microsoft.WindowsAPICodePack.Shell.pdb
-del /f /q $(TargetDir)Microsoft.WindowsAPICodePack.Shell.xml
-move /y $(TargetDir)MygodLibrary.dll $(TargetDir)Resources\Libraries\MygodLibrary.dll
-move /y $(TargetDir)MygodLibrary.pdb $(TargetDir)Resources\Libraries\MygodLibrary.pdb
-del /f /q $(TargetDir)MygodLibrary.xml
-move /y $(TargetDir)SevenZipSharp.dll $(TargetDir)Resources\Libraries\SevenZipSharp.dll
-move /y $(TargetDir)SevenZipSharp.pdb $(TargetDir)Resources\Libraries\SevenZipSharp.pdb
-del /f /q $(TargetDir)SevenZipSharp.xml
-move /y $(TargetDir)XactInterop3.dll $(TargetDir)Resources\Libraries\XactInterop3.dll</PostBuildEvent>
+$(TargetDir)Resources\Libraries\zh-Hans
+move /y $(TargetDir)zh-Hans\EdgeTool.resources.dll $(TargetDir)Resources\Libraries\zh-Hans\EdgeTool.resources.dll
+rd /s /q $(TargetDir)zh-Hans
+move /y $(TargetDir)*.dll $(TargetDir)Resources\Libraries
+move /y $(TargetDir)*.pdb $(TargetDir)Resources\Libraries
+del /f /q $(TargetDir)*.xml
+move /y $(TargetDir)Resources\Libraries\EdgeTool.pdb $(TargetDir)EdgeTool.pdb</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

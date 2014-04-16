@@ -60,8 +60,8 @@ namespace Mygod.Edge.Tool
     {
         public static Dictionary<string, string> GlobalPercents;
         private static int refreshing;
-        public static readonly string ResourcesPath = Path.Combine(CurrentApp.Directory, "Resources");
-        public static readonly string AchievementsPath = Path.Combine(ResourcesPath, "Achievements.xml");
+        private static readonly string ResourcesPath = Path.Combine(CurrentApp.Directory, "Resources"),
+                                       AchievementsPath = Path.Combine(ResourcesPath, "Achievements.xml");
 
         static Achievements()
         {

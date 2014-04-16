@@ -38,9 +38,6 @@ namespace Mygod.Edge.Tool
             notifyIcon.MouseClick += OnHideWindow;
             notifyIcon.BalloonTipClicked += OnBalloonClosed;
             notifyIcon.BalloonTipClosed += OnBalloonClosed;
-            exeSelector.Filters.Add(new CommonFileDialogFilter("可执行程序 (*.exe)", "*.exe"));
-            LevelSelector.Filters.Add(new CommonFileDialogFilter("EDGE 关卡文件 (*.bin)", "*.bin"));
-            LevelSelector.Controls.Add(new CommonFileDialogCheckBox("转换到 P&C 版 (不选中表示转换到移动版)"));
             InitializeComponent();
             DecompileHistoryBox.ItemsSource = decompileHistory;
             checkBoxes = CheckBoxPanel.Children.OfType<CheckBox>().ToDictionary(box => box.Content as string);
@@ -63,7 +60,7 @@ namespace Mygod.Edge.Tool
             RefreshAchievements();
         }
 
-        private const string
+        private static readonly string
             ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done",
             AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
 
@@ -104,12 +101,23 @@ namespace Mygod.Edge.Tool
         public static Edge Edge;
         private readonly ObservableCollection<Level> levels = new ObservableCollection<Level>();
         private Thread searcher;
-        private readonly CommonOpenFileDialog
-            exeSelector = new CommonOpenFileDialog { Title = "请选择 edge.exe", DefaultFileName = "edge.exe" },
-            outputSelector = new CommonOpenFileDialog
-                { Title = "请选择要保存的位置", IsFolderPicker = true, AddToMostRecentlyUsedList = false };
+
+        private readonly CommonOpenFileDialog exeSelector = new CommonOpenFileDialog
+        {
+            Title = Localization.GameSelectorTitle, DefaultFileName = "edge.exe",
+            Filters = { new CommonFileDialogFilter(Localization.ExecutableFilter, "*.exe") }
+        },
+                                              outputSelector = new CommonOpenFileDialog
+        {
+            Title = Localization.OutputPathSelectorTitle, IsFolderPicker = true, AddToMostRecentlyUsedList = false
+        };
+
         private static readonly CommonOpenFileDialog LevelSelector = new CommonOpenFileDialog
-            { Title = "请选择要处理的 .bin 文件", Multiselect = true, AddToMostRecentlyUsedList = false };
+        {
+            Title = Localization.LevelFileSelectorTitle, Multiselect = true, AddToMostRecentlyUsedList = false,
+            Controls = { new CommonFileDialogCheckBox(Localization.ConvertToPcBox) },
+            Filters = { new CommonFileDialogFilter(Localization.EdgeLevelFilter, "*.bin") }
+        };
 
         private void Browse(object sender, RoutedEventArgs e)
         {
@@ -120,7 +128,8 @@ namespace Mygod.Edge.Tool
         {
             if (string.IsNullOrWhiteSpace(GamePath.Text) || !File.Exists(GamePath.Text))
             {
-                if (sender != null) TaskDialog.Show(this, "错误", "加载失败。", "路径不合法！", TaskDialogType.Error);
+                if (sender != null) TaskDialog.Show(this, Localization.Error, Localization.LoadingFailed,
+                                                    Localization.InvalidPath, TaskDialogType.Error);
                 return;
             }
             try
@@ -135,7 +144,7 @@ namespace Mygod.Edge.Tool
                 }
                 catch
                 {
-                    Trace.WriteLine("加载 mappings.xml 失败！");
+                    Trace.WriteLine("Failed to load mappings.xml!");
                 }
                 levels.Clear();
                 searcher = new Thread(Load);
@@ -153,7 +162,8 @@ namespace Mygod.Edge.Tool
             }
             catch (Exception exc)
             {
-                if (sender != null) TaskDialog.Show(this, "错误", "加载失败。", exc.Message, TaskDialogType.Error);
+                if (sender != null) TaskDialog.Show(this, Localization.Error, Localization.LoadingFailed,
+                                                    exc.Message, TaskDialogType.Error);
                 SwitchProfileButton.IsEnabled = RunGameButton.IsEnabled = false;
             }
         }
@@ -180,9 +190,9 @@ namespace Mygod.Edge.Tool
 
         private void RunGame(object sender, EventArgs e)
         {
-            if (Edge == null || (isDirty && TaskDialog.Show(this, "询问", "确定要继续吗？", "您对要安装的 edgemod " +
-                "的修改还没有应用，启动游戏后你不会看到新安装的 edgemod 中的内容。你现在可以取消后点击安装来应用你对 "
-                + "edgemod 的修改。", TaskDialogType.OKCancelQuestion) != TaskDialogResult.Ok)) return;
+            if (Edge == null || (isDirty && TaskDialog.Show(this, Localization.Ask, Localization.ProceedConfirm,
+                Localization.EdgeModsChangesNotAppliedMessage, TaskDialogType.OKCancelQuestion)
+                != TaskDialogResult.Ok)) return;
             Process.Start(new ProcessStartInfo(Edge.GamePath) { WorkingDirectory = Edge.GameDirectory });
             isDirty = false;
         }
@@ -235,11 +245,11 @@ namespace Mygod.Edge.Tool
                 }
                 catch (Exception exc)
                 {
-                    TaskDialog.Show(window, "错误", "转换失败。", "文件名：" + file, TaskDialogType.Error,
-                                    exc.GetMessage());
+                    TaskDialog.Show(window, Localization.Error, Localization.ConversionFailed, file,
+                                    TaskDialogType.Error, exc.GetMessage());
                 }
-            if (count > 0) TaskDialog.Show(window, "完成", "转换完毕。", string.Format("成功转换了 {0} 个文件。", count),
-                                           TaskDialogType.Information);
+            if (count > 0) TaskDialog.Show(window, Localization.Finished, Localization.ConversionFinished, 
+                             string.Format(Localization.ConversionFinishedDetails, count), TaskDialogType.Information);
         }
         private void CheckForUpdates(object sender, RoutedEventArgs e)
         {
@@ -248,9 +258,10 @@ namespace Mygod.Edge.Tool
         public static void CheckForUpdates(Window window = null)
         {
             WebsiteManager.CheckForUpdates(
-                () => TaskDialog.Show(window, "检查完毕", "没有可用更新。", type: TaskDialogType.Information),
-                exc => TaskDialog.Show(window, "错误", "检查更新失败。", type: TaskDialogType.Error,
-                                       expandedInfo: exc.GetMessage()));
+                () => TaskDialog.Show(window, Localization.Finished, Localization.NoUpdatesAvailable,
+                                      type: TaskDialogType.Information),
+                exc => TaskDialog.Show(window, Localization.Error, Localization.CheckForUpdatesFailed,
+                                       type: TaskDialogType.Error, expandedInfo: exc.GetMessage()));
         }
         private void Help(object sender, RoutedEventArgs e)
         {
@@ -357,8 +368,8 @@ namespace Mygod.Edge.Tool
         private void ForceUnlockAchievement(object sender, MouseButtonEventArgs e)
         {
             var item = AchievementsList.SelectedItem as Achievement;
-            if (item != null && Users.Current.CurrentUser != null && TaskDialog.Show(this, "询问",
-                "确定要(取消)获得该成就吗？", type: TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes)
+            if (item != null && Users.Current.CurrentUser != null && TaskDialog.Show(this, Localization.Ask,
+                Localization.AchievementUnlockConfirm, type: TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes)
                 Users.Current.CurrentUser.SetAchieved(item, !Users.Current.CurrentUser.GetAchieved(item));
         }
 
@@ -379,9 +390,8 @@ namespace Mygod.Edge.Tool
             {
                 while (Interlocked.Exchange(ref balloonShown, 1) == 1) Thread.Sleep(500);
                 notifyIcon.Visible = true;
-                notifyIcon.ShowBalloonTip(5000, "获得成就 " + achievement.Title + "！",
-                    "恭喜你获得了一个成就！快去 EdgeTool 看看吧！" + Environment.NewLine
-                    + "说明：" + achievement.Description, ToolTipIcon.Info);
+                notifyIcon.ShowBalloonTip(5000, string.Format(Localization.AchievementUnlocked, achievement.Title),
+                    Localization.AchievementUnlockedDetails + achievement.Description, ToolTipIcon.Info);
             }
         }
 
@@ -419,7 +429,7 @@ namespace Mygod.Edge.Tool
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
                 e.Effects = e.AllowedEffects & DragDropEffects.Copy;
-                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "(反)编译");
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, Localization.Decompile);
             }
             else
             {
@@ -437,7 +447,7 @@ namespace Mygod.Edge.Tool
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (files == null) return;
             var count = ProcessCore(files);
-            WarningBox.Text += string.Format("(反)编译完毕。共(反)编译了 {0} 个文件。", count);
+            WarningBox.Text += string.Format(Localization.DecompileFinishedDetails, count);
         }
 
         private int ProcessCore(IEnumerable<string> allFiles, string directory = null, bool addToHistory = true)
@@ -450,8 +460,8 @@ namespace Mygod.Edge.Tool
             foreach (var file in files)
             {
                 if (file.EndsWith(".png", true, CultureInfo.InvariantCulture) && !exFormat.HasValue)
-                    exFormat = TaskDialog.Show(this, "询问", "要使用新版 .etx 格式吗？",
-                        "仅适用于 Steam 正版。（非 Demo）", TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes;
+                    exFormat = TaskDialog.Show(this, Localization.Ask, Localization.NewEtxConfirmTitle,
+                        Localization.NewEtxConfirmDetails, TaskDialogType.YesNoQuestion) == TaskDialogResult.Yes;
                 var result = Compiler.Compile(exFormat ?? false, file, directory);
                 if (result.Item1 == null)
                 {
@@ -463,13 +473,12 @@ namespace Mygod.Edge.Tool
                         }
                         catch (Win32Exception exc)
                         {
-                            TaskDialog.Show(this, "错误", "无法打开(反)编译的文件。", exc.Message,
-                                            TaskDialogType.Error);
+                            TaskDialog.Show(this, Localization.Error, Localization.StartDecompiledFileFailed,
+                                            exc.Message, TaskDialogType.Error);
                         }
                 }
-                else TaskDialog.Show(this, "错误", Path.GetFileNameWithoutExtension(file) + " (反)编译失败。",
-                                     "错误信息：" + Environment.NewLine + result.Item1.GetMessage(),
-                                     TaskDialogType.Error);
+                else TaskDialog.Show(this, Localization.Error, string.Format(Path.GetFileNameWithoutExtension(file),
+                    Localization.DecompileFailed), footerText: result.Item1.GetMessage(), type: TaskDialogType.Error);
                 if (!string.IsNullOrWhiteSpace(result.Item2))
                     WarningBox.Text += string.Format("{0}{1}{2}{1}", file, Environment.NewLine, result.Item2);
             }
@@ -480,7 +489,7 @@ namespace Mygod.Edge.Tool
         {
             var count = ProcessCore(DecompileHistoryBox.SelectedItems.OfType<List<string>>()
                             .SelectMany(a => a).Distinct(), addToHistory: false);
-            WarningBox.Text += string.Format("(反)编译完毕。共(反)编译了 {0} 个文件。", count);
+            WarningBox.Text += string.Format(Localization.DecompileFinishedDetails, count);
         }
         private void ClearHistory(object sender, RoutedEventArgs e)
         {
@@ -501,8 +510,8 @@ namespace Mygod.Edge.Tool
         private void RefreshEdgeMods(object sender = null, RoutedEventArgs e = null)
         {
             var result = Edge.RefreshEdgeMods();
-            if (!string.IsNullOrWhiteSpace(result))
-                TaskDialog.Show(this, "错误", "加载 EdgeMod 时出现了问题。", result, TaskDialogType.Error);
+            if (!string.IsNullOrWhiteSpace(result)) TaskDialog.Show(this, Localization.Error,
+                                                        Localization.LoadEdgeModsError, result, TaskDialogType.Error);
         }
 
         private ProgressDialog dialog;
@@ -514,11 +523,15 @@ namespace Mygod.Edge.Tool
             if (!Settings.EdgeModLoaded)
             {
                 Settings.EdgeModLoaded = true;
-                TaskDialog.Show(this, "信息", "第一次安装 EdgeMod （以及执行清理后第一次安装）时速度可能较慢，" +
-                                "请耐心等待。", type: TaskDialogType.Information);
+                TaskDialog.Show(this, Localization.Information, Localization.EdgeModsFirstInstallHint,
+                                type: TaskDialogType.Information);
             }
-            dialog = new ProgressDialog { Description = "开始安装中……", ShowTimeRemaining = true, 
-                Text = "安装 EdgeMod", WindowTitle = "安装 EdgeMod", UseCompactPathsForDescription = true };
+            dialog = new ProgressDialog
+            {
+                Description = Localization.InstallEdgeModsPreparing,
+                Text = Localization.InstallEdgeModsTitle, WindowTitle = Localization.InstallEdgeModsTitle,
+                ShowTimeRemaining = true, UseCompactPathsForDescription = true
+            };
             dialog.DoWork += InstallEdgeMods;
             dialog.RunWorkerCompleted += InstallEdgeModsCompleted;
             dialog.ShowDialog(this);
@@ -540,8 +553,8 @@ namespace Mygod.Edge.Tool
                 if (!string.IsNullOrWhiteSpace(e.Result.ToString()))
                 {
                     DescriptionBlock.Text = e.Result.ToString();
-                    TaskDialog.Show(this, "完成", "安装完毕。", "但是出了一些问题，去看看详情吧。",
-                                    TaskDialogType.Information);
+                    TaskDialog.Show(this, Localization.Finished, Localization.InstallEdgeModsFinished,
+                                    Localization.InstallEdgeModsFinishedError, TaskDialogType.Information);
                 }
                 else if (needsRunning) RunGame(sender, e);
                 needsRunning = false;
@@ -564,8 +577,8 @@ namespace Mygod.Edge.Tool
         private void CleanUpInstall(object sender, RoutedEventArgs e)
         {
             Edge.CleanUp();
-            TaskDialog.Show(this, "完毕", "清理完毕。", "所有的 EdgeMod 已被临时卸载。想要再次安装点击安装即可。",
-                            TaskDialogType.Information);
+            TaskDialog.Show(this, Localization.Finished, Localization.CleanupFinished,
+                            Localization.CleanupFinishedDetails, TaskDialogType.Information);
             isDirty = true;
         }
 
@@ -575,7 +588,8 @@ namespace Mygod.Edge.Tool
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
                 e.Effects = e.AllowedEffects & DragDropEffects.Copy;
-                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "安装 %1", "EdgeMod");
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects,
+                                           Localization.InstallEdgeMods.Replace("EdgeMods", "%1"), "EdgeMods");
             }
             else
             {
@@ -593,16 +607,15 @@ namespace Mygod.Edge.Tool
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (files == null) return;
             if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture))
-                .Count(InstallEdgeMod) == 0) return;
-            TaskDialog.Show(this, "成功", "安装成功。", type: TaskDialogType.Information);
-            RefreshEdgeMods();
+                     .Count(InstallEdgeMod) > 0) RefreshEdgeMods();
         }
 
         private bool InstallEdgeMod(string file)
         {
             string id = Path.GetFileNameWithoutExtension(file),
                    target = Path.Combine(Edge.ModsDirectory, Path.GetFileName(file));
-            if (File.Exists(target) && TaskDialog.Show(this, "询问", id + " 已存在。", "是否要覆盖？",
+            if (File.Exists(target) && TaskDialog.Show(this, Localization.Ask,
+                string.Format(Localization.FileAlreadyExists, id), Localization.FileAlreadyExistsDetails,
                 TaskDialogType.YesNoQuestion) != TaskDialogResult.Yes) return false;
             try
             {
@@ -612,7 +625,8 @@ namespace Mygod.Edge.Tool
             }
             catch (Exception exc)
             {
-                TaskDialog.Show(this, "错误", id + " 安装失败。", exc.Message, TaskDialogType.Error);
+                TaskDialog.Show(this, Localization.Error, string.Format(Localization.InstallEdgeModFailed, id),
+                                exc.Message, TaskDialogType.Error);
             }
             return false;
         }
@@ -656,7 +670,7 @@ namespace Mygod.Edge.Tool
             item.Tag = path;
             if (!File.Exists(path))
             {
-                item.Header = fileName + ".ean (不存在)";
+                item.Header = fileName + ".ean" + Localization.NotExists;
                 item.Foreground = Brushes.Red;
                 return;
             }
@@ -674,7 +688,7 @@ namespace Mygod.Edge.Tool
             item.Tag = path;
             if (!File.Exists(path))
             {
-                item.Header = fileName + ".eso (不存在)";
+                item.Header = fileName + ".eso" + Localization.NotExists;
                 item.Foreground = Brushes.Red;
                 return;
             }
@@ -694,7 +708,7 @@ namespace Mygod.Edge.Tool
             item.Tag = path;
             if (!File.Exists(path))
             {
-                item.Header = fileName + ".ema (不存在)";
+                item.Header = fileName + ".ema" + Localization.NotExists;
                 item.Foreground = Brushes.Red;
                 return;
             }
@@ -711,7 +725,7 @@ namespace Mygod.Edge.Tool
             item.Tag = path;
             if (!File.Exists(path))
             {
-                item.Header = fileName + ".etx (不存在)";
+                item.Header = fileName + ".etx" + Localization.NotExists;
                 item.Foreground = Brushes.Red;
                 return;
             }
@@ -742,7 +756,7 @@ namespace Mygod.Edge.Tool
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
                 e.Effects = e.AllowedEffects & DragDropEffects.Copy;
-                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "绘制模型树");
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, Localization.DrawModelTree);
             }
             else
             {
@@ -775,7 +789,7 @@ namespace Mygod.Edge.Tool
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
                 e.Effects = e.AllowedEffects & DragDropEffects.Copy;
-                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, "绘制动画树");
+                DropTargetHelper.DragEnter(this, e.Data, e.GetPosition(this), e.Effects, Localization.DrawAnimTree);
             }
             else
             {
@@ -822,9 +836,8 @@ namespace Mygod.Edge.Tool
             if (item == null) return;
             var path = item.Tag.ToString();
             if (!path.EndsWith(".ean", false, CultureInfo.InvariantCulture)) return;
-            if (ModelWindow == null) TaskDialog.Show(this, "错误", "对不起，没有可应用动画的模型。",
-                "动画不能离开被应用动画的模型独自存在。应用动画之前必须先在绘制模型树中将要应用动画的模型添加到模型查看器" +
-                "中。", TaskDialogType.Error);
+            if (ModelWindow == null) TaskDialog.Show(this, Localization.Error, Localization.ApplyAnimNoModelTitle,
+                                                     Localization.ApplyAnimNoModelDescription, TaskDialogType.Error);
             else 
             {
                 ModelWindow.ApplyAnimation(path, loop);
@@ -868,7 +881,6 @@ namespace Mygod.Edge.Tool
             if (achievement == null || Users.Current.CurrentUser == null)
                 return Application.Current.Resources["Disabled"];
             if (Users.Current.CurrentUser.GetAchieved(achievement)) return Application.Current.Resources["Achieved"];
-            if (achievement.Help == null) return Application.Current.Resources["HelpUnavailable"];
             var result = (Image) Application.Current.Resources["Help"];
             result.Tag = achievement.Help;
             return result;
@@ -931,7 +943,7 @@ namespace Mygod.Edge.Tool
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value != null ? value.ToString() + '%' : "未知";
+            return value != null ? value.ToString() + '%' : Localization.Unknown;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -946,8 +958,8 @@ namespace Mygod.Edge.Tool
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var list = value as List<string>;
-            if (list == null || list.Count == 0) return "(空)";
-            return list[0] + (list.Count > 1 ? " 等 " + list.Count + " 个文件" : string.Empty);
+            if (list == null || list.Count == 0) return Localization.HistoryListEmpty;
+            return (list.Count > 1 ? string.Format(Localization.HistoryList, list[0], list.Count) : list[0]);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

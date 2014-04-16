@@ -1,7 +1,8 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.ModelWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:m="http://schemas.mygod.tk/wpf"
-               xmlns:local="clr-namespace:Mygod.Edge.Tool" Width="1082" Height="665"
-               Icon="{x:Static m:CurrentApp.MainIcon}" Title="模型查看器" Closed="ModelWindowClosed">
+               xmlns:local="clr-namespace:Mygod.Edge.Tool" xmlns:lex="http://wpflocalizeextension.codeplex.com"
+               Width="1082" Height="665" Icon="{x:Static m:CurrentApp.MainIcon}" Title="{x:Static local:Localization.ModelViewer}"
+               Closed="ModelWindowClosed">
     <m:GlassWindow.Resources>
         <local:SolidColorBrushConverter x:Key="SolidColorBrushConverter" />
     </m:GlassWindow.Resources>
@@ -33,9 +34,8 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Grid>
-        <TextBlock Text="提示：左键左右前后（X 轴与 Z 轴）拖动，右键上下（Y 轴）拖动，滚轮改变视野（Field of View）大小，在右边选取背景色。"
-                   Grid.Row="1" VerticalAlignment="Center" Effect="{DynamicResource GlowingEffect}"
-                   TextWrapping="Wrap" />
+        <TextBlock Text="{x:Static local:Localization.ModelViewerHint}" Grid.Row="1" VerticalAlignment="Center"
+                   Effect="{DynamicResource GlowingEffect}" TextWrapping="Wrap" />
         <m:ColorPicker Grid.Row="1" Grid.Column="2" Name="Picker" SelectedColor="Black" />
     </Grid>
 </m:GlassWindow>

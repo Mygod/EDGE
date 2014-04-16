@@ -1,7 +1,7 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Mygod.Edge.Tool"
                xmlns:m="http://schemas.mygod.tk/wpf" Title="{x:Static m:CurrentApp.Title}"
-               Icon="{x:Static m:CurrentApp.MainIcon}" Closing="OnClosing" Height="500" Width="800">
+               Icon="{x:Static m:CurrentApp.MainIcon}" Closing="OnClosing" Height="570" Width="920">
     <m:GlassWindow.Resources>
         <RoutedCommand x:Key="OpenSettingsIni" />
     </m:GlassWindow.Resources>
@@ -39,37 +39,46 @@
             </Grid.ColumnDefinitions>
             <Label Target="{Binding ElementName=GamePath}" Effect="{DynamicResource GlowingEffect}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center">输入或<Hyperlink Click="Browse">浏览</Hyperlink></TextBlock>
-                    <AccessText>你的 _EDGE 游戏 exe 路径：</AccessText>
+                    <AccessText Text="{x:Static local:Localization.EnterPath_EnterOr}" />
+                    <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Click="Browse">
+                            <Run Text="{x:Static local:Localization.EnterPath_Browse}" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <AccessText Text="{x:Static local:Localization.EnterPath_YourGamePath}" />
                 </StackPanel>
             </Label>
             <ComboBox Grid.Column="1" Name="GamePath" x:FieldModifier="private" VerticalAlignment="Center"
                       IsEditable="True" />
-            <Button Grid.Column="3" Content="加载(_L)" VerticalAlignment="Center" Click="Load" />
-            <Button Grid.Column="5" Content="运行游戏(_R)" VerticalAlignment="Center" Click="RunGame"
-                    Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
-            <Button Grid.Column="7" Content="工具箱(_T)..." VerticalAlignment="Center"
+            <Button Grid.Column="3" Content="{x:Static local:Localization.LoadButton}" VerticalAlignment="Center"
+                    Click="Load" />
+            <Button Grid.Column="5" Content="{x:Static local:Localization.RunGameButton}" VerticalAlignment="Center"
+                    Click="RunGame" Name="RunGameButton" x:FieldModifier="private" IsEnabled="False" />
+            <Button Grid.Column="7" Content="{x:Static local:Localization.ToolboxButton}" VerticalAlignment="Center"
                     Click="PopContextMenu" ContextMenuService.Placement="Bottom">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="录制 _KeyEvent" Click="RecordKeyEvent" />
-                        <MenuItem Header="转换手机版关卡文件(_C)..." Click="ConvertMobiLevel" />
+                        <MenuItem Header="{x:Static local:Localization.RecordKeyEventItem}"
+                                  Click="RecordKeyEvent" />
+                        <MenuItem Header="{x:Static local:Localization.ConvertMobileLevelsItem}"
+                                  Click="ConvertMobiLevel" />
                         <Separator />
-                        <MenuItem Header="打开 ED_GE 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
-                                  CommandParameter="EDGE" />
-                        <MenuItem Header="打开 EDGE _Demo 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
-                                  CommandParameter="EDGE Demo" />
-                        <MenuItem Header="打开 EDGE E_pic 的 settings.ini" Command="{StaticResource OpenSettingsIni}"
-                                  CommandParameter="EDGE Epic" />
+                        <MenuItem Header="{x:Static local:Localization.OpenSettingsIniEdgeItem}"
+                                  Command="{StaticResource OpenSettingsIni}" CommandParameter="EDGE" />
+                        <MenuItem Header="{x:Static local:Localization.OpenSettingsIniEdgeDemoItem}"
+                                  Command="{StaticResource OpenSettingsIni}" CommandParameter="EDGE Demo" />
+                        <MenuItem Header="{x:Static local:Localization.OpenSettingsIniEdgeEpicItem}"
+                                  Command="{StaticResource OpenSettingsIni}" CommandParameter="EDGE Epic" />
                         <Separator />
-                        <MenuItem Header="检查 _EdgeTool 更新" Click="CheckForUpdates" />
-                        <MenuItem Header="帮助(_H)" Click="Help" />
+                        <MenuItem Header="{x:Static local:Localization.CheckForUpdatesItem}"
+                                  Click="CheckForUpdates" />
+                        <MenuItem Header="{x:Static local:Localization.Help}" Click="Help" />
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
         </Grid>
         <TabControl Name="Tabs" x:FieldModifier="private" Grid.Row="2">
-            <TabItem Header="浏览成就">
+            <TabItem Header="{x:Static local:Localization.BrowseAchievementsTab}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -87,7 +96,7 @@
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Content="请选择你的用户：(_U)" />
+                    <Label Content="{x:Static local:Localization.SelectUser}" />
                     <ComboBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{x:Static local:Users.Current}"
                               SelectedItem="{Binding CurrentUser, Source={x:Static local:Users.Current}}"
                               SelectionChanged="RefreshAchievementsList">
@@ -99,26 +108,32 @@
                                           Text="{x:Static local:Achievements.CountString}" />,
                                     <Run Text="{Binding AchievedPoints, Mode=OneWay}" />/<Run
                                          Text="{Binding Points, Mode=OneWay}" />
-                                    点)
+                                    <Run Text="{x:Static local:Localization.Points}" />)
                                 </TextBlock>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Name="SwitchProfileButton" x:FieldModifier="private" Content="切换到当前存档(_D)"
+                    <Button Name="SwitchProfileButton" x:FieldModifier="private"
+                            Content="{x:Static local:Localization.SwitchToSelectedProfileButton}"
                             Click="SetDefaultProfile" Grid.Column="3" VerticalAlignment="Center" IsEnabled="False" />
-                    <Button Content="刷新全球玩家进度(_G)" Click="RefreshGlobalPercent" Grid.Column="5"
-                            VerticalAlignment="Center" ToolTip="此功能需要联网。" />
-                    <Button Content="排序(_S)...." ContextMenuService.Placement="Bottom" Click="PopContextMenu"
-                            Grid.Column="7" VerticalAlignment="Center">
+                    <Button Content="{x:Static local:Localization.RefreshGlobalPlayerProgressButton}"
+                            Click="RefreshGlobalPercent" Grid.Column="5" VerticalAlignment="Center"
+                            ToolTip="{x:Static local:Localization.RequireNetworkTooltip}" />
+                    <Button Content="{x:Static local:Localization.SortButton}" ContextMenuService.Placement="Bottom"
+                            Click="PopContextMenu" Grid.Column="7" VerticalAlignment="Center">
                         <Button.ContextMenu>
                             <ContextMenu MenuItem.Click="SortAchievements">
-                                <MenuItem Header="默认顺序(_S)" />
-                                <MenuItem Header="按是否获得(_A)" Tag="CurrentUserAchieved" />
-                                <MenuItem Header="按 AP_I 名称" Tag="ApiName" />
-                                <MenuItem Header="按标题(_T)" Tag="Title" />
-                                <MenuItem Header="按描述(_D)" Tag="Description" />
-                                <MenuItem Header="按点数(_P)" Tag="Points_DESCENDING" />
-                                <MenuItem Header="按全球玩家进度(_G)" Tag="GlobalPercent_DESCENDING" />
+                                <MenuItem Header="{x:Static local:Localization.SortDefaultOrder}" />
+                                <MenuItem Header="{x:Static local:Localization.SortByAchieved}"
+                                          Tag="CurrentUserAchieved" />
+                                <MenuItem Header="{x:Static local:Localization.SortByApiName}" Tag="ApiName" />
+                                <MenuItem Header="{x:Static local:Localization.SortByTitle}" Tag="Title" />
+                                <MenuItem Header="{x:Static local:Localization.SortByDescription}"
+                                          Tag="Description" />
+                                <MenuItem Header="{x:Static local:Localization.SortByPoints}"
+                                          Tag="Points_DESCENDING" />
+                                <MenuItem Header="{x:Static local:Localization.SortByGlobalPlayerProgress}"
+                                          Tag="GlobalPercent_DESCENDING" />
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -142,7 +157,8 @@
                                         <TextBlock TextWrapping="Wrap" ToolTip="{Binding ApiName}">
                                             <Run Text="{Binding Title, Mode=OneWay}" FontSize="18"
                                                  FontWeight="Bold" />
-                                            (<Run Text="{Binding Points, Mode=OneWay}" /> 点)
+                                            (<Run Text="{Binding Points, Mode=OneWay}" />
+                                            <Run Text="{x:Static local:Localization.Points}" />)
                                         </TextBlock>
                                         <TextBlock Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap"
                                                    Visibility="{Binding Description,
@@ -150,7 +166,7 @@
                                         <Grid Margin="0,3,0,0">
                                             <m:AnimatedProgressBar Value="{Binding GlobalPercent, Mode=OneWay}" />
                                             <TextBlock Margin="5,0" VerticalAlignment="Center">
-                                                <Run Text="全球玩家进度：" /><Run
+                                                <Run Text="{x:Static local:Localization.GlobalPlayerProgress}" /><Run
                                                     Text="{Binding GlobalPercentText, Mode=OneWay,
                                                                    Converter={StaticResource GlobalPercentText}}" />
                                             </TextBlock>
@@ -164,12 +180,12 @@
                     </ListBox>
                     <TextBlock Name="AchievementsTip" x:FieldModifier="private" Grid.Row="3" Grid.ColumnSpan="4"
                                Visibility="Collapsed" Margin="0,5,0,0"
-                               Text="提示：右击可强制(取消)获得成就。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。" />
+                               Text="{x:Static local:Localization.BrowseAchievementsTabHint}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="EdgeMod 管理" AllowDrop="True" PreviewDragEnter="OnEdgeModDragEnter"
-                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave" PreviewDrop="OnEdgeModDrop"
-                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
+            <TabItem Header="{x:Static local:Localization.ManageEdgeModsTab}" AllowDrop="True"
+                     PreviewDragEnter="OnEdgeModDragEnter" PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave"
+                     PreviewDrop="OnEdgeModDrop" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" />
@@ -182,26 +198,37 @@
                                   SelectionMode="Single" SelectionChanged="UpdateDescription"
                                   VirtualizingPanel.ScrollUnit="Pixel">
                         <m:DataGridEx.Columns>
-                            <DataGridTextColumn Header="名称" Binding="{Binding Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="版本" Binding="{Binding Version}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="作者" Binding="{Binding Author}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Header="启用" Binding="{Binding Enabled}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.EdgeModName}"
+                                                Binding="{Binding Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.EdgeModVersion}"
+                                                Binding="{Binding Version}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.EdgeModAuthor}"
+                                                Binding="{Binding Author}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Header="{x:Static local:Localization.EdgeModEnabled}"
+                                                    Binding="{Binding Enabled}" />
                         </m:DataGridEx.Columns>
                     </m:DataGridEx>
                     <TextBox Name="DescriptionBlock" x:FieldModifier="private" Grid.Row="2" TextWrapping="Wrap"
                              IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto"
-                             Text="要开始，请点击这里的什么东西。如果想要安装 EdgeMod，请把要安装的 EdgeMod 拖动到游戏目录下的 mods 文件夹中后按下刷新，或更简单地，把它拖动到这里。" />
-                    <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="0,0,2,0" Content="刷新(_F)" Click="RefreshEdgeMods" />
-                        <Button Margin="2,0" Content="删除当前选中的 EdgeMo_d" Click="DeleteCurrentEdgeMod" />
-                        <Button Margin="2,0" Content="删除所有未启用的 Edge_Mod" Click="DeleteDisabledEdgeMods" />
-                        <Button Margin="2,0" Content="应用更改(_A)" Click="InstallEdgeMods" />
-                        <Button Margin="2,0" Content="应用更改并运行游戏(_X)" Click="InstallEdgeModsAndRun" />
-                        <Button Margin="2,0,0,0" Content="临时全部卸载(_C)" Click="CleanUpInstall" />
-                    </StackPanel>
+                             Text="{x:Static local:Localization.ManageEdgeModsTabHint}" />
+                    <WrapPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button Margin="0,0,2,0" Content="{x:Static local:Localization.RefreshEdgeModsButton}"
+                                Click="RefreshEdgeMods" />
+                        <Button Margin="2,0" Content="{x:Static local:Localization.DeleteSelectedEdgeModButton}"
+                                Click="DeleteCurrentEdgeMod" />
+                        <Button Margin="2,0" Content="{x:Static local:Localization.DeleteAllDisabledEdgeModsButton}"
+                                Click="DeleteDisabledEdgeMods" />
+                        <Button Margin="2,0" Content="{x:Static local:Localization.ApplyChangesButton}"
+                                Click="InstallEdgeMods" />
+                        <Button Margin="2,0" Content="{x:Static local:Localization.ApplyChangesExecuteButton}"
+                                Click="InstallEdgeModsAndRun" />
+                        <Button Margin="2,0,0,0" Content="{x:Static local:Localization.CleanUpInstallButton}"
+                                Click="CleanUpInstall" />
+                    </WrapPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="浏览关卡" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
+            <TabItem Header="{x:Static local:Localization.BrowseLevelsTab}"
+                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -212,46 +239,95 @@
                               Sorting="OnSort" Initialized="OnGridInitialized" VirtualizingPanel.ScrollUnit="Pixel">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Binding="{Binding Mapping}" />
-                            <DataGridTextColumn Header="关卡名" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelName}"
+                                                Binding="{Binding Name}" />
                             <DataGridTextColumn Header="ID" Binding="{Binding ID}"
                                                 ElementStyle="{StaticResource AlignRight}" />
                             <DataGridTextColumn Binding="{Binding FilePath, Converter={StaticResource BinFilePath}}"
-                                                Header="路径" />
-                            <DataGridTextColumn Header="S+ 标准" ElementStyle="{StaticResource AlignRight}"
-                                                Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="S 标准" ElementStyle="{StaticResource AlignRight}"
-                                                Binding="{Binding STime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="A 标准" ElementStyle="{StaticResource AlignRight}"
-                                                Binding="{Binding ATime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="B 标准" ElementStyle="{StaticResource AlignRight}"
-                                                Binding="{Binding BTime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="C 标准" ElementStyle="{StaticResource AlignRight}"
-                                                Binding="{Binding CTime, Converter={StaticResource Seconds}}" />
-                            <DataGridTextColumn Header="Java版音乐" Binding="{Binding MusicJavaName}" />
-                            <DataGridTextColumn Header="音乐" Binding="{Binding MusicName}" />
-                            <DataGridTextColumn Header="大小" Binding="{Binding Size}" />
-                            <DataGridTextColumn Header="初始坐标" Binding="{Binding SpawnPoint}" />
-                            <DataGridTextColumn Header="终点坐标" Binding="{Binding ExitPoint}" />
+                                                Header="{x:Static local:Localization.LevelPath}" />
+                            <DataGridTextColumn ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding SPlusTime, Converter={StaticResource Seconds}}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock>
+                                        S+
+                                        <Run Text="{x:Static local:Localization.LevelCriteria}" />
+                                    </TextBlock>
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding STime, Converter={StaticResource Seconds}}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock>
+                                        S
+                                        <Run Text="{x:Static local:Localization.LevelCriteria}" />
+                                    </TextBlock>
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding ATime, Converter={StaticResource Seconds}}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock>
+                                        A
+                                        <Run Text="{x:Static local:Localization.LevelCriteria}" />
+                                    </TextBlock>
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding BTime, Converter={StaticResource Seconds}}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock>
+                                        B
+                                        <Run Text="{x:Static local:Localization.LevelCriteria}" />
+                                    </TextBlock>
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource AlignRight}"
+                                                Binding="{Binding CTime, Converter={StaticResource Seconds}}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock>
+                                        C
+                                        <Run Text="{x:Static local:Localization.LevelCriteria}" />
+                                    </TextBlock>
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelMusicJava}"
+                                                Binding="{Binding MusicJavaName}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelMusic}"
+                                                Binding="{Binding MusicName}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelSize}"
+                                                Binding="{Binding Size}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelSpawnPoint}"
+                                                Binding="{Binding SpawnPoint}" />
+                            <DataGridTextColumn Header="{x:Static local:Localization.LevelExitPoint}"
+                                                Binding="{Binding ExitPoint}" />
                         </DataGrid.Columns>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="显示小地图(_M)" Click="ShowMinimap" />
-                                <MenuItem Header="绘制模型树(_D)" Click="DrawLevelModelTree" />
-                                <MenuItem Header="在资源管理器中浏览关卡(_E)" Click="ShowLevelInExplorer" />
-                                <MenuItem Header="反编译关卡(_C)..." Click="Decompile" />
+                                <MenuItem Header="{x:Static local:Localization.ShowMinimapItem}"
+                                          Click="ShowMinimap" />
+                                <MenuItem Header="{x:Static local:Localization.DrawModelTreeItem}"
+                                          Click="DrawLevelModelTree" />
+                                <MenuItem Header="{x:Static local:Localization.BrowseLevelInExplorerItem}"
+                                          Click="ShowLevelInExplorer" />
+                                <MenuItem Header="{x:Static local:Localization.DecompileLevelItem}"
+                                          Click="Decompile" />
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                     </DataGrid>
                     <TextBlock Grid.Row="2" TextWrapping="Wrap">
-                        提示：右击选中关卡即可显示更多操作。
-                        <Hyperlink Click="ModifyMappingXml">你可以点击这里手动修改关卡索引。</Hyperlink>
-                        <Hyperlink Click="ShowMappingXmlHelp">如何修改关卡索引？</Hyperlink>
+                        <Run Text="{x:Static local:Localization.BrowseLevelsTabHint}" />
+                        <Hyperlink Click="ModifyMappingXml">
+                            <Run Text="{x:Static local:Localization.ModifyMappingXmlLink}" />
+                        </Hyperlink>
+                        <Hyperlink Click="ShowMappingXmlHelp">
+                            <Run Text="{x:Static local:Localization.ShowMappingXmlHelpLink}" />
+                        </Hyperlink>
                     </TextBlock>
                 </Grid>
             </TabItem>
-            <TabItem Header="文件(反)编译" Name="CompileTab" x:FieldModifier="private" AllowDrop="True"
-                     PreviewDrop="OnBinaryDrop" PreviewDragEnter="OnBinaryDragEnter" PreviewDragOver="OnDragOver"
-                     PreviewDragLeave="OnDragLeave">
+            <TabItem Header="{x:Static local:Localization.CompileTab}" Name="CompileTab" x:FieldModifier="private"
+                     AllowDrop="True" PreviewDrop="OnBinaryDrop" PreviewDragEnter="OnBinaryDragEnter"
+                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -261,17 +337,18 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <TextBlock Margin="5,0" TextWrapping="Wrap">
-                        要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里，或者从左下角的历史记录里选中要反编译的文件就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
-                        <LineBreak />
-                        帮助：<Hyperlink Click="ShowCommandLineHelp">命令行(反)编译帮助</Hyperlink>
-                        或 右击下面任意一种文件格式打开该格式的说明
+                        <Run Text="{x:Static local:Localization.CompileTabHint}" />
+                        <Hyperlink Click="ShowCommandLineHelp">
+                            <Run Text="{x:Static local:Localization.CompileTabHintShowCommandLineHelpLink}" />
+                        </Hyperlink>
                     </TextBlock>
                     <Grid Row="2" Margin="5,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="(反)编译完成后打开：" VerticalAlignment="Top" />
+                        <TextBlock Text="{x:Static local:Localization.StartAfterCompileLabel}"
+                                   VerticalAlignment="Top" />
                         <WrapPanel Name="CheckBoxPanel" x:FieldModifier="private" Grid.Column="1">
                             <WrapPanel.Resources>
                                 <Style TargetType="CheckBox">
@@ -321,7 +398,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <Button Grid.Row="2" Content="(反)编译(_C)" Click="DecompileHistory">
+                        <Button Grid.Row="2" Content="{x:Static local:Localization.CompileButton}"
+                                Click="DecompileHistory">
                             <Button.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -333,7 +411,8 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Grid.Row="4" Content="清空历史记录(_H)" Click="ClearHistory">
+                        <Button Grid.Row="4" Content="{x:Static local:Localization.ClearHistoryButton}"
+                                Click="ClearHistory">
                             <Button.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -352,9 +431,10 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="绘制模型树" Name="DrawModelTreeTab" x:FieldModifier="private" AllowDrop="True"
-                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}" PreviewDragEnter="OnModelDragEnter"
-                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave" PreviewDrop="OnModelDrop">
+            <TabItem Header="{x:Static local:Localization.DrawModelTree}" AllowDrop="True"
+                     Name="DrawModelTreeTab" x:FieldModifier="private" PreviewDragEnter="OnModelDragEnter"
+                     PreviewDragOver="OnDragOver" PreviewDragLeave="OnDragLeave" PreviewDrop="OnModelDrop"
+                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -366,25 +446,32 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Content="请输入模型名：（无需 .r_mdl 扩展名）" Target="{Binding ElementName=ModelNameBox}" />
+                    <Label Content="{x:Static local:Localization.EnterModelNameLabel}"
+                           Target="{Binding ElementName=ModelNameBox}" />
                     <ComboBox Name="ModelNameBox" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Center"
                               IsEditable="True" />
                     <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="绘制(_D)" Click="DrawModelTree" Margin="2" IsDefault="True" />
-                        <Button Content="将选中模型添加到模型查看器(_S)" Margin="2" Click="ViewModel" />
-                        <Button Content="在资源管理器中找到选中项(_X)" Margin="2" Click="ShowFileInExplorer" />
-                        <Button Content="帮助(_H)" Click="GetModelTreeHelp" Margin="2" />
+                        <Button Content="{x:Static local:Localization.DrawButton}" Click="DrawModelTree" Margin="2"
+                                IsDefault="True" />
+                        <Button Content="{x:Static local:Localization.ViewerAddSelectedModelButton}" Margin="2"
+                                Click="ViewModel" />
+                        <Button Content="{x:Static local:Localization.BrowseFileInExplorerButton}" Margin="2"
+                                Click="ShowFileInExplorer" />
+                        <Button Content="{x:Static local:Localization.Help}" Click="GetModelTreeHelp" Margin="2" />
                     </WrapPanel>
                     <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <CheckBox Name="DrawChildModelsBox" x:FieldModifier="private" Content="同时绘制子模型(_C)"
-                                  Margin="2" ToolTip="如果分别绘制，子模型的变换可能显示不正常。" />
-                        <CheckBox Name="EnableDebugModeBox" x:FieldModifier="private" Content="启用调试模式(_N)"
-                                  Margin="2" ToolTip="启用调试模式后你可以看到所有三角形的三边。" />
+                        <CheckBox Name="DrawChildModelsBox" x:FieldModifier="private" Margin="2"
+                                  Content="{x:Static local:Localization.DrawChildModelsBox}"
+                                  ToolTip="{x:Static local:Localization.DrawChildModelsBoxHint}" />
+                        <CheckBox Name="EnableDebugModeBox" x:FieldModifier="private" Margin="2"
+                                  Content="{x:Static local:Localization.EnableDebugModeBox}"
+                                  ToolTip="{x:Static local:Localization.EnableDebugModeBoxHint}" />
                     </WrapPanel>
                     <TreeView Name="ModelTreeView" x:FieldModifier="private" Grid.Row="3" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
-            <TabItem Header="绘制动画树" IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}"
+            <TabItem Header="{x:Static local:Localization.DrawAnimTree}"
+                     IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}"
                      PreviewDragEnter="OnAnimationDragEnter" PreviewDragOver="OnDragOver"
                      PreviewDragLeave="OnDragLeave" PreviewDrop="OnAnimationDrop" AllowDrop="True">
                 <Grid>
@@ -397,16 +484,18 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Content="请输入动画名：（无需 .r_cha 扩展名）"
+                    <Label Content="{x:Static local:Localization.EnterAnimNameLabel}"
                            Target="{Binding ElementName=AnimationNameBox}" />
                     <ComboBox Name="AnimationNameBox" x:FieldModifier="private" Grid.Column="1"
                               VerticalAlignment="Center" IsEditable="True" />
                     <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="绘制(_D)" Click="DrawAnimationTree" Margin="2" IsDefault="True" />
-                        <Button Content="对模型查看器中的全部模型应用选中动画，右击不循环(_A)" Margin="2"
+                        <Button Content="{x:Static local:Localization.DrawButton}" Click="DrawAnimationTree" Margin="2"
+                                IsDefault="True" />
+                        <Button Content="{x:Static local:Localization.ViewerApplySelectedAnimButton}" Margin="2"
                                 Click="ViewAnimation" MouseRightButtonUp="ViewAnimationNonLoop" />
-                        <Button Content="在资源管理器中找到选中项(_X)" Margin="2" Click="ShowFileInExplorer" />
-                        <Button Content="帮助(_H)" Click="GetAnimationTreeHelp" Margin="2" />
+                        <Button Content="{x:Static local:Localization.BrowseFileInExplorerButton}" Margin="2"
+                                Click="ShowFileInExplorer" />
+                        <Button Content="{x:Static local:Localization.Help}" Click="GetAnimationTreeHelp" Margin="2" />
                     </WrapPanel>
                     <TreeView Name="AnimationTreeView" x:FieldModifier="private" Grid.Row="2" Grid.ColumnSpan="2" />
                 </Grid>

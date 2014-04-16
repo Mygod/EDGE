@@ -37,7 +37,7 @@ namespace Mygod.Edge.Tool
                             var root = XDocument.Parse(extractor.ExtractString(i)).GetElement("Mod");
                             ID = root.GetAttributeValue("ID").Trim();
                             if (ID.Any(c => !char.IsLetterOrDigit(c) && c != '_' && c != '-' && c != '.'))
-                                throw new FormatException("ID 只能包含字母、数字以及“._-”中的符号！");
+                                throw new FormatException(Localization.EdgeModIDMalformed);
                             Name = root.GetAttributeValue("Name");
                             Version = Version.Parse(root.GetAttributeValue("Version"));
                             root.GetAttributeValueWithDefault(out Type, "Type");
@@ -82,17 +82,7 @@ namespace Mygod.Edge.Tool
                         case "sfx":
                             containSfx = true;
                             break;
-                        case "config\\settings_readme.txt":
-                            throw new FormatException("EdgeMod 不允许修改 config\\settings_readme.txt！");
-                        case "config\\settings_template_do_not_modify.ini":
-                            throw new FormatException("EdgeMod 不允许修改 " +
-                                                      "config\\settings_template_do_not_modify.ini！");
                         default:
-                            if (fileName.StartsWith("mods\\", true, CultureInfo.InvariantCulture)
-                                || "mods".Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
-                                throw new FormatException("EdgeMod 不允许修改 mods 文件夹内的内容！");
-                            if (fileName.EndsWith(".bak", true, CultureInfo.InvariantCulture))
-                                throw new FormatException("EdgeMod 不允许有以 .bak 为扩展名的文件！");
                             if (fileName.StartsWith("audio\\", true, CultureInfo.InvariantCulture))
                                 containAudio = true;
                             if (fileName.StartsWith("sfx\\", true, CultureInfo.InvariantCulture)) containSfx = true;
@@ -101,30 +91,25 @@ namespace Mygod.Edge.Tool
                     i++;
                 }
             }
-            if (!initialized) throw new FormatException("mod.xml 未找到！");
+            if (!initialized) throw new FormatException(Localization.ModXmlNotFound);
             if (Type != EdgeModType.Game)
             {
-                if (containXml) throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 mapping.xml。" +
-                                                          "请改用 mod.xml 或 mapping.xsl。");
-                if (containAudio) throw new FormatException("不允许非 Game 类型的 EdgeMod 重写 audio 文件夹以及之下" +
-                                                            "的内容。请改用 sfx 文件夹。");
+                if (containXml) throw new FormatException(Localization.MappingXmlOverwriteForbidden);
+                if (containAudio) throw new FormatException(Localization.AudioOverwriteForbidden);
             }
-            if (containAudio && containSfx) throw new FormatException("不允许在写入 audio 文件夹的同时使用 " +
-                                                                      "sfx 文件夹！请选择其中一个。");
+            if (containAudio && containSfx) throw new FormatException(Localization.AudioSfxConflict);
             if (mappings != null)
             {
-                if (Xsl != null) throw new FormatException("不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行" +
-                                                           "修改！请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！");
+                if (Xsl != null) throw new FormatException(Localization.MappingXslConflict);
                 var xslBuilder = new StringBuilder();
                 foreach (var item in mappings)
                     xslBuilder.Append("      </xsl:text>" + item.GetXElement() + "<xsl:text>\r\n");
-                xslBuilder.AppendLine("      </xsl:text>\r\n    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
+                xslBuilder.AppendLine
+                    ("      </xsl:text>\r\n    </xsl:element>\r\n  </xsl:template>\r\n</xsl:transform>");
                 Xsl = XslHead.Replace("extended", "bonus") + xslBuilder;
                 XslCracked = XslHead + xslBuilder;
             }
-            if (Xsl != null && containXml) throw new FormatException("不允许在使用 mapping.xml 的情况下再使用 " +
-                                                                     "mapping.xsl 和/或 mod.xml 进行修改。请将修改合" +
-                                                                     "并到 mapping.xml 中。");
+            if (Xsl != null && containXml) throw new FormatException(Localization.MappingXmlConflict);
         }
 
         private static void Set(out HashSet<string> set, string value)
@@ -157,22 +142,22 @@ namespace Mygod.Edge.Tool
             if (MinEngineVersion != null && parent.EngineVersion < MinEngineVersion
                 || MaxEngineVersion != null && parent.EngineVersion > MaxEngineVersion)
             {
-                error.AppendLine(string.Format("{0} 不支持版本为 {1} 的游戏引擎！该 EdgeMod 将不会被安装。",
-                                               ID, parent.EngineVersion));
+                error.AppendLine(string.Format(Localization.EdgeModErrorEngineNotSupported, ID, parent.EngineVersion));
                 return;
             }
             if (!Dependency.IsSubsetOf(from edgeMod in parent.EdgeMods where edgeMod.Enabled select edgeMod.ID))
             {
-                error.AppendLine(string.Format("{0} 的依赖项没有全部被安装！", ID));
+                error.AppendLine(string.Format(Localization.EdgeModErrorEngineDependenciesNotInstalled, ID));
                 return;
             }
             if (conflicts.ContainsKey(ID))
             {
-                error.AppendLine(string.Format("{0} 与 {1} 冲突！{1} 将不会被安装。", conflicts[ID].ID, ID));
+                error.AppendLine(string.Format(Localization.EdgeModErrorConflict, conflicts[ID].ID, ID));
                 return;
             }
             conflicts.Add(ID, this);    // self conflict
-            foreach (var conflict in Conflicts.Where(conflict => !conflicts.ContainsKey(conflict))) conflicts.Add(conflict, this);
+            foreach (var conflict in Conflicts.Where(conflict => !conflicts.ContainsKey(conflict)))
+                conflicts.Add(conflict, this);
             using (var extractor = new SevenZipExtractor(FilePath))
             {
                 try
@@ -186,8 +171,11 @@ namespace Mygod.Edge.Tool
                         {
                             if (e.ArchiveFileInfo.IsDirectory) return;          // ignore directories
                             var lowered = e.ArchiveFileInfo.FileName.ToLower(); // and files that has been processed
-                            if (lowered == "mod.xml" || lowered == "description.txt"
-                                || lowered == "levels\\mapping.xsl") return;
+                            if (lowered == "mod.xml" || lowered == "description.txt" ||
+                                lowered == "levels\\mapping.xsl" || lowered == "config\\settings_readme.txt" ||
+                                lowered == "config\\settings_template_do_not_modify.ini" ||
+                                lowered.StartsWith("mods\\", true, CultureInfo.InvariantCulture) ||
+                                lowered.EndsWith(".bak", true, CultureInfo.InvariantCulture)) return;
                             var isSfx = lowered.StartsWith("sfx\\", true, CultureInfo.InvariantCulture);
                             if (isSfx) path = Path.Combine(parent.BeginSfx(), e.ArchiveFileInfo.FileName);
                             Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -204,12 +192,11 @@ namespace Mygod.Edge.Tool
                                     {
                                         if (Type == EdgeModType.Level && fileInfo.Exists
                                         && !allModifiedFiles.Contains(e.ArchiveFileInfo.FileName.ToLower()))
-                                            throw new IOException("不允许 Level 类的 EdgeMod 修改游戏自带的文件！" +
-                                                                  "请改用 Theme 或 Game 类。");
+                                            throw new IOException(Localization.EdgeModErrorLevelOverwriteForbidden);
                                         if (!fileInfo.Exists || (ulong)fileInfo.Length != e.ArchiveFileInfo.Size
                                             || Math.Abs(fileInfo.LastWriteTime.Ticks
                                                             - e.ArchiveFileInfo.LastWriteTime.Ticks)
-                                            > new TimeSpan(0, 0, 1).Ticks)  // 快速检测
+                                            > new TimeSpan(0, 0, 1).Ticks)  // fast check
                                         {
                                             parent.CreateCopy(allModifiedFiles, lowered);
                                             File.Delete(path);
@@ -243,14 +230,13 @@ namespace Mygod.Edge.Tool
                         }
                         catch (Exception exc)
                         {
-                            error.AppendFormat("应用 {0} 的 {1} 时发生了错误：{2}{3}",
-                                               ID, path, exc.Message, Environment.NewLine);
+                            error.AppendFormat(Localization.EdgeModFileError, ID, path, exc.Message);
                         }
                     });
                 }
                 catch (Exception exc)
                 {
-                    error.AppendFormat("应用 {0} 时发生了错误：{1}{2}", ID, exc.Message, Environment.NewLine);
+                    error.AppendFormat(Localization.EdgeModError, ID, exc.Message);
                 }
             }
             try
@@ -271,7 +257,7 @@ namespace Mygod.Edge.Tool
             }
             catch (Exception exc)
             {
-                error.AppendFormat("更新关卡列表时发生了错误：{0}{1}", exc.Message, Environment.NewLine);
+                error.AppendFormat(Localization.EdgeModErrorXsl, exc.Message);
             }
         }
     }
@@ -343,8 +329,8 @@ namespace Mygod.Edge.Tool
                 }
                 catch (Exception exc)
                 {
-                    errors.AppendFormat("加载 {0} 失败：{1}{2}", Path.GetFileNameWithoutExtension(edgeMod),
-                                        exc.Message, Environment.NewLine);
+                    errors.AppendFormat(Localization.EdgeModError, Path.GetFileNameWithoutExtension(edgeMod),
+                                        exc.Message);
                 }
             return errors.ToString();
         }
@@ -410,17 +396,17 @@ namespace Mygod.Edge.Tool
                         break;
                     }
                     if (result[i] < 0)
-                        error.AppendLine(string.Format("{0} 的安装链中含有环！该 EdgeMod 将不会被安装。", group[i].ID));
+                        error.AppendLine(string.Format(Localization.EdgeModErrorDependenciesLoop, group[i].ID));
                     else group[i].Install(allModifiedFiles, error, conflicts, callback);
                 }
                 if (cancelled) break;
             }
-            if (callback != null) callback("即将完成……");
+            if (callback != null) callback(Localization.InstallEdgeModsAlmostThere);
             EndSfx(allModifiedFiles);
             allModifiedFiles.ExceptWith(ModifiedFiles);
             foreach (var oldFile in allModifiedFiles) RestoreCopy(oldFile);
             ModifiedFiles.Save();
-            if (callback != null) callback("已完成。");
+            if (callback != null) callback(Localization.InstallEdgeModsDone);
             return error.ToString();
         }
 
@@ -484,10 +470,9 @@ namespace Mygod.Edge.Tool
 
         #region - Public Methods -
 
-        public int AddVertex(int vertex)
+        public void AddVertex(int vertex)
         {
             vertices[numVerts++] = vertex;
-            return numVerts - 1;
         }
 
         public void AddEdge(int start, int end)
@@ -562,23 +547,22 @@ namespace Mygod.Edge.Tool
     {
         public StringSetFile(string path)
         {
-            FilePath = path;
+            filePath = path;
             Refresh();
         }
 
-        public readonly string FilePath;
+        private readonly string filePath;
 
         public void Refresh()
         {
             Clear();
-            if (File.Exists(FilePath))
-                foreach (var item in File.ReadAllText(FilePath).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-                    Add(item);
+            if (File.Exists(filePath)) foreach (var item in File.ReadAllText(filePath)
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)) Add(item);
         }
         public void Save()
         {
-            if (Count == 0) File.Delete(FilePath);
-            else File.WriteAllText(FilePath, string.Join(Environment.NewLine, this));
+            if (Count == 0) File.Delete(filePath);
+            else File.WriteAllText(filePath, string.Join(Environment.NewLine, this));
         }
     }
 

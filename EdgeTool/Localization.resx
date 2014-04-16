@@ -1,0 +1,757 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AchievementUnlockConfirm" xml:space="preserve">
+    <value>Are you sure you want to force (un)lock the achievement?</value>
+  </data>
+  <data name="AchievementUnlocked" xml:space="preserve">
+    <value>Achievement unlocked: {0}</value>
+  </data>
+  <data name="AchievementUnlockedDetails" xml:space="preserve">
+    <value>Congratulations! You have unlocked an achievement! Go check it out!
+Achievement description: </value>
+  </data>
+  <data name="ApplyChangesButton" xml:space="preserve">
+    <value>_Apply changes</value>
+  </data>
+  <data name="ApplyChangesExecuteButton" xml:space="preserve">
+    <value>Apply changes and e_xecute EDGE...</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>Ask</value>
+  </data>
+  <data name="BrowseAchievementsTab" xml:space="preserve">
+    <value>Browse achievements</value>
+  </data>
+  <data name="BrowseAchievementsTabHint" xml:space="preserve">
+    <value>Hint: Right click to force (un)lock the achievement. If you are playing EDGE with EdgeTool running in the background, you'll be able to see the newly-acquired achievements as soon as you get them.</value>
+  </data>
+  <data name="BrowseFileInExplorerButton" xml:space="preserve">
+    <value>Browse this file in E_xplorer</value>
+  </data>
+  <data name="BrowseLevelInExplorerItem" xml:space="preserve">
+    <value>Browse the level in _Explorer</value>
+  </data>
+  <data name="BrowseLevelsTab" xml:space="preserve">
+    <value>Browse levels</value>
+  </data>
+  <data name="BrowseLevelsTabHint" xml:space="preserve">
+    <value>Hint: right click on the levels to do something complicated.</value>
+  </data>
+  <data name="Bumper" xml:space="preserve">
+    <value>Bumper</value>
+  </data>
+  <data name="CheckForUpdatesFailed" xml:space="preserve">
+    <value>Failed to check for updates.</value>
+  </data>
+  <data name="CheckForUpdatesItem" xml:space="preserve">
+    <value>Check for updates for _EdgeTool</value>
+  </data>
+  <data name="CleanUpInstallButton" xml:space="preserve">
+    <value>_Clean up all EdgeMods temporarily</value>
+  </data>
+  <data name="ClearHistoryButton" xml:space="preserve">
+    <value>Clear _history</value>
+  </data>
+  <data name="CommandLineDecompileError" xml:space="preserve">
+    <value>Error: </value>
+  </data>
+  <data name="CommandLineDecompileHeader" xml:space="preserve">
+    <value>------ (De)compiling {0} ------</value>
+  </data>
+  <data name="CommandLineDecompileSuccess" xml:space="preserve">
+    <value>(De)compiled successfully.</value>
+  </data>
+  <data name="CommandLineDecompileWarning" xml:space="preserve">
+    <value>Warning: </value>
+  </data>
+  <data name="CompileButton" xml:space="preserve">
+    <value>(De)_compile</value>
+  </data>
+  <data name="CompileTab" xml:space="preserve">
+    <value>(De)compile</value>
+  </data>
+  <data name="CompileTabHint" xml:space="preserve">
+    <value>To (de)compile files, just simply drag your files here, or select files from the history at the bottom-left corner. If you are going to compile a level, only the .xml file is needed.
+Help: Right click on any file format below to view its document, or</value>
+  </data>
+  <data name="CompileTabHintShowCommandLineHelpLink" xml:space="preserve">
+    <value>Show command line (de)compile help</value>
+  </data>
+  <data name="ConversionFailed" xml:space="preserve">
+    <value>Conversion failed.</value>
+  </data>
+  <data name="ConversionFinished" xml:space="preserve">
+    <value>Conversion finished.</value>
+  </data>
+  <data name="ConversionFinishedDetails" xml:space="preserve">
+    <value>{0} file(s) have been converted.</value>
+  </data>
+  <data name="ConvertMobileLevelsItem" xml:space="preserve">
+    <value>_Convert mobile levels...</value>
+  </data>
+  <data name="ConvertToPcBox" xml:space="preserve">
+    <value>Convert to P&amp;C version (uncheck this if you want to convert to mobile version)</value>
+  </data>
+  <data name="Decompile" xml:space="preserve">
+    <value>(De)compile</value>
+  </data>
+  <data name="DecompileFileSelectorTitle" xml:space="preserve">
+    <value>Select files to (de)compile</value>
+  </data>
+  <data name="DecompileLevelItem" xml:space="preserve">
+    <value>De_compile the level...</value>
+  </data>
+  <data name="DeleteAllDisabledEdgeModsButton" xml:space="preserve">
+    <value>Delete all disabled Edge_Mods</value>
+  </data>
+  <data name="DeleteSelectedEdgeModButton" xml:space="preserve">
+    <value>_Delete selected EdgeMod</value>
+  </data>
+  <data name="DrawAnimTree" xml:space="preserve">
+    <value>Draw animation tree</value>
+  </data>
+  <data name="DrawButton" xml:space="preserve">
+    <value>_Draw</value>
+  </data>
+  <data name="DrawChildModelsBox" xml:space="preserve">
+    <value>Draw _child models</value>
+  </data>
+  <data name="DrawChildModelsBoxHint" xml:space="preserve">
+    <value>If you want to view child models in the model viewer as well, check this box or it might look weird.</value>
+  </data>
+  <data name="DrawModelTree" xml:space="preserve">
+    <value>Draw model tree</value>
+  </data>
+  <data name="DrawModelTreeItem" xml:space="preserve">
+    <value>_Draw model tree</value>
+  </data>
+  <data name="EdgeLevelFilter" xml:space="preserve">
+    <value>EDGE level files (*.bin)</value>
+  </data>
+  <data name="EdgeModAuthor" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="EdgeModEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="EdgeModName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EdgeModsChangesNotAppliedMessage" xml:space="preserve">
+    <value>You haven't applied your changes to EdgeMods, so you won't see the changes after you launch the game. You can press Cancel and click Apply changes to resolve this issue.</value>
+  </data>
+  <data name="EdgeModVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="EnableDebugModeBox" xml:space="preserve">
+    <value>E_nable debug mode</value>
+  </data>
+  <data name="EnableDebugModeBoxHint" xml:space="preserve">
+    <value>You'll be able to see edges of models in this mode.</value>
+  </data>
+  <data name="EnterAnimNameLabel" xml:space="preserve">
+    <value>Enter the animation name without the .r_cha extension:</value>
+  </data>
+  <data name="EnterModelNameLabel" xml:space="preserve">
+    <value>Enter the _model name without the .rmdl extension:</value>
+  </data>
+  <data name="EnterPath_Browse" xml:space="preserve">
+    <value>browse</value>
+  </data>
+  <data name="EnterPath_EnterOr" xml:space="preserve">
+    <value>_Enter or </value>
+  </data>
+  <data name="EnterPath_YourGamePath" xml:space="preserve">
+    <value> the path of edge.exe:</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ExecutableFilter" xml:space="preserve">
+    <value>Executable files (*.exe)</value>
+  </data>
+  <data name="ExitPoint" xml:space="preserve">
+    <value>Exit Point</value>
+  </data>
+  <data name="FallingPlatform" xml:space="preserve">
+    <value>Falling Platform</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>FATAL</value>
+  </data>
+  <data name="FatalMessage" xml:space="preserve">
+    <value>What have you done? Please report this and the error messages to bugs.mygod.tk to help us solve the problem.</value>
+  </data>
+  <data name="FatalTitle" xml:space="preserve">
+    <value>YOU CRASHED MY PROGRAM?!</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="GameSelectorTitle" xml:space="preserve">
+    <value>Select edge.exe</value>
+  </data>
+  <data name="GlobalPlayerProgress" xml:space="preserve">
+    <value>Global player progress: </value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>_Help</value>
+  </data>
+  <data name="HelpItem" xml:space="preserve">
+    <value>_Help</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>Invalid path.</value>
+  </data>
+  <data name="JumpListToolkit" xml:space="preserve">
+    <value>Toolkit</value>
+  </data>
+  <data name="JumpTaskCheckForUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="JumpTaskConvertMobiLevels" xml:space="preserve">
+    <value>Convert mobile levels</value>
+  </data>
+  <data name="JumpTaskDecompile" xml:space="preserve">
+    <value>(De)compile</value>
+  </data>
+  <data name="JumpTaskHelp" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="JumpTaskLaunchGame" xml:space="preserve">
+    <value>Launch EDGE</value>
+  </data>
+  <data name="JumpTaskRecordKeyEvent" xml:space="preserve">
+    <value>Record KeyEvent</value>
+  </data>
+  <data name="KeyEventRecorder" xml:space="preserve">
+    <value>KeyEvent Recorder</value>
+  </data>
+  <data name="KeyEventRecorderHint" xml:space="preserve">
+    <value>Press F10 to start, F11 to stop, F12 to stop and discard recorded KeyEvents.</value>
+  </data>
+  <data name="KeyEventRecorderInitialTime" xml:space="preserve">
+    <value>_Initial time:</value>
+  </data>
+  <data name="KeyEventRecorderPlaybackSpeed" xml:space="preserve">
+    <value>Playback _speed:</value>
+  </data>
+  <data name="LevelCriteria" xml:space="preserve">
+    <value>Criteria</value>
+  </data>
+  <data name="LevelExitPoint" xml:space="preserve">
+    <value>Exit point</value>
+  </data>
+  <data name="LevelFileSelectorTitle" xml:space="preserve">
+    <value>Select level .bin files that you want to process</value>
+  </data>
+  <data name="LevelMusic" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="LevelMusicJava" xml:space="preserve">
+    <value>Music in Java version</value>
+  </data>
+  <data name="LevelName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LevelPath" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="LevelSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="LevelSpawnPoint" xml:space="preserve">
+    <value>Spawn point</value>
+  </data>
+  <data name="LoadButton" xml:space="preserve">
+    <value>_Load</value>
+  </data>
+  <data name="LoadingFailed" xml:space="preserve">
+    <value>Loading failed.</value>
+  </data>
+  <data name="ManageEdgeModsTab" xml:space="preserve">
+    <value>Manage EdgeMods</value>
+  </data>
+  <data name="ManageEdgeModsTabHint" xml:space="preserve">
+    <value>To install the EdgeMod, you can drag the file here, or you can copy/move the file into the mods directory under the game directory and click Refresh.</value>
+  </data>
+  <data name="MinimapHint" xml:space="preserve">
+    <value>Normal blocks get lighter as they get higher</value>
+  </data>
+  <data name="MinimapSaveButton" xml:space="preserve">
+    <value>_Save minimap...</value>
+  </data>
+  <data name="ModelViewer" xml:space="preserve">
+    <value>Model Viewer</value>
+  </data>
+  <data name="ModelViewerHint" xml:space="preserve">
+    <value>Hint: Hold left button to drag left, right, forward and backward (X and Z axis). Hold right button to drag up and down (Y axis). Scroll to change Field of View. You can pick background color on the right.</value>
+  </data>
+  <data name="ModifyMappingXmlLink" xml:space="preserve">
+    <value>Click here if you want to modify mappings.xml manually.</value>
+  </data>
+  <data name="NoUpdatesAvailable" xml:space="preserve">
+    <value>There is currently no updates available.</value>
+  </data>
+  <data name="OpenSettingsIniEdgeDemoItem" xml:space="preserve">
+    <value>Open settings.ini for EDGE _Demo</value>
+  </data>
+  <data name="OpenSettingsIniEdgeEpicItem" xml:space="preserve">
+    <value>Open settings.ini for EDGE E_pic</value>
+  </data>
+  <data name="OpenSettingsIniEdgeItem" xml:space="preserve">
+    <value>Open settings.ini for ED_GE</value>
+  </data>
+  <data name="OutputPathSelectorTitle" xml:space="preserve">
+    <value>Select where you want to save</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>points</value>
+  </data>
+  <data name="Prism" xml:space="preserve">
+    <value>Prism</value>
+  </data>
+  <data name="ProceedConfirm" xml:space="preserve">
+    <value>Are you sure to proceed?</value>
+  </data>
+  <data name="RecordKeyEventItem" xml:space="preserve">
+    <value>Record _KeyEvent</value>
+  </data>
+  <data name="RefreshEdgeModsButton" xml:space="preserve">
+    <value>Re_fresh</value>
+  </data>
+  <data name="RefreshGlobalPlayerProgressButton" xml:space="preserve">
+    <value>Refresh _global player progress</value>
+  </data>
+  <data name="RequireNetworkTooltip" xml:space="preserve">
+    <value>This feature requires network.</value>
+  </data>
+  <data name="ResizerGrow" xml:space="preserve">
+    <value>Enlarger</value>
+  </data>
+  <data name="ResizerShrink" xml:space="preserve">
+    <value>Shrinker</value>
+  </data>
+  <data name="RunGameButton" xml:space="preserve">
+    <value>_Run EDGE</value>
+  </data>
+  <data name="SelectUser" xml:space="preserve">
+    <value>Select _user:</value>
+  </data>
+  <data name="ShowMappingXmlHelpLink" xml:space="preserve">
+    <value>(How?)</value>
+  </data>
+  <data name="ShowMinimapItem" xml:space="preserve">
+    <value>Show _minimap</value>
+  </data>
+  <data name="SortButton" xml:space="preserve">
+    <value>_Sort...</value>
+  </data>
+  <data name="SortByAchieved" xml:space="preserve">
+    <value>By _achieved</value>
+  </data>
+  <data name="SortByApiName" xml:space="preserve">
+    <value>By AP_I name</value>
+  </data>
+  <data name="SortByDescription" xml:space="preserve">
+    <value>By _description</value>
+  </data>
+  <data name="SortByGlobalPlayerProgress" xml:space="preserve">
+    <value>By _global player progress</value>
+  </data>
+  <data name="SortByPoints" xml:space="preserve">
+    <value>By _points</value>
+  </data>
+  <data name="SortByTitle" xml:space="preserve">
+    <value>By _title</value>
+  </data>
+  <data name="SortDefaultOrder" xml:space="preserve">
+    <value>By default _order</value>
+  </data>
+  <data name="SpawnPoint" xml:space="preserve">
+    <value>Spawn Point</value>
+  </data>
+  <data name="StartAfterCompileLabel" xml:space="preserve">
+    <value>Start after (de)compilation:</value>
+  </data>
+  <data name="SwitchToSelectedProfileButton" xml:space="preserve">
+    <value>Switch to selecte_d profile</value>
+  </data>
+  <data name="ToolboxButton" xml:space="preserve">
+    <value>_Toolbox...</value>
+  </data>
+  <data name="ViewerAddSelectedModelButton" xml:space="preserve">
+    <value>Add _selected models to model viewer</value>
+  </data>
+  <data name="ViewerApplySelectedAnimButton" xml:space="preserve">
+    <value>_Apply selected animation to all models in model viewer (right click if you want to play only once)</value>
+  </data>
+  <data name="DecompileFailed" xml:space="preserve">
+    <value>Failed to decompile {0}.</value>
+  </data>
+  <data name="DecompileFinishedDetails" xml:space="preserve">
+    <value>Finished. {0} file(s) have been (de)compiled.</value>
+  </data>
+  <data name="EdgeModsFirstInstallHint" xml:space="preserve">
+    <value>It might be a little slower to apply the changes for the first time or for the first time after cleaning up. Please wait for a moment.</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="LoadEdgeModsError" xml:space="preserve">
+    <value>Some errors occurred when attempting to load EdgeMods.</value>
+  </data>
+  <data name="NewEtxConfirmDetails" xml:space="preserve">
+    <value>You should use it if you are using the latest Steam non-demo version of the game.</value>
+  </data>
+  <data name="NewEtxConfirmTitle" xml:space="preserve">
+    <value>Would you like to use the new version of .etx files?</value>
+  </data>
+  <data name="StartDecompiledFileFailed" xml:space="preserve">
+    <value>Unable to start the (de)compiled file.</value>
+  </data>
+  <data name="InstallEdgeModsPreparing" xml:space="preserve">
+    <value>Preparing...</value>
+  </data>
+  <data name="InstallEdgeModsTitle" xml:space="preserve">
+    <value>Install EdgeMods</value>
+  </data>
+  <data name="AchievementAchievedHint" xml:space="preserve">
+    <value>You have achieved this achievement.</value>
+  </data>
+  <data name="AchievementDisabledHint" xml:space="preserve">
+    <value>Coming soon...</value>
+  </data>
+  <data name="AchievementHelpHint" xml:space="preserve">
+    <value>JUST TELL ME HOW I CAN GET THIS!</value>
+  </data>
+  <data name="ApplyAnimNoModelDescription" xml:space="preserve">
+    <value>You can only apply the animation to one of the models and then view the model. Please pick a model and add it to model viewer in Draw model tree tab.</value>
+  </data>
+  <data name="ApplyAnimNoModelTitle" xml:space="preserve">
+    <value>Sorry, there is no model to apply your animation to.</value>
+  </data>
+  <data name="AudioOverwriteForbidden" xml:space="preserve">
+    <value>Non-game-typed EdgeMods cannot overwrite /audio/*. Please use /sfx instead.</value>
+  </data>
+  <data name="AudioSfxConflict" xml:space="preserve">
+    <value>It is not allowed to overwrite /audio/* and use /sfx at the same time. Please choose one of them.</value>
+  </data>
+  <data name="CleanupFinished" xml:space="preserve">
+    <value>Cleanup finished.</value>
+  </data>
+  <data name="CleanupFinishedDetails" xml:space="preserve">
+    <value>All EdgeMods have been uninstalled temporarily. To re-install them, just click Apply changes again.</value>
+  </data>
+  <data name="DecompileUnrecognizedFile" xml:space="preserve">
+    <value>Sorry, EdgeTool is unable to recognize the file you are going to (de)compile!</value>
+  </data>
+  <data name="EdgeModError" xml:space="preserve">
+    <value>Error occurred when trying to apply {0}: {1}
+</value>
+  </data>
+  <data name="EdgeModErrorConflict" xml:space="preserve">
+    <value>{0} conflicts with {1}! {1} won't be installed.</value>
+  </data>
+  <data name="EdgeModErrorDependenciesLoop" xml:space="preserve">
+    <value>{0}'s dependencies tree contains loops! This EdgeMod will NOT be installed.</value>
+  </data>
+  <data name="EdgeModErrorEngineDependenciesNotInstalled" xml:space="preserve">
+    <value>Some/all of {0}'s dependencies are not installed!</value>
+  </data>
+  <data name="EdgeModErrorEngineNotSupported" xml:space="preserve">
+    <value>{0} doesn't support your game engine ({1})! That one won't be installed.</value>
+  </data>
+  <data name="EdgeModErrorLevelOverwriteForbidden" xml:space="preserve">
+    <value>Level-typed EdgeMods are not allowed to overwrite files that comes with the game! Please use @Type=Theme or Game instead if you want to do this.</value>
+  </data>
+  <data name="EdgeModErrorXsl" xml:space="preserve">
+    <value>Error occurred when trying to update the level list: {0}</value>
+  </data>
+  <data name="EdgeModFileError" xml:space="preserve">
+    <value>Error occurred when trying to apply {1} in {0}: {2}
+</value>
+  </data>
+  <data name="EdgeModIDMalformed" xml:space="preserve">
+    <value>ID can only consist of letters, numbers, “.”, “_” and “-”!</value>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>{0} already exists.</value>
+  </data>
+  <data name="FileAlreadyExistsDetails" xml:space="preserve">
+    <value>Do you want to overwrite it?</value>
+  </data>
+  <data name="HistoryList" xml:space="preserve">
+    <value>{1} files: {0}...</value>
+  </data>
+  <data name="HistoryListEmpty" xml:space="preserve">
+    <value>(EMPTY)</value>
+  </data>
+  <data name="InstallEdgeModFailed" xml:space="preserve">
+    <value>Failed to install {0}.</value>
+  </data>
+  <data name="InstallEdgeMods" xml:space="preserve">
+    <value>Install EdgeMods</value>
+  </data>
+  <data name="InstallEdgeModsAlmostThere" xml:space="preserve">
+    <value>Almost there...</value>
+  </data>
+  <data name="InstallEdgeModsDone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="InstallEdgeModsFinished" xml:space="preserve">
+    <value>Installation finished.</value>
+  </data>
+  <data name="InstallEdgeModsFinishedError" xml:space="preserve">
+    <value>But some errors have occurred. Go check it out.</value>
+  </data>
+  <data name="MappingXmlConflict" xml:space="preserve">
+    <value>It is not allowed to use /levels/mapping.xsl and/or /mod.xml when you have already overwrited /levels/mapping.xml. Please try to merge your changes into /levels/mapping.xml.</value>
+  </data>
+  <data name="MappingXmlOverwriteForbidden" xml:space="preserve">
+    <value>Non-game-typed EdgeMods cannot overwrite /levels/mapping.xml. Please use /mod.xml or /levels/mapping.xsl instead.</value>
+  </data>
+  <data name="MappingXslConflict" xml:space="preserve">
+    <value>It is not allowed to use /levels/mapping.xsl and /mod.xml to modify /levels/mapping.xml at the same time! Please try to merge your changes in /mod.xml into /levels/mapping.xsl!</value>
+  </data>
+  <data name="Minimap" xml:space="preserve">
+    <value>Minimap</value>
+  </data>
+  <data name="MinimapSaveDialogTitle" xml:space="preserve">
+    <value>Save minimap</value>
+  </data>
+  <data name="ModelColorWarning" xml:space="preserve">
+    <value>Sorry, EdgeTool is unable to provide full support for this model.</value>
+  </data>
+  <data name="ModelColorWarningDetails" xml:space="preserve">
+    <value>This model has used Models/Model/Triangle/Vertex/@Color which EdgeTool hasn't supported yet. The model will be rendered in white color.</value>
+  </data>
+  <data name="ModXmlNotFound" xml:space="preserve">
+    <value>File not found: /mod.xml.</value>
+  </data>
+  <data name="NotExists" xml:space="preserve">
+    <value> (NOT EXISTS)</value>
+  </data>
+  <data name="PngFilter" xml:space="preserve">
+    <value>PNG Image (*.png)</value>
+  </data>
+  <data name="TriangleVertexCountError" xml:space="preserve">
+    <value>One Triangle must have three Vertex child elements!</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="XlsFormatIDError" xml:space="preserve">
+    <value>Line 1 Column 1 must be 'id'!</value>
+  </data>
+  <data name="AdvancedCameraModeDisabled" xml:space="preserve">
+    <value>{0}: Advanced camera mode will be disabled! {1} will be ignored. To enable this mode, remove @Zoom or set it to a negative value.</value>
+  </data>
+  <data name="BumperPositionOutOfRange" xml:space="preserve">
+    <value>Bumper: Its X/Y-coordinate is not larger than 0 and its Y/X-coordinate is less than level's length/width! This is known to cause extra blocks or missing blocks around this Bumper.</value>
+  </data>
+  <data name="CameraTriggerDisabled" xml:space="preserve">
+    <value>CameraTrigger: This trigger will be disabled for its @Duration=0.</value>
+  </data>
+  <data name="DeprecatedAttribute" xml:space="preserve">
+    <value>{0}: {1} is deprecated. Do not use it.</value>
+  </data>
+  <data name="DeprecatedElement" xml:space="preserve">
+    <value>{0}: This element is deprecated. Do not use it.</value>
+  </data>
+  <data name="ExitPointOutOfRange" xml:space="preserve">
+    <value>Level: @ExitPoint is out of the level range! This will cause the game crashing!</value>
+  </data>
+  <data name="ExitPointCorrupted" xml:space="preserve">
+    <value>{0}: @Position is same as /Level/@ExitPoint! The actual exit point will be corrupted and the level will be impossible to pass!</value>
+  </data>
+  <data name="FallingPlatformStaticBlock" xml:space="preserve">
+    <value>FallingPlatform: There is already a static block at {0}! This static block will be corrupted.</value>
+  </data>
+  <data name="FallingPlatformXYOutOfRange" xml:space="preserve">
+    <value>FallingPlatform: Putting it at {0} will make it visible and un-collidable! Please move the platform or enlarge the level size.</value>
+  </data>
+  <data name="FallingPlatformZOutOfRange" xml:space="preserve">
+    <value>FallingPlatform: Z-coordinate is not larger than ! Player block will be unable to climb or EDGE on this platform!</value>
+  </data>
+  <data name="FieldOfViewIgnored" xml:space="preserve">
+    <value>{0}: @Angle and @FieldOfView are both set! @FieldOfView will be ignored.</value>
+  </data>
+  <data name="IDDuplicated" xml:space="preserve">
+    <value>Duplicated ID!</value>
+  </data>
+  <data name="IDInvalidCharacter" xml:space="preserve">
+    <value>ID can't contain any character in “(,)”!</value>
+  </data>
+  <data name="ImageSizeIncorrect" xml:space="preserve">
+    <value>{0}: Incorrect image size. It should be {1}. Its content will not be loaded.</value>
+  </data>
+  <data name="LevelInvalidArgument" xml:space="preserve">
+    <value>Level: {2} is wrong! Will be corrected automatically: {0} =&gt; {1}</value>
+  </data>
+  <data name="LevelTimeThresholdsAscending" xml:space="preserve">
+    <value>Level: Time thresholds for S+, S, A, B, C must be strictly increasing or you may not achieve some of the ranks.</value>
+  </data>
+  <data name="MusicJavaOutOfRange" xml:space="preserve">
+    <value>Level: @MusicJava is out of range (0-11)! 00_menus will be used.</value>
+  </data>
+  <data name="MusicOutOfRange" xml:space="preserve">
+    <value>Level: @Music is out of range (0-24)! 06_Kakkoi will be used.</value>
+  </data>
+  <data name="SpawnPointOutOfRange" xml:space="preserve">
+    <value>Level: Z-coordinate of @SpawnPoint is less than -20, the level will stuck restarting itself over and over!</value>
+  </data>
+  <data name="ThemeOutOfRange" xml:space="preserve">
+    <value>Level: @Theme is out of range (0-3)! White theme (0) will be used.</value>
+  </data>
+  <data name="UnrecognizedChildElement" xml:space="preserve">
+    <value>{0}: Unable to recognize this element under {1} element. It will be ignored.</value>
+  </data>
+  <data name="UnrecognizedCoordinate" xml:space="preserve">
+    <value>Unrecognized coordinate!</value>
+  </data>
+  <data name="UnrecognizedSize" xml:space="preserve">
+    <value>Unrecognized level size!</value>
+  </data>
+  <data name="ValueOutOfRange" xml:space="preserve">
+    <value>{0}: @Angle or @FieldOfView is larger than 184! 184 will be used for this value.</value>
+  </data>
+  <data name="ZoomOutOfRange" xml:space="preserve">
+    <value>{0}: @Zoom is out of range (1-{1})! Zoom level 1 will be used.</value>
+  </data>
+  <data name="ButtonSequenceEventIgnored" xml:space="preserve">
+    <value>Button: Events for buttons in button sequences will be ignored.</value>
+  </data>
+  <data name="ButtonSequenceForceStayDownMode" xml:space="preserve">
+    <value>Button: Buttons in button sequences will be forced to use StayDown mode.</value>
+  </data>
+  <data name="ResizerXYOutOfRange" xml:space="preserve">
+    <value>Resizer{0}: X and/or Y-coordinate is out of range! The resizer will be visible in the level but will neither function nor collide with the player block and might cause the game to crash.</value>
+  </data>
+  <data name="ResizerZOutOfRange" xml:space="preserve">
+    <value>Resizer{0}: Z-coordinate is out of range! This could cause the game to crash.</value>
+  </data>
+  <data name="UnrecognizedEvent" xml:space="preserve">
+    <value>Unrecognized event!</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+</root>

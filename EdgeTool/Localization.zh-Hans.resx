@@ -1,0 +1,754 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplyChangesButton" xml:space="preserve">
+    <value>应用更改(_A)</value>
+  </data>
+  <data name="ApplyChangesExecuteButton" xml:space="preserve">
+    <value>应用更改并运行游戏(_X)</value>
+  </data>
+  <data name="BrowseAchievementsTab" xml:space="preserve">
+    <value>浏览成就</value>
+  </data>
+  <data name="BrowseAchievementsTabHint" xml:space="preserve">
+    <value>提示：右击可强制(取消)获得成就。开启 EdgeTool 后玩 EDGE 可即时看到获得的成就。</value>
+  </data>
+  <data name="BrowseLevelsTab" xml:space="preserve">
+    <value>浏览关卡</value>
+  </data>
+  <data name="CheckForUpdatesItem" xml:space="preserve">
+    <value>检查 _EdgeTool 更新</value>
+  </data>
+  <data name="CleanUpInstallButton" xml:space="preserve">
+    <value>临时全部卸载(_C)</value>
+  </data>
+  <data name="ConvertMobileLevelsItem" xml:space="preserve">
+    <value>转换手机版关卡文件(_C)...</value>
+  </data>
+  <data name="DeleteAllDisabledEdgeModsButton" xml:space="preserve">
+    <value>删除所有未启用的 Edge_Mods</value>
+  </data>
+  <data name="DeleteSelectedEdgeModButton" xml:space="preserve">
+    <value>删除当前选中的 EdgeMo_d</value>
+  </data>
+  <data name="EdgeModAuthor" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="EdgeModEnabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="EdgeModName" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="EdgeModVersion" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="EnterPath_Browse" xml:space="preserve">
+    <value>浏览</value>
+  </data>
+  <data name="EnterPath_EnterOr" xml:space="preserve">
+    <value>输入或</value>
+  </data>
+  <data name="EnterPath_YourGamePath" xml:space="preserve">
+    <value>你的 _EDGE 游戏 exe 路径：</value>
+  </data>
+  <data name="GlobalPlayerProgress" xml:space="preserve">
+    <value>全球玩家进度：</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>帮助(_H)</value>
+  </data>
+  <data name="LevelName" xml:space="preserve">
+    <value>关卡名</value>
+  </data>
+  <data name="LevelPath" xml:space="preserve">
+    <value>路径</value>
+  </data>
+  <data name="LoadButton" xml:space="preserve">
+    <value>加载(_L)</value>
+  </data>
+  <data name="ManageEdgeModsTab" xml:space="preserve">
+    <value>EdgeMods 管理</value>
+  </data>
+  <data name="ManageEdgeModsTabHint" xml:space="preserve">
+    <value>如果想要安装 EdgeMod，请把要安装的 EdgeMod 拖动到游戏目录下的 mods 文件夹中后按下刷新，或更简单地，把它拖动到这里。</value>
+  </data>
+  <data name="OpenSettingsIniEdgeDemoItem" xml:space="preserve">
+    <value>打开 EDGE _Demo 的 settings.ini</value>
+  </data>
+  <data name="OpenSettingsIniEdgeEpicItem" xml:space="preserve">
+    <value>打开 EDGE E_pic 的 settings.ini</value>
+  </data>
+  <data name="OpenSettingsIniEdgeItem" xml:space="preserve">
+    <value>打开 ED_GE 的 settings.ini</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>点</value>
+  </data>
+  <data name="RecordKeyEventItem" xml:space="preserve">
+    <value>录制 _KeyEvent</value>
+  </data>
+  <data name="RefreshEdgeModsButton" xml:space="preserve">
+    <value>刷新(_F)</value>
+  </data>
+  <data name="RefreshGlobalPlayerProgressButton" xml:space="preserve">
+    <value>刷新全球玩家进度(_G)</value>
+  </data>
+  <data name="RequireNetworkTooltip" xml:space="preserve">
+    <value>此功能需要联网。</value>
+  </data>
+  <data name="RunGameButton" xml:space="preserve">
+    <value>运行游戏(_R)</value>
+  </data>
+  <data name="SelectUser" xml:space="preserve">
+    <value>请选择你的用户：(_U)</value>
+  </data>
+  <data name="SortButton" xml:space="preserve">
+    <value>排序(_S)...</value>
+  </data>
+  <data name="SortByAchieved" xml:space="preserve">
+    <value>按是否获得(_A)</value>
+  </data>
+  <data name="SortByApiName" xml:space="preserve">
+    <value>按 AP_I 名称</value>
+  </data>
+  <data name="SortByDescription" xml:space="preserve">
+    <value>按描述(_D)</value>
+  </data>
+  <data name="SortByGlobalPlayerProgress" xml:space="preserve">
+    <value>按全球玩家进度(_G)</value>
+  </data>
+  <data name="SortByPoints" xml:space="preserve">
+    <value>按点数(_P)</value>
+  </data>
+  <data name="SortByTitle" xml:space="preserve">
+    <value>按标题(_T)</value>
+  </data>
+  <data name="SortDefaultOrder" xml:space="preserve">
+    <value>默认顺序(_O)</value>
+  </data>
+  <data name="SwitchToSelectedProfileButton" xml:space="preserve">
+    <value>切换到选中存档(_D)</value>
+  </data>
+  <data name="ToolboxButton" xml:space="preserve">
+    <value>工具箱(_T)...</value>
+  </data>
+  <data name="BrowseFileInExplorerButton" xml:space="preserve">
+    <value>在资源管理器中找到选中项(_X)</value>
+  </data>
+  <data name="BrowseLevelInExplorerItem" xml:space="preserve">
+    <value>在资源管理器中浏览关卡(_E)</value>
+  </data>
+  <data name="BrowseLevelsTabHint" xml:space="preserve">
+    <value>提示：右击选中关卡即可显示更多操作。</value>
+  </data>
+  <data name="ClearHistoryButton" xml:space="preserve">
+    <value>清空历史记录(_H)</value>
+  </data>
+  <data name="CompileButton" xml:space="preserve">
+    <value>(反)编译(_C)</value>
+  </data>
+  <data name="CompileTab" xml:space="preserve">
+    <value>文件(反)编译</value>
+  </data>
+  <data name="CompileTabHint" xml:space="preserve">
+    <value>要(反)编译 EDGE 里的二进制文件，把你的玩意儿拖动到这里，或者从左下角的历史记录里选中要反编译的文件就行了。（如果是关卡，只需拖动反编译得到的 .xml 文件即可）
+帮助：右击下面任意一种文件格式打开该格式的说明 或</value>
+  </data>
+  <data name="CompileTabHintShowCommandLineHelpLink" xml:space="preserve">
+    <value>查看命令行(反)编译帮助</value>
+  </data>
+  <data name="DecompileLevelItem" xml:space="preserve">
+    <value>反编译关卡(_C)...</value>
+  </data>
+  <data name="DrawAnimTree" xml:space="preserve">
+    <value>绘制动画树</value>
+  </data>
+  <data name="DrawButton" xml:space="preserve">
+    <value>绘制(_D)</value>
+  </data>
+  <data name="DrawChildModelsBox" xml:space="preserve">
+    <value>绘制子模型(_C)</value>
+  </data>
+  <data name="DrawChildModelsBoxHint" xml:space="preserve">
+    <value>如果分别绘制，子模型的变换可能显示不正常。</value>
+  </data>
+  <data name="DrawModelTreeItem" xml:space="preserve">
+    <value>绘制模型树(_D)</value>
+  </data>
+  <data name="DrawModelTree" xml:space="preserve">
+    <value>绘制模型树</value>
+  </data>
+  <data name="EdgeLevelFilter" xml:space="preserve">
+    <value>EDGE 关卡文件 (*.bin)</value>
+  </data>
+  <data name="EnableDebugModeBox" xml:space="preserve">
+    <value>启用调试模式(_N)</value>
+  </data>
+  <data name="EnableDebugModeBoxHint" xml:space="preserve">
+    <value>启用调试模式后你可以看到所有三角形的三边。</value>
+  </data>
+  <data name="EnterAnimNameLabel" xml:space="preserve">
+    <value>请输入动画名：（无需 .r_cha 扩展名）</value>
+  </data>
+  <data name="EnterModelNameLabel" xml:space="preserve">
+    <value>请输入模型名：（无需 .r_mdl 扩展名）</value>
+  </data>
+  <data name="ExecutableFilter" xml:space="preserve">
+    <value>可执行程序 (*.exe)</value>
+  </data>
+  <data name="LevelCriteria" xml:space="preserve">
+    <value>标准</value>
+  </data>
+  <data name="LevelExitPoint" xml:space="preserve">
+    <value>终点坐标</value>
+  </data>
+  <data name="LevelMusic" xml:space="preserve">
+    <value>音乐</value>
+  </data>
+  <data name="LevelMusicJava" xml:space="preserve">
+    <value>Java 版音乐</value>
+  </data>
+  <data name="LevelSize" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="LevelSpawnPoint" xml:space="preserve">
+    <value>初始坐标</value>
+  </data>
+  <data name="ModifyMappingXmlLink" xml:space="preserve">
+    <value>你可以点击这里手动修改关卡索引。</value>
+  </data>
+  <data name="ShowMappingXmlHelpLink" xml:space="preserve">
+    <value>如何修改关卡索引？</value>
+  </data>
+  <data name="ShowMinimapItem" xml:space="preserve">
+    <value>显示小地图(_M)</value>
+  </data>
+  <data name="StartAfterCompileLabel" xml:space="preserve">
+    <value>(反)编译完成后打开：</value>
+  </data>
+  <data name="ViewerAddSelectedModelButton" xml:space="preserve">
+    <value>将选中模型添加到模型查看器(_S)</value>
+  </data>
+  <data name="ViewerApplySelectedAnimButton" xml:space="preserve">
+    <value>对模型查看器中的全部模型应用选中动画，右击不循环(_A)</value>
+  </data>
+  <data name="AchievementAchievedHint" xml:space="preserve">
+    <value>此成就已获得。</value>
+  </data>
+  <data name="AchievementDisabledHint" xml:space="preserve">
+    <value>对不起，由于你还没有玩过 V1.0.2483.7086 的破解版游戏，你现在无法浏览当前获得了哪些成就。</value>
+  </data>
+  <data name="AchievementHelpHint" xml:space="preserve">
+    <value>到底怎么获得此成就？！我要疯了！</value>
+  </data>
+  <data name="AchievementUnlockConfirm" xml:space="preserve">
+    <value>确定要(取消)获得该成就吗？</value>
+  </data>
+  <data name="AchievementUnlocked" xml:space="preserve">
+    <value>获得成就 {0}！</value>
+  </data>
+  <data name="AchievementUnlockedDetails" xml:space="preserve">
+    <value>恭喜你获得了一个成就！快去 EdgeTool 看看吧！
+成就说明：</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>询问</value>
+  </data>
+  <data name="Bumper" xml:space="preserve">
+    <value>撞击器</value>
+  </data>
+  <data name="CheckForUpdatesFailed" xml:space="preserve">
+    <value>检查更新失败。</value>
+  </data>
+  <data name="CommandLineDecompileError" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="CommandLineDecompileHeader" xml:space="preserve">
+    <value>------ (反)编译 {0} ------</value>
+  </data>
+  <data name="CommandLineDecompileSuccess" xml:space="preserve">
+    <value>(反)编译成功。</value>
+  </data>
+  <data name="CommandLineDecompileWarning" xml:space="preserve">
+    <value>警告：</value>
+  </data>
+  <data name="ConversionFailed" xml:space="preserve">
+    <value>转换失败。</value>
+  </data>
+  <data name="ConversionFinished" xml:space="preserve">
+    <value>转换完毕。</value>
+  </data>
+  <data name="ConversionFinishedDetails" xml:space="preserve">
+    <value>成功转换了 {0} 个文件。</value>
+  </data>
+  <data name="ConvertToPcBox" xml:space="preserve">
+    <value>转换到 P&amp;C 版 (不选中表示转换到移动版)</value>
+  </data>
+  <data name="Decompile" xml:space="preserve">
+    <value>(反)编译</value>
+  </data>
+  <data name="DecompileFileSelectorTitle" xml:space="preserve">
+    <value>请选择要(反)编译的文件</value>
+  </data>
+  <data name="EdgeModsChangesNotAppliedMessage" xml:space="preserve">
+    <value>您对要安装的 EdgeMods 的修改还没有应用，启动游戏后你不会看到新安装的 EdgeMods 中的内容。你现在可以取消后点击安装来应用你对 EdgeMods 的修改。</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="ExitPoint" xml:space="preserve">
+    <value>终点</value>
+  </data>
+  <data name="FallingPlatform" xml:space="preserve">
+    <value>可掉落平台</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>严重错误</value>
+  </data>
+  <data name="FatalMessage" xml:space="preserve">
+    <value>你干了什么？赶紧向 bugs.mygod.tk 报告错误信息和你的不当行径。</value>
+  </data>
+  <data name="FatalTitle" xml:space="preserve">
+    <value>哇靠崩溃啦！</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="GameSelectorTitle" xml:space="preserve">
+    <value>请选择 edge.exe</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>路径不合法。</value>
+  </data>
+  <data name="JumpListToolkit" xml:space="preserve">
+    <value>工具箱</value>
+  </data>
+  <data name="JumpTaskCheckForUpdates" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="JumpTaskConvertMobiLevels" xml:space="preserve">
+    <value>转换手机版关卡文件</value>
+  </data>
+  <data name="JumpTaskDecompile" xml:space="preserve">
+    <value>(反)编译</value>
+  </data>
+  <data name="JumpTaskHelp" xml:space="preserve">
+    <value>帮助</value>
+  </data>
+  <data name="JumpTaskLaunchGame" xml:space="preserve">
+    <value>启动游戏</value>
+  </data>
+  <data name="JumpTaskRecordKeyEvent" xml:space="preserve">
+    <value>录制 KeyEvent</value>
+  </data>
+  <data name="KeyEventRecorder" xml:space="preserve">
+    <value>KeyEvent 录制器</value>
+  </data>
+  <data name="KeyEventRecorderHint" xml:space="preserve">
+    <value>按 F10 开始，按 F11 停止，按 F12 停止并放弃已录制的结果。</value>
+  </data>
+  <data name="KeyEventRecorderInitialTime" xml:space="preserve">
+    <value>初始时刻：(_I)</value>
+  </data>
+  <data name="KeyEventRecorderPlaybackSpeed" xml:space="preserve">
+    <value>播放速度：(_S)</value>
+  </data>
+  <data name="LevelFileSelectorTitle" xml:space="preserve">
+    <value>请选择要处理的 .bin 文件</value>
+  </data>
+  <data name="LoadingFailed" xml:space="preserve">
+    <value>加载失败。</value>
+  </data>
+  <data name="MinimapHint" xml:space="preserve">
+    <value>普通方块颜色越淡高度越高</value>
+  </data>
+  <data name="MinimapSaveButton" xml:space="preserve">
+    <value>保存小地图(_S)...</value>
+  </data>
+  <data name="ModelViewer" xml:space="preserve">
+    <value>模型查看器</value>
+  </data>
+  <data name="ModelViewerHint" xml:space="preserve">
+    <value>提示：左键左右前后（X 轴与 Z 轴）拖动，右键上下（Y 轴）拖动，滚轮改变视野（Field of View）大小，在右边选取背景色。</value>
+  </data>
+  <data name="NoUpdatesAvailable" xml:space="preserve">
+    <value>没有可用更新。</value>
+  </data>
+  <data name="OutputPathSelectorTitle" xml:space="preserve">
+    <value>请选择要保存的位置</value>
+  </data>
+  <data name="Prism" xml:space="preserve">
+    <value>棱柱</value>
+  </data>
+  <data name="ProceedConfirm" xml:space="preserve">
+    <value>确定要继续吗？</value>
+  </data>
+  <data name="ResizerGrow" xml:space="preserve">
+    <value>方块放大器</value>
+  </data>
+  <data name="ResizerShrink" xml:space="preserve">
+    <value>方块缩小器</value>
+  </data>
+  <data name="SpawnPoint" xml:space="preserve">
+    <value>起点</value>
+  </data>
+  <data name="AdvancedCameraModeDisabled" xml:space="preserve">
+    <value>{0} 元素：高级相机模式被禁用！{1} 将会被忽略。要启用请将 @Zoom 删去或设为负值。</value>
+  </data>
+  <data name="ApplyAnimNoModelDescription" xml:space="preserve">
+    <value>动画不能离开被应用动画的模型独自存在。应用动画之前必须先在绘制模型树中将要应用动画的模型添加到模型查看器中。</value>
+  </data>
+  <data name="ApplyAnimNoModelTitle" xml:space="preserve">
+    <value>对不起，没有可应用动画的模型。</value>
+  </data>
+  <data name="AudioOverwriteForbidden" xml:space="preserve">
+    <value>不允许非 Game 类型的 EdgeMod 重写 /audio/*。请改用 /sfx 文件夹。</value>
+  </data>
+  <data name="AudioSfxConflict" xml:space="preserve">
+    <value>不允许在写入 /audio 文件夹的同时使用 /sfx 文件夹！请选择其中一个。</value>
+  </data>
+  <data name="BumperPositionOutOfRange" xml:space="preserve">
+    <value>Bumper 元素：该 Bumper 的 X/Y 坐标 &lt;= 0 且 Y/X 坐标小于关卡长/宽度！这会导致该 Bumper 及其附近不正常地多或缺方块。</value>
+  </data>
+  <data name="ButtonSequenceEventIgnored" xml:space="preserve">
+    <value>Button 元素：在按钮序列中的按钮所触发的事件将被游戏忽略。</value>
+  </data>
+  <data name="ButtonSequenceForceStayDownMode" xml:space="preserve">
+    <value>Button 元素：在按钮序列中的按钮在实际游戏中会被强制使用 StayDown 模式。</value>
+  </data>
+  <data name="CameraTriggerDisabled" xml:space="preserve">
+    <value>CameraTrigger 元素：由于 @Duration 当前为 0，该元素将在实际游戏中被禁用。</value>
+  </data>
+  <data name="CleanupFinished" xml:space="preserve">
+    <value>清理完毕。</value>
+  </data>
+  <data name="CleanupFinishedDetails" xml:space="preserve">
+    <value>所有的 EdgeMods 已被临时卸载。想要再次安装点击应用更改即可。</value>
+  </data>
+  <data name="DecompileFailed" xml:space="preserve">
+    <value>{0} (反)编译失败。</value>
+  </data>
+  <data name="DecompileFinishedDetails" xml:space="preserve">
+    <value>(反)编译完毕。共(反)编译了 {0} 个文件。</value>
+  </data>
+  <data name="DecompileUnrecognizedFile" xml:space="preserve">
+    <value>对不起，无法识别您要(反)编译的文件！</value>
+  </data>
+  <data name="DeprecatedAttribute" xml:space="preserve">
+    <value>{0} 元素：{1} 已过时，请勿使用。</value>
+  </data>
+  <data name="DeprecatedElement" xml:space="preserve">
+    <value>{0} 元素：已过时，请勿使用。</value>
+  </data>
+  <data name="EdgeModError" xml:space="preserve">
+    <value>应用 {0} 时发生了错误：{1}
+</value>
+  </data>
+  <data name="EdgeModErrorConflict" xml:space="preserve">
+    <value>{0} 与 {1} 冲突！{1} 将不会被安装。</value>
+  </data>
+  <data name="EdgeModErrorDependenciesLoop" xml:space="preserve">
+    <value>{0} 的依赖树中含有环！该 EdgeMod 将不会被安装。</value>
+  </data>
+  <data name="EdgeModErrorEngineDependenciesNotInstalled" xml:space="preserve">
+    <value>{0} 的依赖项没有全部被安装！</value>
+  </data>
+  <data name="EdgeModErrorEngineNotSupported" xml:space="preserve">
+    <value>{0} 不支持版本为 {1} 的游戏引擎！该 EdgeMod 将不会被安装。</value>
+  </data>
+  <data name="EdgeModErrorLevelOverwriteForbidden" xml:space="preserve">
+    <value>不允许 Level 类的 EdgeMod 修改游戏自带的文件！请改用 Theme 或 Game 类。</value>
+  </data>
+  <data name="EdgeModErrorXsl" xml:space="preserve">
+    <value>更新关卡列表时发生了错误：{0}</value>
+  </data>
+  <data name="EdgeModFileError" xml:space="preserve">
+    <value>应用 {0} 的 {1} 时发生了错误：{2}
+</value>
+  </data>
+  <data name="EdgeModIDMalformed" xml:space="preserve">
+    <value>ID 只能包含字母、数字以及“._-”中的符号！</value>
+  </data>
+  <data name="EdgeModsFirstInstallHint" xml:space="preserve">
+    <value>第一次安装 EdgeMod （以及执行清理后第一次安装）时速度可能较慢，请耐心等待。</value>
+  </data>
+  <data name="ExitPointOutOfRange" xml:space="preserve">
+    <value>Level 元素：@ExitPoint 超出关卡大小！这会导致游戏崩溃！</value>
+  </data>
+  <data name="ExitPointCorrupted" xml:space="preserve">
+    <value>{0} 元素：@Position 与 /Level/@ExitPoint 相同！终点将被腐蚀，关卡将无法过关！</value>
+  </data>
+  <data name="FallingPlatformStaticBlock" xml:space="preserve">
+    <value>FallingPlatform 元素：{0} 处已经有静态方块！该静态方块将被腐蚀。</value>
+  </data>
+  <data name="FallingPlatformXYOutOfRange" xml:space="preserve">
+    <value>FallingPlatform 元素：将可掉落平台放在 {0} 将使其可见但可被穿透！请移动该平台位置或扩大关卡大小。</value>
+  </data>
+  <data name="FallingPlatformZOutOfRange" xml:space="preserve">
+    <value>FallingPlatform 元素：Z 坐标小于等于 0！玩家方块在此可掉落平台上将无法向上翻滚/EDGE！</value>
+  </data>
+  <data name="FieldOfViewIgnored" xml:space="preserve">
+    <value>{0} 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。</value>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>{0} 已存在。</value>
+  </data>
+  <data name="FileAlreadyExistsDetails" xml:space="preserve">
+    <value>是否要覆盖？</value>
+  </data>
+  <data name="HistoryList" xml:space="preserve">
+    <value>{0} 等 {1} 个文件</value>
+  </data>
+  <data name="HistoryListEmpty" xml:space="preserve">
+    <value>(空)</value>
+  </data>
+  <data name="IDDuplicated" xml:space="preserve">
+    <value>ID 重复！</value>
+  </data>
+  <data name="IDInvalidCharacter" xml:space="preserve">
+    <value>ID 不能包含“(,)”中的任何一个字符！</value>
+  </data>
+  <data name="ImageSizeIncorrect" xml:space="preserve">
+    <value>{0}：图像尺寸不正确，应为 {1}！其内容将不会被加载。</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="InstallEdgeModFailed" xml:space="preserve">
+    <value>{0} 安装失败。</value>
+  </data>
+  <data name="InstallEdgeMods" xml:space="preserve">
+    <value>安装 EdgeMods</value>
+  </data>
+  <data name="InstallEdgeModsAlmostThere" xml:space="preserve">
+    <value>即将完成……</value>
+  </data>
+  <data name="InstallEdgeModsDone" xml:space="preserve">
+    <value>已完成。</value>
+  </data>
+  <data name="InstallEdgeModsFinished" xml:space="preserve">
+    <value>安装完毕。</value>
+  </data>
+  <data name="InstallEdgeModsFinishedError" xml:space="preserve">
+    <value>但是出了一些问题，去看看详情吧。</value>
+  </data>
+  <data name="InstallEdgeModsPreparing" xml:space="preserve">
+    <value>开始安装中……</value>
+  </data>
+  <data name="InstallEdgeModsTitle" xml:space="preserve">
+    <value>安装 EdgeMod</value>
+  </data>
+  <data name="LevelInvalidArgument" xml:space="preserve">
+    <value>Level 元素：{2} 数值错误！将被自动纠正：{0} =&gt; {1}</value>
+  </data>
+  <data name="LevelTimeThresholdsAscending" xml:space="preserve">
+    <value>Level 元素：达到 S+、S、A、B、C 所需的时间必须严格递增，否则将无法获得部分评级。</value>
+  </data>
+  <data name="LoadEdgeModsError" xml:space="preserve">
+    <value>加载 EdgeMods 时出现了问题。</value>
+  </data>
+  <data name="MappingXmlConflict" xml:space="preserve">
+    <value>不允许在使用 mapping.xml 的情况下再使用 mapping.xsl 和/或 mod.xml 进行修改。请将修改合并到 mapping.xml 中。</value>
+  </data>
+  <data name="MappingXmlOverwriteForbidden" xml:space="preserve">
+    <value>不允许非 Game 类型的 EdgeMod 重写 /levels/mapping.xml。请改用 /mod.xml 或 /levels/mapping.xsl。</value>
+  </data>
+  <data name="MappingXslConflict" xml:space="preserve">
+    <value>不允许同时使用 mapping.xsl 与 mod.xml 对 mapping.xml 进行修改！请将 mod.xml 中添加的关卡合并至 mapping.xsl 中！</value>
+  </data>
+  <data name="Minimap" xml:space="preserve">
+    <value>小地图</value>
+  </data>
+  <data name="MinimapSaveDialogTitle" xml:space="preserve">
+    <value>保存小地图</value>
+  </data>
+  <data name="ModelColorWarning" xml:space="preserve">
+    <value>对不起，EdgeTool 无法完全支持此模型。</value>
+  </data>
+  <data name="ModelColorWarningDetails" xml:space="preserve">
+    <value>EdgeTool 当前暂时不支持 Models/Model/Triangle/Vertex/@Color 属性，模型将使用白色渲染。</value>
+  </data>
+  <data name="ModXmlNotFound" xml:space="preserve">
+    <value>/mod.xml 未找到！</value>
+  </data>
+  <data name="MusicJavaOutOfRange" xml:space="preserve">
+    <value>Level 元素：@MusicJava 超出范围 (0-11)！在实际游戏中将播放 00_menus。</value>
+  </data>
+  <data name="MusicOutOfRange" xml:space="preserve">
+    <value>Level 元素：@Music 超出范围 (0-24)！在实际游戏中将播放 06_Kakkoi。</value>
+  </data>
+  <data name="NewEtxConfirmDetails" xml:space="preserve">
+    <value>仅适用于 Steam 正版。（非 Demo）</value>
+  </data>
+  <data name="NewEtxConfirmTitle" xml:space="preserve">
+    <value>要使用新版 .etx 格式吗？</value>
+  </data>
+  <data name="NotExists" xml:space="preserve">
+    <value> (不存在)</value>
+  </data>
+  <data name="PngFilter" xml:space="preserve">
+    <value>PNG 文件 (*.png)</value>
+  </data>
+  <data name="SpawnPointOutOfRange" xml:space="preserve">
+    <value>Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！</value>
+  </data>
+  <data name="StartDecompiledFileFailed" xml:space="preserve">
+    <value>无法打开(反)编译的文件。</value>
+  </data>
+  <data name="ThemeOutOfRange" xml:space="preserve">
+    <value>Level 元素：@Theme 超出范围 (0-3)！在实际游戏中的显示效果将使用白色主题（0）。</value>
+  </data>
+  <data name="TriangleVertexCountError" xml:space="preserve">
+    <value>一个 Triangle 元素必须要有三个 Vertex 元素！</value>
+  </data>
+  <data name="UnrecognizedChildElement" xml:space="preserve">
+    <value>{0} 元素：无法识别在 {1} 元素下的该子元素，它将被忽略。</value>
+  </data>
+  <data name="UnrecognizedCoordinate" xml:space="preserve">
+    <value>坐标无法识别！</value>
+  </data>
+  <data name="UnrecognizedEvent" xml:space="preserve">
+    <value>事件无法识别！</value>
+  </data>
+  <data name="UnrecognizedSize" xml:space="preserve">
+    <value>关卡大小无法识别！</value>
+  </data>
+  <data name="ValueOutOfRange" xml:space="preserve">
+    <value>{0} 元素：@Angle 或 @FieldOfView 大于 184！在实际游戏中将使用 184。</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="XlsFormatIDError" xml:space="preserve">
+    <value>第一行第一列必须为 id！</value>
+  </data>
+  <data name="ZoomOutOfRange" xml:space="preserve">
+    <value>{0} 元素：@Zoom 超出范围 (1-{1})！在实际游戏中将使用 1 级缩放。</value>
+  </data>
+  <data name="ResizerXYOutOfRange" xml:space="preserve">
+    <value>Resizer{0} 元素：X 坐标 和/或 Y 坐标超出范围！该方块尺寸调整器将在关卡中可见，但没有任何实际作用，也不会添加任何静态方块，并有几率导致游戏崩溃！</value>
+  </data>
+  <data name="ResizerZOutOfRange" xml:space="preserve">
+    <value>Resizer{0} 元素：Z 坐标超出范围！这会导致游戏崩溃。</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+</root>

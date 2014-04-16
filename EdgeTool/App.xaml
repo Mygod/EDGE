@@ -1,24 +1,29 @@
 ﻿<Application x:Class="Mygod.Edge.Tool.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Startup="OnStartup"
-             DispatcherUnhandledException="OnError">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" DispatcherUnhandledException="OnError"
+             xmlns:local="clr-namespace:Mygod.Edge.Tool" Startup="OnStartup">
     <Application.Resources>
         <Image x:Key="Disabled" x:Shared="False" Source="/Resources/Images/Disabled.png"
-               ToolTip="对不起，由于你还没有玩过 V1.0.2483.7086 的破解版游戏，你现在无法浏览当前获得了哪些成就。" />
-        <Image x:Key="Achieved" x:Shared="False" Source="/Resources/Images/Achieved.png" ToolTip="此成就已获得。" />
-        <Image x:Key="Help" x:Shared="False" Source="/Resources/Images/Help.png"
-               ToolTip="到底怎么获得此成就？！我要疯了！" Cursor="Hand" MouseLeftButtonUp="ShowHelp" />
-        <Image x:Key="HelpUnavailable" x:Shared="False" Source="/Resources/Images/HelpUnavailable.png"
-               ToolTip="暂时没有视频帮助，如果你有获得方法，欢迎通过 EDGE Fans 告诉我们。" />
+               ToolTip="{x:Static local:Localization.AchievementDisabledHint}" />
+        <Image x:Key="Achieved" x:Shared="False" Source="/Resources/Images/Achieved.png"
+               ToolTip="{x:Static local:Localization.AchievementAchievedHint}" />
+        <Image x:Key="Help" x:Shared="False" Source="/Resources/Images/Help.png" Cursor="Hand"
+               ToolTip="{x:Static local:Localization.AchievementHelpHint}" MouseLeftButtonUp="ShowHelp" />
     </Application.Resources>
     <JumpList.JumpList>
         <JumpList ShowFrequentCategory="True" ShowRecentCategory="True">
-            <JumpTask Title="启动游戏" CustomCategory="工具箱" Arguments="-lg" IconResourceIndex="3" />
-            <JumpTask Title="(反)编译" CustomCategory="工具箱" Arguments="-c" IconResourceIndex="2" />
-            <JumpTask Title="录制 KeyEvent" CustomCategory="工具箱" Arguments="-rke" IconResourceIndex="1" />
-            <JumpTask Title="转换手机版关卡文件" CustomCategory="工具箱" Arguments="-cml" IconResourceIndex="5" />
-            <JumpTask Title="检查更新" CustomCategory="工具箱" Arguments="-c4u" IconResourceIndex="6" />
-            <JumpTask Title="帮助" CustomCategory="工具箱" ApplicationPath="http://edgefans.tk/developers"
-                      IconResourceIndex="4" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskLaunchGame}" Arguments="-lg"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="3" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskDecompile}" Arguments="-c"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="2" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskRecordKeyEvent}" Arguments="-rke"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="1" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskConvertMobiLevels}" Arguments="-cml"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="5" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskCheckForUpdates}" Arguments="-c4u"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="6" />
+            <JumpTask Title="{x:Static local:Localization.JumpTaskHelp}"
+                      ApplicationPath="http://edgefans.tk/developers"
+                      CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="4" />
         </JumpList>
     </JumpList.JumpList>
 </Application>
