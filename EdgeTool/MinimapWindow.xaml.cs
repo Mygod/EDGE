@@ -15,7 +15,8 @@ namespace Mygod.Edge.Tool
         public MinimapWindow(Level level)
         {
             InitializeComponent();
-            Title = Localization.Minimap + " - " + (this.level = level).Name;
+            Title = Localization.Minimap + " - " + (this.level = level).Name.Replace("\r\n", " ")
+                                                                            .Replace('\r', ' ').Replace('\n', ' ');
             initialized = true;
             Redraw();
         }
@@ -86,8 +87,8 @@ namespace Mygod.Edge.Tool
         {
             var position = e.GetPosition((IInputElement) sender);
             int x = (int) Math.Floor(position.X), y = (int) Math.Floor(position.Y);
-            Coordinates.Text = string.Format("({0}, {1}{2})", x, y,
-                                             heightMap[y, x] >= 0 ? ", " + heightMap[y, x] : string.Empty);
+            if (x >= 0 && x < level.Size.Width && y >= 0 && y < level.Size.Length) Coordinates.Text =
+                string.Format("({0}, {1}{2})", x, y, heightMap[y, x] >= 0 ? ", " + heightMap[y, x] : string.Empty);
         }
     }
 }
