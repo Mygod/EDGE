@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -12,11 +13,12 @@ namespace Mygod.Edge.Tool
 {
     public sealed partial class MinimapWindow
     {
+        private static readonly Regex EnterProcessor = new Regex(@"(\r(\n)?|\n)", RegexOptions.Compiled);
+
         public MinimapWindow(Level level)
         {
             InitializeComponent();
-            Title = Localization.Minimap + " - " + (this.level = level).Name.Replace("\r\n", " ")
-                                                                            .Replace('\r', ' ').Replace('\n', ' ');
+            Title = Localization.Minimap + " - " + EnterProcessor.Replace((this.level = level).Name, " $1");
             initialized = true;
             Redraw();
         }
