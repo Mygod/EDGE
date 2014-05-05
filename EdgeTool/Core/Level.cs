@@ -364,7 +364,6 @@ namespace Mygod.Edge.Tool
         }
         private Level(string path) : this()
         {
-            LegacyMinimap = Flat.LoadFromImage(path + ".png");
             var element = XHelper.Load(path + ".xml").GetElement("Level");
             ID = element.GetAttributeValue<int>("ID");
             Name = element.GetAttributeValue("Name");
@@ -377,6 +376,7 @@ namespace Mygod.Edge.Tool
             CTime = thresholds[4];
             CheckTime();
             Size = element.GetAttributeValue<Size3D>("Size");
+            LegacyMinimap = new Flat(path + ".png", LegacyMinimapSize);
             CollisionMap = new Cube(path + ".{0}.png", Size);
             SpawnPoint = element.GetAttributeValue<Point3D16>("SpawnPoint");
             ExitPoint = element.GetAttributeValue<Point3D16>("ExitPoint");
@@ -938,7 +938,7 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    public struct Size2D : IXSerializable
+    public struct Size2D : IXSerializable, IEquatable<Size2D>
     {
         public Size2D(ushort width, ushort length)
         {
@@ -952,6 +952,31 @@ namespace Mygod.Edge.Tool
         public static implicit operator Size2D(Size3D size)
         {
             return new Size2D(size.Width, size.Length);
+        }
+        public static bool operator ==(Size2D a, Size2D b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(Size2D a, Size2D b)
+        {
+            return !(a == b);
+        }
+
+        public bool Equals(Size2D other)
+        {
+            return Width == other.Width && Length == other.Length;
+        }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is Size2D && Equals((Size2D)obj);
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Width.GetHashCode() * 397) ^ Length.GetHashCode();
+            }
         }
 
         public override string ToString()
@@ -1089,20 +1114,19 @@ namespace Mygod.Edge.Tool
         public Flat(string path, Size2D size) : this(size.Width, size.Length)
         {
             if (!File.Exists(path)) return;
-            var array = ImageConverter.Load(path);
-            if (array.Length != size.Width * size.Length)
-                Warning.WriteLine(string.Format(Localization.ImageSizeIncorrect, path, size));
-            else InitFromBitmapData(array, size);
-        }
-
-        public static Flat LoadFromImage(string path)
-        {
-            if (!File.Exists(path)) return new Flat(0, 0);
-            Size2D size;
-            var array = ImageConverter.Load(path, out size);
-            var result = new Flat(size.Width, size.Length);
-            result.InitFromBitmapData(array, size);
-            return result;
+            Size2D fileSize;
+            var array = ImageConverter.Load(path, out fileSize);
+            if (fileSize != size) Warning.WriteLine(string.Format(Localization.ImageSizeIncorrect, path, size));
+            else
+            {
+                detailedInformation = array;
+                var pos = 0;
+                for (var y = 0; y < size.Length; y++) for (var x = 0; x < size.Width; x++, pos++)
+                {
+                    var color = array[pos];
+                    this[x, y] = color.R == 255;
+                }
+            }
         }
 
         public void SaveToImage(string path, bool half = false)
@@ -1123,20 +1147,9 @@ namespace Mygod.Edge.Tool
             if (hasBlock) ImageConverter.Save(array, Width, Length, path, half);
         }
 
-        private void InitFromBitmapData(Color[] array, Size2D size)
-        {
-            detailedInformation = array;
-            var pos = 0;
-            for (var y = 0; y < size.Length; y++) for (var x = 0; x < size.Width; x++, pos++)
-            {
-                var color = array[pos];
-                this[x, y] = color.R == 255;
-            }
-        }
-
         private readonly BitArray data;
         public readonly int Width, Length;
-        private Color[] detailedInformation;
+        private readonly Color[] detailedInformation;
 
         public static int GetBytes(int width, int length)
         {

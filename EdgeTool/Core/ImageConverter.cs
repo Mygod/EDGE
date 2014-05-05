@@ -62,10 +62,5 @@ namespace Mygod.Edge.Tool
                 if (clone != null) clone.Dispose();
             }
         }
-        public static Color[] Load(string path)
-        {
-            Size2D temp;
-            return Load(path, out temp);
-        }
     }
 }
