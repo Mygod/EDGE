@@ -751,4 +751,7 @@
   <data name="Unknown" xml:space="preserve">
     <value>未知</value>
   </data>
+  <data name="LevelLegacyMinimapMalformed" xml:space="preserve">
+    <value>此关卡的旧版小地图已损坏！其内容将被自动忽略！</value>
+  </data>
 </root>

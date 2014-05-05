@@ -754,4 +754,7 @@ Help: Right click on any file format below to view its document, or</value>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="LevelLegacyMinimapMalformed" xml:space="preserve">
+    <value>The legacy minimap in this level is malformed! It will be ignored automatically.</value>
+  </data>
 </root>

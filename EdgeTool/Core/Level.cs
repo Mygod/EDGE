@@ -289,6 +289,20 @@ namespace Mygod.Edge.Tool
             if (Temp2 != temp)
                 Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, temp, Temp2, "unknown_ushort_2"));
             ushort width = reader.ReadUInt16(), length = reader.ReadUInt16();
+            var legacyMinimapValid = true;
+            if (LegacyMinimapSize.Width != width)
+            {
+                Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, width, LegacyMinimapSize.Width,
+                                                "unknown_ushort_3"));
+                legacyMinimapValid = false;
+            }
+            if (LegacyMinimapSize.Length != length)
+            {
+                Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, width, LegacyMinimapSize.Length,
+                                                "unknown_ushort_4"));
+                legacyMinimapValid = false;
+            }
+            if (!legacyMinimapValid) Warning.WriteLine(Localization.LevelLegacyMinimapMalformed);
             var tempByte = reader.ReadByte();
             if (tempByte != 10)
                 Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, temp, 10, "unknown_byte_1"));
@@ -299,7 +313,7 @@ namespace Mygod.Edge.Tool
             if (0 != temp)
                 Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, temp, 0, "unknown_ushort_6"));
             #endregion
-            LegacyMinimap = new Flat(reader, new Size2D(width, length));
+            LegacyMinimap = legacyMinimapValid ? new Flat(reader, LegacyMinimapSize) : new Flat(LegacyMinimapSize);
             CollisionMap = new Cube(reader, Size);
             SpawnPoint = new Point3D16(reader);
             Zoom = reader.ReadInt16();
@@ -464,7 +478,11 @@ namespace Mygod.Edge.Tool
         public ushort CTime { get; set; }
         public Size3D Size { get; set; }
         public ushort Temp1 { get { return (ushort) (Size.Width + Size.Length); } }
-        public ushort Temp2 { get { return (ushort) (Temp1 + Size.Height + Size.Height); } }
+        public ushort Temp2 { get { return (ushort)(Temp1 + Size.Height + Size.Height); } }
+        public Size2D LegacyMinimapSize
+        {
+            get { return new Size2D((ushort)((Temp1 + 9) / 10), (ushort)((Temp2 + 9) / 10)); }
+        }
 
         public Point3D16 SpawnPoint
         {
@@ -626,8 +644,7 @@ namespace Mygod.Edge.Tool
             Size.Write(writer);
             writer.Write(Temp1);
             writer.Write(Temp2);
-            writer.Write((ushort)LegacyMinimap.Width);
-            writer.Write((ushort)LegacyMinimap.Length);
+            LegacyMinimapSize.Write(writer);
             writer.Write((byte) 10);
             writer.Write((ushort) (Size.Length - 1));
             writer.Write((ushort) 0);
@@ -921,7 +938,7 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    public struct Size2D
+    public struct Size2D : IXSerializable
     {
         public Size2D(ushort width, ushort length)
         {
@@ -940,6 +957,12 @@ namespace Mygod.Edge.Tool
         public override string ToString()
         {
             return string.Format("{0}x{1}", Width, Length);
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write(Width);
+            writer.Write(Length);
         }
     }
     public struct Size3D : IXSerializable, IComparable, IComparable<Size3D>
@@ -1055,6 +1078,9 @@ namespace Mygod.Edge.Tool
             Length = length;
             Width = width;
             data = array == null ? new BitArray(GetBytes(width, length) << 3) : new BitArray(array);
+        }
+        public Flat(Size2D size, byte[] array = null) : this(size.Width, size.Length, array)
+        {
         }
         public Flat(BinaryReader reader, Size2D size)
             : this(size.Width, size.Length, reader.ReadBytes(size.FlatBytes))

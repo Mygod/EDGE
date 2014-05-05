@@ -1262,6 +1262,15 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
+        ///   查找类似 The legacy minimap in this level is malformed! It will be ignored automatically. 的本地化字符串。
+        /// </summary>
+        public static string LevelLegacyMinimapMalformed {
+            get {
+                return ResourceManager.GetString("LevelLegacyMinimapMalformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Music 的本地化字符串。
         /// </summary>
         public static string LevelMusic {
