@@ -62,6 +62,9 @@
                                   Click="RecordKeyEvent" />
                         <MenuItem Header="{x:Static local:Localization.ConvertMobileLevelsItem}"
                                   Click="ConvertMobiLevel" />
+                        <MenuItem Header="{x:Static local:Localization.CompileMobileVersionItem}"
+                                  Click="CompileMobileVersion"
+                                  IsEnabled="{Binding IsEnabled, ElementName=RunGameButton}" />
                         <Separator />
                         <MenuItem Header="{x:Static local:Localization.OpenSettingsIniEdgeItem}"
                                   Command="{StaticResource OpenSettingsIni}" CommandParameter="EDGE" />

@@ -268,6 +268,14 @@ namespace Mygod.Edge.Tool
         {
             Bumpers = new Bumpers(this);
         }
+        public Level(string name, Size3D size) : this()
+        {
+            Name = name;
+            CollisionMap = new Cube(Size = size);
+            LegacyMinimap = new Flat(LegacyMinimapSize);
+            ExitPoint = new Point3D16(0, 0, 1);
+            Buttons = new Buttons(this);
+        }
         private Level(BinaryReader reader) : this()
         {
             ID = reader.ReadInt32();
@@ -313,7 +321,12 @@ namespace Mygod.Edge.Tool
             if (0 != temp)
                 Warning.WriteLine(string.Format(Localization.LevelInvalidArgument, temp, 0, "unknown_ushort_6"));
             #endregion
-            LegacyMinimap = legacyMinimapValid ? new Flat(reader, LegacyMinimapSize) : new Flat(LegacyMinimapSize);
+            if (legacyMinimapValid) LegacyMinimap = new Flat(reader, LegacyMinimapSize);
+            else
+            {
+                LegacyMinimap = new Flat(LegacyMinimapSize);
+                reader.ReadBytes((width * length + 7) / 8);
+            }
             CollisionMap = new Cube(reader, Size);
             SpawnPoint = new Point3D16(reader);
             Zoom = reader.ReadInt16();
@@ -552,7 +565,7 @@ namespace Mygod.Edge.Tool
         private short zoom, value;
         private byte theme, musicJava, music;
 
-        public byte ModelTheme { get; private set; }
+        public byte ModelTheme { get; set; }
         public bool ValueIsAngle;
         public Flat LegacyMinimap;
         public Cube CollisionMap;
@@ -570,18 +583,19 @@ namespace Mygod.Edge.Tool
         [Obsolete]
         public XElementObjectList<MiniBlock> MiniBlocks = new XElementObjectList<MiniBlock>();
 
-        private static readonly string[] Musics =
-        {
-            "00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", "07_Dark",
-            "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", "13_Debrief", "14_Space",
-            "15_Voyage_geometrique", "16_Mzone", "17_R2", "18_Mystery_cube", "19_Duty", "20_PerfectCell", "21_fun",
-            "22_lol", "23_lostway", "24_wall_street"
-        },
-        MusicsJava =
-        {
-            "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", "05_test", "06_mysterycube",
-            "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
-        };
+        public static readonly string[]
+            Musics =
+            {
+                "00_Title", "01_Eternity", "02_Quiet", "03_Pad", "04_Jingle", "05_Tec", "06_Kakkoi", "07_Dark",
+                "08_Squadron", "09_8bits", "10_Pixel", "11_Jupiter", "12_Shame", "13_Debrief", "14_Space",
+                "15_Voyage_geometrique", "16_Mzone", "17_R2", "18_Mystery_cube", "19_Duty", "20_PerfectCell", "21_fun",
+                "22_lol", "23_lostway", "24_wall_street"
+            },
+            MusicsJava =
+            {
+                "00_menus", "01_braintonik", "02_cube_dance", "03_essai_2", "04_essai_01", "05_test", "06_mysterycube",
+                "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
+            };
 
         public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
         public string MusicJavaName
@@ -589,7 +603,7 @@ namespace Mygod.Edge.Tool
             get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; }
         }
 
-        public IEnumerable<string> Compile(string path)
+        public Level EasyCompile(string path)
         {
             FilePath = path;
             var level = (Level)MemberwiseClone();
@@ -611,6 +625,11 @@ namespace Mygod.Edge.Tool
                 }
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read))
             using (var writer = new BinaryWriter(stream)) level.Write(writer);
+            return level;
+        }
+        public IEnumerable<string> Compile(string path)
+        {
+            var level = EasyCompile(path);
             yield return path;
             if (ModelTheme <= 3) yield return new ModelGenerator(level, ModelTheme).Generate(path);
         }
@@ -707,7 +726,8 @@ namespace Mygod.Edge.Tool
 
     public sealed class MappingLevel : IComparable, IComparable<MappingLevel>
     {
-        public MappingLevel(LevelType type, int index, string fileName, int leaderboardID, string nameSfx)
+        public MappingLevel(LevelType type, int index, string fileName = null, int leaderboardID = 0,
+                            string nameSfx = null)
         {
             Type = type;
             Index = index;
@@ -717,7 +737,8 @@ namespace Mygod.Edge.Tool
         }
         public MappingLevel(LevelType type, int index, XElement element)
             : this(type, index, element.GetAttributeValue("filename"),
-                   element.GetAttributeValueWithDefault<int>("leaderboard_id"), element.GetAttributeValue("name_sfx"))
+                   element.GetAttributeValueWithDefault<int>("leaderboard_id"),
+                   element.GetAttributeValue("name_sfx"))
         {
         }
 
@@ -1185,6 +1206,11 @@ namespace Mygod.Edge.Tool
 
     public sealed class Cube : List<Flat>, IXSerializable
     {
+        public Cube(Size3D size)
+        {
+            Size = size;
+            for (var z = 0; z < size.Height; z++) Add(new Flat(size));
+        }
         public Cube(BinaryReader reader, Size3D size)
         {
             Size = size;

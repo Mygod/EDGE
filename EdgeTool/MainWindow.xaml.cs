@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.XPath;
 using Mygod.Edge.Tool.LibTwoTribes;
 using Mygod.Edge.Tool.LibTwoTribes.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -21,6 +23,7 @@ using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using Mygod.Net;
 using Mygod.Windows;
 using Mygod.Windows.Dialogs;
+using Mygod.Xml.Linq;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
@@ -44,8 +47,8 @@ namespace Mygod.Edge.Tool
             LevelList.ItemsSource = levels;
             GamePath.ItemsSource = Settings.RecentPaths;
             GamePath.Text = Settings.CurrentPath;
-            foreach (var name in ModelNames.Split(',').OrderBy(name => name)) ModelNameBox.Items.Add(name);
-            foreach (var name in AnimationNames.Split(',').OrderBy(name => name)) AnimationNameBox.Items.Add(name);
+            foreach (var name in ModelNames) ModelNameBox.Items.Add(name);
+            foreach (var name in AnimationNames) AnimationNameBox.Items.Add(name);
             if (!string.IsNullOrWhiteSpace(App.GamePath)) GamePath.Text = App.GamePath;
             Load(null, null);
             foreach (var edgemod in App.EdgeMods) InstallEdgeMod(edgemod);
@@ -60,9 +63,80 @@ namespace Mygod.Edge.Tool
             RefreshAchievements();
         }
 
-        private static readonly string
-            ModelNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry,cam_entry_target,cube_finish_shadow,cube_idle,cube_idle_shadow,cubeanimation_d_front,cubeanimation_e_middle,cubeanimation_full_d,cubeanimation_full_e,cubeanimation_full_g,cubeanimation_full_last_e,cubeanimation_g_hook,cubeanimation_last_e_bottom,cubeanimation_shadow,falling_platform,finish,holoswitch,menu_background,menu_background_shadow,menu_background_skybox,platform,platform_active,platform_active_small,platform_edges_active,platform_edges_active_small,platform_small,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini,skybox_1,skybox_2,skybox_3,skybox_4,switch,switch_done,switch_ghost,switch_ghost_done",
-            AnimationNames = "bumper_bottom,bumper_right,bumper_roof,cam_entry_target__loop,cam_entry__loop,cubeanimation_d_front,cubeanimation_d_front_shadow,cubeanimation_e_middle,cubeanimation_e_middle_shadow,cubeanimation_full_d,cubeanimation_full_d_shadow,cubeanimation_full_e,cubeanimation_full_e_shadow,cubeanimation_full_g,cubeanimation_full_g_shadow,cubeanimation_full_last_e,cubeanimation_full_last_e_shadow,cubeanimation_g_hook,cubeanimation_g_hook_shadow,cubeanimation_last_e_bottom,cubeanimation_last_e_bottom_shadow,cube_climbdown,cube_climbdown_shadow,cube_climbleft,cube_climbleft_shadow,cube_climbright,cube_climbright_shadow,cube_climbup,cube_climbup_shadow,cube_finish,cube_finish_shadow,cube_idle_shadow,cube_movedown,cube_movedown_shadow,cube_moveleft,cube_moveleft_shadow,cube_moveright,cube_moveright_shadow,cube_moveup,cube_moveup_shadow,menu_background,menu_background_shadow,prism,prism_finish,prism_shadow,shrinker_tobig,shrinker_tomini";
+        private static readonly string[]
+            ModelNames =
+            {
+                "bumper_bottom", "bumper_right", "bumper_roof", "cam_entry", "cam_entry_target", "cube_finish_shadow",
+                "cube_idle", "cube_idle_shadow", "cubeanimation_d_front", "cubeanimation_e_middle",
+                "cubeanimation_full_d", "cubeanimation_full_e", "cubeanimation_full_g", "cubeanimation_full_last_e",
+                "cubeanimation_g_hook", "cubeanimation_last_e_bottom", "cubeanimation_shadow", "falling_platform",
+                "finish", "holoswitch", "menu_background", "menu_background_shadow", "menu_background_skybox",
+                "platform", "platform_active", "platform_active_small", "platform_edges_active",
+                "platform_edges_active_small", "platform_small", "prism", "prism_finish", "prism_shadow",
+                "shrinker_tobig", "shrinker_tomini", "skybox_1", "skybox_2", "skybox_3", "skybox_4", "switch",
+                "switch_done", "switch_ghost", "switch_ghost_done"
+            },
+            AnimationNames =
+            {
+                "bumper_bottom", "bumper_right", "bumper_roof", "cam_entry_target__loop", "cam_entry__loop",
+                "cubeanimation_d_front", "cubeanimation_d_front_shadow", "cubeanimation_e_middle",
+                "cubeanimation_e_middle_shadow", "cubeanimation_full_d", "cubeanimation_full_d_shadow",
+                "cubeanimation_full_e", "cubeanimation_full_e_shadow", "cubeanimation_full_g",
+                "cubeanimation_full_g_shadow", "cubeanimation_full_last_e", "cubeanimation_full_last_e_shadow",
+                "cubeanimation_g_hook", "cubeanimation_g_hook_shadow", "cubeanimation_last_e_bottom",
+                "cubeanimation_last_e_bottom_shadow", "cube_climbdown", "cube_climbdown_shadow", "cube_climbleft",
+                "cube_climbleft_shadow", "cube_climbright", "cube_climbright_shadow", "cube_climbup",
+                "cube_climbup_shadow", "cube_finish", "cube_finish_shadow", "cube_idle_shadow", "cube_movedown",
+                "cube_movedown_shadow", "cube_moveleft", "cube_moveleft_shadow", "cube_moveright",
+                "cube_moveright_shadow", "cube_moveup", "cube_moveup_shadow", "menu_background",
+                "menu_background_shadow", "prism", "prism_finish", "prism_shadow", "shrinker_tobig", "shrinker_tomini"
+            },
+            MobileStandardLevels =
+            {
+                "level309", "level300", "level310", "level36", "level201", "level37", "level311", "level38", "level59",
+                "level301", "level40", "level43", "level206", "level312", "level44", "level42", "level315", "level45",
+                "level46", "level60", "level307", "level48", "level202", "level305", "level41", "level303", "level49",
+                "level302", "level204", "level304", "level52", "level308", "level50", "level306", "level51",
+                "level313", "level47", "level314", "level53", "level54", "level317", "level319", "level318",
+                "level222", "level221", "level220", "level400", "level401"
+            },
+            MobileBonusLevels =
+            {
+                "hangout_815", "hammer_810", "compost_805", "babylonian_817", "swirl_801", "density_806", "magic_811",
+                "cubism_808", "mystic_813", "indiana_804", "chunk_816", "goliath_812", "fourohfour_818", "gears_802",
+                "fireworks_800", "zias_850", "winners_820"
+            },
+            MobileStandardLevelSounds =
+            {
+                "1st_contact", "training", "playground", "pushing_stars", "bump", "city_rythm", "speedrun",
+                "milky_way", "8bit", "metro", "mini_me", "vertex", "equalizer", "peripherique", "time_machine",
+                "mind_the_gap", "edge_code", "edge_time", "chase", "landing", "chess", "switch_keep", "mecanic",
+                "higher", "squadron", "metronome", "orion", "try_again", "hypnozone", "beat", "star_castle", "sticker",
+                "sync_the_wall", "snap", "braintonic", "2nd_contact", "jungle_fever", "speedrun_2", "edge_master",
+                "cube_invaders", "starfield", "bonus", "extra_cube", "sliced", "earthquake", "vertigo", "push_me",
+                "perfect_cell"
+            },
+            MobileBonusLevelSounds =
+            {
+                "hangout", "hammer", "compost", "babylonian", "swirl", "density", "magic", "cubism", "mystic",
+                "indiana", "chunk", "goliath", "404", "gears", "fireworks", "zias", "winners"
+            },
+            MobileMusics =
+            {
+                "00_Title.mp3", "01_Eternity.mp3", "02_Quiet.mp3", "03_Pad.mp3", "04_Jingle.wav", "05_Tec.mp3",
+                "06_Kakkoi.mp3", "07_Dark.mp3", "08_Squadron.mp3", "09_8bits.mp3", "10_Pixel.mp3", "11_Jupiter.mp3",
+                "12_Shame.mp3", "13_Debrief.mp3", "14_Space.mp3", "15_Voyage_geometrique.mp3", "16_Mzone.mp3",
+                "17_R2.mp3", "18_Mystery_cube.mp3", "19_Duty.mp3", "20_perfect_cell_you_are_perfect_1.mp3",
+                "21_fun.mp3", "22_LOL.mp3", "23_lostway.mp3", "24_wall_street.mp3"
+            },
+            MobileSounds =
+            {
+                "bumper", "enlarger", "finish", "gameover", "hologram_loop", "hologram_on-off", "menu_back",
+                "menu_confirm", "menu_confirm_final", "menu_move", "pf", "pff_amorce", "pff_fall", "player_fall",
+                "player_step_0", "player_step_1", "player_step_2", "player_step_3", "player_step_4",
+                "player_step_mini_0", "player_step_mini_1", "player_step_mini_2", "player_step_mini_3",
+                "player_step_mini_4", "prism", "shrinker", "switch"
+            };
 
         private static void ShowInExplorer(string path)
         {
@@ -102,15 +176,21 @@ namespace Mygod.Edge.Tool
         private readonly ObservableCollection<Level> levels = new ObservableCollection<Level>();
         private Thread searcher;
 
-        private readonly CommonOpenFileDialog exeSelector = new CommonOpenFileDialog
-        {
-            Title = Localization.GameSelectorTitle, DefaultFileName = "edge.exe",
-            Filters = { new CommonFileDialogFilter(Localization.ExecutableFilter, "*.exe") }
-        },
-                                              outputSelector = new CommonOpenFileDialog
-        {
-            Title = Localization.OutputPathSelectorTitle, IsFolderPicker = true, AddToMostRecentlyUsedList = false
-        };
+        private readonly CommonOpenFileDialog
+            exeSelector = new CommonOpenFileDialog
+            {
+                Title = Localization.GameSelectorTitle, DefaultFileName = "edge.exe",
+                Filters = { new CommonFileDialogFilter(Localization.ExecutableFilter, "*.exe") }
+            },
+            outputSelector = new CommonOpenFileDialog
+            {
+                Title = Localization.OutputPathSelectorTitle, IsFolderPicker = true, AddToMostRecentlyUsedList = false
+            },
+            projectSelector = new CommonOpenFileDialog
+            {
+                Title = Localization.ProjectPathSelectorTitle,
+                Filters = { new CommonFileDialogFilter(Localization.ProjectFilter, "*.xml") }
+            };
 
         private static readonly CommonOpenFileDialog LevelSelector = new CommonOpenFileDialog
         {
@@ -251,6 +331,172 @@ namespace Mygod.Edge.Tool
             if (count > 0) TaskDialog.Show(window, Localization.Finished, Localization.ConversionFinished, 
                              string.Format(Localization.ConversionFinishedDetails, count), TaskDialogType.Information);
         }
+
+        private static readonly Lazy<Level> PlaceholderLevel = new Lazy<Level>(() =>
+            new Level("PLACEHOLDER", new Size3D(1, 1, 1)) { ModelTheme = 99, SpawnPoint = new Point3D16(0, 0, 1) });
+        private string sfxPath, ffmpeg, outputDir, orgDir;
+        private string SfxPath
+        {
+            get
+            {
+                if (sfxPath == null)
+                {
+                    sfxPath = Helper.GetRandomDirectory();
+                    Compiler.Compile(false, Edge.AudioDirectory, sfxPath);
+                }
+                return sfxPath;
+            }
+        }
+        private Regex keepRegex;
+        private bool KeepRegexCheck(string name)
+        {
+            return keepRegex != null && keepRegex.IsMatch(name);
+        }
+        private void CompileMobileVersion(object sender, RoutedEventArgs e)
+        {
+            if (projectSelector.ShowDialog(this) != CommonFileDialogResult.Ok) return;
+            if (dialog != null) dialog.Dispose();
+            dialog = new ProgressDialog
+            {
+                Text = Localization.CompileMobileVersionTitle, WindowTitle = Localization.CompileMobileVersionTitle,
+                Description = Localization.Preparing, ShowCancelButton = false, UseCompactPathsForDescription = true,
+                ProgressBarStyle = ProgressBarStyle.MarqueeProgressBar
+            };
+            dialog.DoWork += CompileMobileVersion;
+            dialog.RunWorkerCompleted += GenerateAndroidAssetsCompleted;
+            dialog.ShowDialog(this, projectSelector.FileName);
+        }
+
+        private static void Start(string path, string args = null)
+        {
+            Process.Start(new ProcessStartInfo(path, args)
+            {
+                UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = Path.GetDirectoryName(path)
+            }).WaitForExit();
+        }
+        private void Ffmpeg(string input, string output)
+        {
+            Start(ffmpeg, string.Format("-i \"{0}\" -f ogg \"{1}\" -y", input, output));
+        }
+        private void GenerateMobileLevelFiles(int count, IReadOnlyList<MappingLevel> levelPack,
+                                              IList<string> levelList, IList<string> levelSoundList)
+        {
+            for (var i = 0; i < count; ++i)
+            {
+                var name = levelList[i] + ".bin";
+                dialog.ReportProgress(0, null, name);
+                try
+                {
+                    string source, target = Path.Combine(outputDir, name);
+                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
+                    else
+                    {
+                        Level level;
+                        if (levelPack[i].FileName == null || !File.Exists(source =
+                            Path.Combine(Edge.LevelsDirectory, name = levelPack[i].FileName + ".bin")))
+                            level = PlaceholderLevel.Value;
+                        else
+                        {
+                            level = Level.CreateFromCompiled(source);
+                            level.SPlusTime *= 100;
+                            level.STime *= 100;
+                            level.ATime *= 100;
+                            level.BTime *= 100;
+                            level.CTime *= 100;
+                        }
+                        level.EasyCompile(target);
+                    }
+                    dialog.ReportProgress(0, null, name = levelSoundList[i] + ".caf");
+                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
+                    else
+                    {
+                        target = Path.Combine(outputDir, name);
+                        if (levelPack[i].NameSfx == null || !File.Exists(source =
+                            Path.Combine(SfxPath, "sfx", "levelsfx_" + levelPack[i].NameSfx + ".wav")))
+                            File.WriteAllBytes(target, CurrentApp.ReadResourceBytes("Resources/placeholder.caf"));
+                        else Ffmpeg(source, target);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception(name, exc);
+                }
+            }
+        }
+        private void CompileMobileVersion(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                var configDir = Path.GetDirectoryName(e.Argument.ToString());
+                outputDir = Path.Combine(configDir, "src", "assets");
+                orgDir = Path.Combine(configDir, "org");
+                ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
+                var root = XHelper.Load(e.Argument.ToString()).Root;
+                var regex = root.GetAttributeValue("keep");
+                keepRegex = regex == null ? null : new Regex(regex, RegexOptions.Compiled);
+                List<MappingLevel>
+                    levelPackA = new List<MappingLevel>(root.XPathSelectElements("levelPackA/level").Take(48)
+                        .Select((c, i) => new MappingLevel(LevelType.Standard, i, c))),
+                    levelPackB = new List<MappingLevel>(root.XPathSelectElements("levelPackB/level").Take(17)
+                        .Select((c, i) => new MappingLevel(LevelType.Bonus, i, c)));
+                while (levelPackA.Count < 48) levelPackA.Add(new MappingLevel(LevelType.Standard, levelPackA.Count));
+                while (levelPackB.Count < 17) levelPackB.Add(new MappingLevel(LevelType.Bonus, levelPackB.Count));
+                sfxPath = null;
+                GenerateMobileLevelFiles(48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
+                GenerateMobileLevelFiles(17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds);
+                dialog.ReportProgress(0, null, "cos.bin");
+                File.Copy(Path.Combine(KeepRegexCheck("cos.bin") ? orgDir : Edge.GameDirectory, "cos.bin"),
+                          Path.Combine(outputDir, "cos.bin"), true);
+                dialog.ReportProgress(0, null, "font.bin");
+                File.Copy(Path.Combine(KeepRegexCheck("font.bin") ? orgDir : Edge.GameDirectory, "font.bin"),
+                          Path.Combine(outputDir, "font.bin"), true);
+                for (var i = 0; i <= 24; ++i)
+                {
+                    dialog.ReportProgress(0, null, MobileMusics[i]);
+                    File.Copy(KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
+                                                 : Path.Combine(Edge.GameDirectory, "music", Level.Musics[i] + ".ogg"),
+                              Path.Combine(outputDir, MobileMusics[i]), true);
+                }
+                foreach (var sound in MobileSounds)
+                {
+                    string name = sound + ".caf", target = Path.Combine(outputDir, name);
+                    dialog.ReportProgress(0, null, name);
+                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
+                    else Ffmpeg(Path.Combine(SfxPath, "sfx", sound + ".wav"), target);
+                }
+                foreach (var spr in Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"), "*.spr"))
+                {
+                    var name = Path.GetFileName(spr);
+                    dialog.ReportProgress(0, null, name);
+                    File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name) : spr,
+                              Path.Combine(outputDir, name), true);
+                }
+                dialog.ReportProgress(0, null, Localization.AlmostThere);
+                Start(Path.Combine(configDir, "compile.bat"));
+                dialog.ReportProgress(0, null, Localization.Done);
+            }
+            catch (Exception exc)
+            {
+                e.Result = exc;
+            }
+        }
+        private void GenerateAndroidAssetsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (e.Result != null)
+                    TaskDialog.Show(this, Localization.Error, Localization.CompileMobileVersionFailed,
+                                    footerText: ((Exception) e.Result).GetMessage(), type: TaskDialogType.Error);
+            });
+            if (sfxPath == null) return;
+            try
+            {
+                Directory.Delete(sfxPath, true);
+            }
+            catch { }
+            sfxPath = null;
+        }
+
         private void CheckForUpdates(object sender, RoutedEventArgs e)
         {
             CheckForUpdates(this);
@@ -526,11 +772,11 @@ namespace Mygod.Edge.Tool
                 TaskDialog.Show(this, Localization.Information, Localization.EdgeModsFirstInstallHint,
                                 type: TaskDialogType.Information);
             }
+            if (dialog != null) dialog.Dispose();
             dialog = new ProgressDialog
             {
-                Description = Localization.InstallEdgeModsPreparing,
                 Text = Localization.InstallEdgeModsTitle, WindowTitle = Localization.InstallEdgeModsTitle,
-                ShowTimeRemaining = true, UseCompactPathsForDescription = true
+                Description = Localization.Preparing, ShowTimeRemaining = true, UseCompactPathsForDescription = true
             };
             dialog.DoWork += InstallEdgeMods;
             dialog.RunWorkerCompleted += InstallEdgeModsCompleted;

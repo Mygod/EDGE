@@ -401,21 +401,23 @@ namespace Mygod.Edge.Tool
                 }
                 if (cancelled) break;
             }
-            if (callback != null) callback(Localization.InstallEdgeModsAlmostThere);
+            if (callback != null) callback(Localization.AlmostThere);
             EndSfx(allModifiedFiles);
             allModifiedFiles.ExceptWith(ModifiedFiles);
             foreach (var oldFile in allModifiedFiles) RestoreCopy(oldFile);
             ModifiedFiles.Save();
-            if (callback != null) callback(Localization.InstallEdgeModsDone);
+            if (callback != null) callback(Localization.Done);
             return error.ToString();
         }
 
         private string sfxPath;
         public string BeginSfx()
         {
-            if (sfxPath != null) return sfxPath;
-            sfxPath = Helper.GetRandomDirectory();
-            Compiler.Compile(false, AudioDirectory, sfxPath);
+            if (sfxPath == null)
+            {
+                sfxPath = Helper.GetRandomDirectory();
+                Compiler.Compile(false, AudioDirectory, sfxPath);
+            }
             return sfxPath;
         }
         private void EndSfx(ICollection<string> allModifiedFiles)

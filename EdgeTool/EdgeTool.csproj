@@ -196,6 +196,7 @@
     <None Include="app.manifest" />
     <None Include="Mygod.cer" />
     <None Include="Mygod.pfx" />
+    <Resource Include="Resources\placeholder.caf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\EdgeBin.h" />

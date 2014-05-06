@@ -243,7 +243,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value>_Draw model tree</value>
   </data>
   <data name="EdgeLevelFilter" xml:space="preserve">
-    <value>EDGE level files (*.bin)</value>
+    <value>EDGE level files</value>
   </data>
   <data name="EdgeModAuthor" xml:space="preserve">
     <value>Author</value>
@@ -285,7 +285,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value>Error</value>
   </data>
   <data name="ExecutableFilter" xml:space="preserve">
-    <value>Executable files (*.exe)</value>
+    <value>Executable files</value>
   </data>
   <data name="ExitPoint" xml:space="preserve">
     <value>Exit Point</value>
@@ -527,7 +527,7 @@ Help: Right click on any file format below to view its document, or</value>
   <data name="StartDecompiledFileFailed" xml:space="preserve">
     <value>Unable to start the (de)compiled file.</value>
   </data>
-  <data name="InstallEdgeModsPreparing" xml:space="preserve">
+  <data name="Preparing" xml:space="preserve">
     <value>Preparing...</value>
   </data>
   <data name="InstallEdgeModsTitle" xml:space="preserve">
@@ -610,10 +610,10 @@ Help: Right click on any file format below to view its document, or</value>
   <data name="InstallEdgeMods" xml:space="preserve">
     <value>Install EdgeMods</value>
   </data>
-  <data name="InstallEdgeModsAlmostThere" xml:space="preserve">
+  <data name="AlmostThere" xml:space="preserve">
     <value>Almost there...</value>
   </data>
-  <data name="InstallEdgeModsDone" xml:space="preserve">
+  <data name="Done" xml:space="preserve">
     <value>Done.</value>
   </data>
   <data name="InstallEdgeModsFinished" xml:space="preserve">
@@ -650,7 +650,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value> (NOT EXISTS)</value>
   </data>
   <data name="PngFilter" xml:space="preserve">
-    <value>PNG Image (*.png)</value>
+    <value>PNG Image</value>
   </data>
   <data name="TriangleVertexCountError" xml:space="preserve">
     <value>One Triangle must have three Vertex child elements!</value>
@@ -756,5 +756,20 @@ Help: Right click on any file format below to view its document, or</value>
   </data>
   <data name="LevelLegacyMinimapMalformed" xml:space="preserve">
     <value>The legacy minimap in this level is malformed! It will be ignored automatically.</value>
+  </data>
+  <data name="ProjectFilter" xml:space="preserve">
+    <value>Project XML</value>
+  </data>
+  <data name="ProjectPathSelectorTitle" xml:space="preserve">
+    <value>Please select the project you would like to use</value>
+  </data>
+  <data name="CompileMobileVersionFailed" xml:space="preserve">
+    <value>Failed to compile mobile version.</value>
+  </data>
+  <data name="CompileMobileVersionItem" xml:space="preserve">
+    <value>Compile mobile _version...</value>
+  </data>
+  <data name="CompileMobileVersionTitle" xml:space="preserve">
+    <value>Compiling mobile version...</value>
   </data>
 </root>

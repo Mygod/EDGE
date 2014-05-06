@@ -125,6 +125,15 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
+        ///   查找类似 Almost there... 的本地化字符串。
+        /// </summary>
+        public static string AlmostThere {
+            get {
+                return ResourceManager.GetString("AlmostThere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 You can only apply the animation to one of the models and then view the model. Please pick a model and add it to model viewer in Draw model tree tab. 的本地化字符串。
         /// </summary>
         public static string ApplyAnimNoModelDescription {
@@ -386,6 +395,33 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
+        ///   查找类似 Failed to compile mobile version. 的本地化字符串。
+        /// </summary>
+        public static string CompileMobileVersionFailed {
+            get {
+                return ResourceManager.GetString("CompileMobileVersionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Compile mobile _version... 的本地化字符串。
+        /// </summary>
+        public static string CompileMobileVersionItem {
+            get {
+                return ResourceManager.GetString("CompileMobileVersionItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Compiling mobile version... 的本地化字符串。
+        /// </summary>
+        public static string CompileMobileVersionTitle {
+            get {
+                return ResourceManager.GetString("CompileMobileVersionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 (De)compile 的本地化字符串。
         /// </summary>
         public static string CompileTab {
@@ -549,6 +585,15 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
+        ///   查找类似 Done. 的本地化字符串。
+        /// </summary>
+        public static string Done {
+            get {
+                return ResourceManager.GetString("Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Draw animation tree 的本地化字符串。
         /// </summary>
         public static string DrawAnimTree {
@@ -603,7 +648,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   查找类似 EDGE level files (*.bin) 的本地化字符串。
+        ///   查找类似 EDGE level files 的本地化字符串。
         /// </summary>
         public static string EdgeLevelFilter {
             get {
@@ -821,7 +866,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   查找类似 Executable files (*.exe) 的本地化字符串。
+        ///   查找类似 Executable files 的本地化字符串。
         /// </summary>
         public static string ExecutableFilter {
             get {
@@ -1064,24 +1109,6 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   查找类似 Almost there... 的本地化字符串。
-        /// </summary>
-        public static string InstallEdgeModsAlmostThere {
-            get {
-                return ResourceManager.GetString("InstallEdgeModsAlmostThere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 Done. 的本地化字符串。
-        /// </summary>
-        public static string InstallEdgeModsDone {
-            get {
-                return ResourceManager.GetString("InstallEdgeModsDone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 Installation finished. 的本地化字符串。
         /// </summary>
         public static string InstallEdgeModsFinished {
@@ -1096,15 +1123,6 @@ namespace Mygod.Edge.Tool {
         public static string InstallEdgeModsFinishedError {
             get {
                 return ResourceManager.GetString("InstallEdgeModsFinishedError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 Preparing... 的本地化字符串。
-        /// </summary>
-        public static string InstallEdgeModsPreparing {
-            get {
-                return ResourceManager.GetString("InstallEdgeModsPreparing", resourceCulture);
             }
         }
         
@@ -1586,7 +1604,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   查找类似 PNG Image (*.png) 的本地化字符串。
+        ///   查找类似 PNG Image 的本地化字符串。
         /// </summary>
         public static string PngFilter {
             get {
@@ -1600,6 +1618,15 @@ namespace Mygod.Edge.Tool {
         public static string Points {
             get {
                 return ResourceManager.GetString("Points", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Preparing... 的本地化字符串。
+        /// </summary>
+        public static string Preparing {
+            get {
+                return ResourceManager.GetString("Preparing", resourceCulture);
             }
         }
         
@@ -1618,6 +1645,24 @@ namespace Mygod.Edge.Tool {
         public static string ProceedConfirm {
             get {
                 return ResourceManager.GetString("ProceedConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Project XML 的本地化字符串。
+        /// </summary>
+        public static string ProjectFilter {
+            get {
+                return ResourceManager.GetString("ProjectFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Please select the project you would like to use 的本地化字符串。
+        /// </summary>
+        public static string ProjectPathSelectorTitle {
+            get {
+                return ResourceManager.GetString("ProjectPathSelectorTitle", resourceCulture);
             }
         }
         

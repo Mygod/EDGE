@@ -57,7 +57,7 @@ namespace Mygod.Edge.Tool
 
         public static string ToCorrectPath(this string value)
         {
-            return value.Replace('\\', '/').Trim('/');
+            return value == null ? null : value.Replace('\\', '/').Trim('/');
         }
 
         private static readonly ILookup<int, Color> Lookup =
@@ -871,7 +871,7 @@ namespace Mygod.Edge.Tool
             foreach (var wavPath in Directory.EnumerateFiles(inputPath, "*.wav"))
             {
                 string name = Path.GetFileName(wavPath), id = Path.GetFileNameWithoutExtension(wavPath);
-                File.Copy(wavPath, Path.Combine(outputPath, name));
+                File.Copy(wavPath, Path.Combine(outputPath, name), true);
                 waves.AppendFormat(Wave, id, name);
                 sounds.AppendFormat(Sound, id, i);
                 cues.AppendFormat(Cue, id, i++);

@@ -296,7 +296,7 @@
     <value>绘制模型树</value>
   </data>
   <data name="EdgeLevelFilter" xml:space="preserve">
-    <value>EDGE 关卡文件 (*.bin)</value>
+    <value>EDGE 关卡文件</value>
   </data>
   <data name="EnableDebugModeBox" xml:space="preserve">
     <value>启用调试模式(_N)</value>
@@ -311,7 +311,7 @@
     <value>请输入模型名：（无需 .r_mdl 扩展名）</value>
   </data>
   <data name="ExecutableFilter" xml:space="preserve">
-    <value>可执行程序 (*.exe)</value>
+    <value>可执行程序</value>
   </data>
   <data name="LevelCriteria" xml:space="preserve">
     <value>标准</value>
@@ -637,10 +637,10 @@
   <data name="InstallEdgeMods" xml:space="preserve">
     <value>安装 EdgeMods</value>
   </data>
-  <data name="InstallEdgeModsAlmostThere" xml:space="preserve">
+  <data name="AlmostThere" xml:space="preserve">
     <value>即将完成……</value>
   </data>
-  <data name="InstallEdgeModsDone" xml:space="preserve">
+  <data name="Done" xml:space="preserve">
     <value>已完成。</value>
   </data>
   <data name="InstallEdgeModsFinished" xml:space="preserve">
@@ -649,8 +649,8 @@
   <data name="InstallEdgeModsFinishedError" xml:space="preserve">
     <value>但是出了一些问题，去看看详情吧。</value>
   </data>
-  <data name="InstallEdgeModsPreparing" xml:space="preserve">
-    <value>开始安装中……</value>
+  <data name="Preparing" xml:space="preserve">
+    <value>开始中……</value>
   </data>
   <data name="InstallEdgeModsTitle" xml:space="preserve">
     <value>安装 EdgeMod</value>
@@ -704,7 +704,7 @@
     <value> (不存在)</value>
   </data>
   <data name="PngFilter" xml:space="preserve">
-    <value>PNG 文件 (*.png)</value>
+    <value>PNG 文件</value>
   </data>
   <data name="SpawnPointOutOfRange" xml:space="preserve">
     <value>Level 元素：@SpawnPoint 的 Z 坐标小于 -20，关卡将会卡死在开始界面！</value>
@@ -753,5 +753,20 @@
   </data>
   <data name="LevelLegacyMinimapMalformed" xml:space="preserve">
     <value>此关卡的旧版小地图已损坏！其内容将被自动忽略！</value>
+  </data>
+  <data name="ProjectFilter" xml:space="preserve">
+    <value>工程 XML</value>
+  </data>
+  <data name="ProjectPathSelectorTitle" xml:space="preserve">
+    <value>请选择要使用的工程</value>
+  </data>
+  <data name="CompileMobileVersionFailed" xml:space="preserve">
+    <value>手机版编译失败。</value>
+  </data>
+  <data name="CompileMobileVersionItem" xml:space="preserve">
+    <value>编译手机版(_V)...</value>
+  </data>
+  <data name="CompileMobileVersionTitle" xml:space="preserve">
+    <value>编译手机版中……</value>
   </data>
 </root>
