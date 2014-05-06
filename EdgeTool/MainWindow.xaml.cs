@@ -334,7 +334,7 @@ namespace Mygod.Edge.Tool
 
         private static readonly Lazy<Level> PlaceholderLevel = new Lazy<Level>(() =>
             new Level("PLACEHOLDER", new Size3D(1, 1, 1)) { ModelTheme = 99, SpawnPoint = new Point3D16(0, 0, 1) });
-        private string sfxPath, ffmpeg, outputDir, orgDir;
+        private string sfxPath, configDir, ffmpeg, outputDir, orgDir;
         private string SfxPath
         {
             get
@@ -378,6 +378,13 @@ namespace Mygod.Edge.Tool
         {
             Start(ffmpeg, string.Format("-i \"{0}\" -f ogg \"{1}\" -y", input, output));
         }
+        private string FallbackPath(string path, bool isSfx = false)
+        {
+            var result = Path.Combine(configDir, path);
+            if (File.Exists(result)) return result;
+            result = Path.Combine(isSfx ? SfxPath : Edge.GameDirectory, path);
+            return File.Exists(result) ? result : null;
+        }
         private void GenerateMobileLevelFiles(int count, IReadOnlyList<MappingLevel> levelPack,
                                               IList<string> levelList, IList<string> levelSoundList)
         {
@@ -387,14 +394,13 @@ namespace Mygod.Edge.Tool
                 dialog.ReportProgress(0, null, name);
                 try
                 {
-                    string source, target = Path.Combine(outputDir, name);
+                    string target = Path.Combine(outputDir, name), source = levelPack[i].FileName == null ? null
+                        : FallbackPath(Path.Combine("levels", name = levelPack[i].FileName + ".bin"));
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
                     else
                     {
                         Level level;
-                        if (levelPack[i].FileName == null || !File.Exists(source =
-                            Path.Combine(Edge.LevelsDirectory, name = levelPack[i].FileName + ".bin")))
-                            level = PlaceholderLevel.Value;
+                        if (source == null) level = PlaceholderLevel.Value;
                         else
                         {
                             level = Level.CreateFromCompiled(source);
@@ -410,11 +416,11 @@ namespace Mygod.Edge.Tool
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
                     else
                     {
+                        source = levelPack[i].NameSfx == null ? null
+                            : FallbackPath(Path.Combine("sfx", "levelsfx_" + levelPack[i].NameSfx + ".wav"), true);
                         target = Path.Combine(outputDir, name);
-                        if (levelPack[i].NameSfx == null || !File.Exists(source =
-                            Path.Combine(SfxPath, "sfx", "levelsfx_" + levelPack[i].NameSfx + ".wav")))
-                            File.WriteAllBytes(target, CurrentApp.ReadResourceBytes("Resources/placeholder.caf"));
-                        else Ffmpeg(source, target);
+                        if (source != null) Ffmpeg(source, target);
+                        else File.WriteAllBytes(target, CurrentApp.ReadResourceBytes("Resources/placeholder.caf"));
                     }
                 }
                 catch (Exception exc)
@@ -427,7 +433,7 @@ namespace Mygod.Edge.Tool
         {
             try
             {
-                var configDir = Path.GetDirectoryName(e.Argument.ToString());
+                configDir = Path.GetDirectoryName(e.Argument.ToString());
                 outputDir = Path.Combine(configDir, "src", "assets");
                 orgDir = Path.Combine(configDir, "org");
                 ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
@@ -445,16 +451,16 @@ namespace Mygod.Edge.Tool
                 GenerateMobileLevelFiles(48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
                 GenerateMobileLevelFiles(17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds);
                 dialog.ReportProgress(0, null, "cos.bin");
-                File.Copy(Path.Combine(KeepRegexCheck("cos.bin") ? orgDir : Edge.GameDirectory, "cos.bin"),
+                File.Copy(KeepRegexCheck("cos.bin") ? Path.Combine(orgDir, "cos.bin") : FallbackPath("cos.bin"),
                           Path.Combine(outputDir, "cos.bin"), true);
                 dialog.ReportProgress(0, null, "font.bin");
-                File.Copy(Path.Combine(KeepRegexCheck("font.bin") ? orgDir : Edge.GameDirectory, "font.bin"),
+                File.Copy(KeepRegexCheck("font.bin") ? Path.Combine(orgDir, "font.bin") : FallbackPath("font.bin"),
                           Path.Combine(outputDir, "font.bin"), true);
                 for (var i = 0; i <= 24; ++i)
                 {
                     dialog.ReportProgress(0, null, MobileMusics[i]);
                     File.Copy(KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
-                                                 : Path.Combine(Edge.GameDirectory, "music", Level.Musics[i] + ".ogg"),
+                                                 : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
                               Path.Combine(outputDir, MobileMusics[i]), true);
                 }
                 foreach (var sound in MobileSounds)
@@ -462,14 +468,14 @@ namespace Mygod.Edge.Tool
                     string name = sound + ".caf", target = Path.Combine(outputDir, name);
                     dialog.ReportProgress(0, null, name);
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
-                    else Ffmpeg(Path.Combine(SfxPath, "sfx", sound + ".wav"), target);
+                    else Ffmpeg(FallbackPath(Path.Combine("sfx", sound + ".wav"), true), target);
                 }
-                foreach (var spr in Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"), "*.spr"))
+                foreach (var name in Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"),
+                                                              "*.spr").Select(Path.GetFileName))
                 {
-                    var name = Path.GetFileName(spr);
                     dialog.ReportProgress(0, null, name);
-                    File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name) : spr,
-                              Path.Combine(outputDir, name), true);
+                    File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name)
+                                  : FallbackPath(Path.Combine("sprites", name)), Path.Combine(outputDir, name), true);
                 }
                 dialog.ReportProgress(0, null, Localization.AlmostThere);
                 Start(Path.Combine(configDir, "compile.bat"));
