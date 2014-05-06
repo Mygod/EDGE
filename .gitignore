@@ -215,7 +215,7 @@ pip-log.txt
 .mr.developer.cfg
 
 #EDGE Compiled files
-*.bin
-*.eso
-*.ema
+mods/*.bin
+mods/*.eso
+mods/*.ema
 Outdated/

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <levelPackA>
+    <!-- Extended Levels x48 -->
+    <level filename="level537" name_sfx="ex_01_first_step" />
+    <level filename="level536" name_sfx="ex_02_climbing" />
+    <level filename="level538" name_sfx="ex_04_click" />
+    <level filename="level535_3D" name_sfx="ex_03_moving_walls" />
+    <level filename="level539" name_sfx="ex_05_black_robot" />
+    <level filename="level541_winter" name_sfx="ex_06_dark_cube" />
+    <level filename="level500" name_sfx="ex_07_roots" />
+    <level filename="level548" name_sfx="ex_08_flick" />
+    <level filename="level540" name_sfx="ex_09_lying_bridge" />
+    <!-- Android Extended Level 10 -->
+    <level filename="level556" name_sfx="minicube" />
+    <level filename="level511" name_sfx="ex_10_crateria" />
+    <!-- Android Extended Level 12 -->
+    <level filename="level555" name_sfx="furious_bot" />
+    <level filename="level512" name_sfx="ex_11_stratosphere" />
+    <!-- Android Extended Level 14 -->
+    <level filename="level557" name_sfx="vertical_way" />
+    <level filename="level519" name_sfx="ex_12_tiny_road" />
+    <level filename="level510" name_sfx="ex_13_cloudy_way" />
+    <level filename="level526" name_sfx="ex_14_walled_up_race" />
+    <level filename="level508" name_sfx="ex_15_sugar_ground" />
+    <!-- Android Extended Level 19 -->
+    <level filename="level558" name_sfx="cargo" />
+    <level filename="level546" name_sfx="ex_16_dark_edge_time" />
+    <level filename="level507" name_sfx="ex_17_trench" />
+    <level filename="level524" name_sfx="ex_18_paper_wall" />
+    <level filename="level516" name_sfx="ex_19_claustrophobia" />
+    <level filename="level553" name_sfx="ex_20_electric_way" />
+    <level filename="level509" name_sfx="ex_21_impulse_maze" />
+    <level filename="level523" name_sfx="ex_22_far" />
+    <level filename="level545" name_sfx="ex_23_deadly_race" />
+    <level filename="level522" name_sfx="ex_24_dont_click" />
+    <level filename="level518" name_sfx="ex_25_white_spring" />
+    <level filename="level533" name_sfx="ex_26_hurry" />
+    <level filename="level528" name_sfx="ex_27_blind" />
+    <level filename="level542" name_sfx="ex_28_wire" />
+    <level filename="level521" name_sfx="ex_29_hyperphase" />
+    <level filename="level532" name_sfx="ex_30_star_factory" />
+    <level filename="level514" name_sfx="ex_31_star_dust" />
+    <level filename="level531" name_sfx="ex_32_destructuring" />
+    <level filename="level520" name_sfx="ex_33_black_hole" />
+    <level filename="level600" name_sfx="ex_34_robot_sport" />
+    <level filename="level525" name_sfx="ex_35_cube_fall" />
+    <level filename="level517" name_sfx="ex_36_galaxy_rail" />
+    <level filename="level544" name_sfx="ex_37_voodoo_dance" />
+    <level filename="level530" name_sfx="ex_38_highest_flag" />
+    <level filename="level515" name_sfx="ex_39_geometric_snake" />
+    <level filename="level527" name_sfx="ex_40_rodeo" />
+    <level filename="level547" name_sfx="ex_41_final_clash" />
+    <level filename="level534" name_sfx="ex_42_pushy" />
+    <level filename="level551" name_sfx="ex_43_arcsector" />
+    <level filename="level550" name_sfx="ex_44_timorg" />
+  </levelPackA>
+</project>
