@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project preset="ios">
+  <levelPackA>
+    <!-- Android Extended Bonus Levels x15 -->
+    <level filename="level574" leaderboard_id="70574" name_sfx="crystal_mine" />
+    <level filename="level570" leaderboard_id="70570" name_sfx="remember" />
+    <level filename="level572" leaderboard_id="70572" name_sfx="zero" />
+    <level filename="level560" leaderboard_id="70560" name_sfx="the_wall" />
+    <level filename="level563" leaderboard_id="70563" name_sfx="rush" />
+    <level filename="level564" leaderboard_id="70564" name_sfx="cubing_machine" />
+    <level filename="level561" leaderboard_id="70561" name_sfx="the_wall_2" />
+    <level filename="level567" leaderboard_id="70567" name_sfx="black_way" />
+    <level filename="level568" leaderboard_id="70568" name_sfx="curious_land" />
+    <level filename="level562" leaderboard_id="70562" name_sfx="the_wall_3" />
+    <level filename="level575" leaderboard_id="70575" name_sfx="little_seed" />
+    <level filename="level569" leaderboard_id="70569" name_sfx="space_noise" />
+    <level filename="level571" leaderboard_id="70571" name_sfx="magic_maze" />
+    <level filename="level566" leaderboard_id="70566" name_sfx="piano" />
+    <level filename="level573" leaderboard_id="70573" name_sfx="star_heart" />
+    <!-- AWESOME PIRATES SPECIAL OFFER! x1 -->
+    <level filename="level554" leaderboard_id="70554" name_sfx="path_of_piracy" />
+    <!-- Hidden Levels x4 -->
+    <level filename="islands_809" leaderboard_id="46018" name_sfx="islands" />
+    <level filename="scientist_803" leaderboard_id="46020" name_sfx="scientist" />
+    <level filename="switchboard_807" leaderboard_id="46022" name_sfx="switchboard" />
+    <level filename="tide_814" leaderboard_id="46023" name_sfx="tide" />
+  </levelPackA>
+</project>
