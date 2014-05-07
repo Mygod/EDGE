@@ -29,6 +29,8 @@ using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
 using ToolTipIcon = System.Windows.Forms.ToolTipIcon;
 
+#pragma warning disable 665
+
 namespace Mygod.Edge.Tool
 {
     public sealed partial class MainWindow
@@ -335,6 +337,7 @@ namespace Mygod.Edge.Tool
         private static readonly Lazy<Level> PlaceholderLevel = new Lazy<Level>(() =>
             new Level("PLACEHOLDER", new Size3D(1, 1, 1)) { ModelTheme = 99, SpawnPoint = new Point3D16(0, 0, 1) });
         private string sfxPath, configDir, ffmpeg, outputDir, orgDir;
+        private bool ios;
         private string SfxPath
         {
             get
@@ -376,7 +379,7 @@ namespace Mygod.Edge.Tool
         }
         private void Ffmpeg(string input, string output)
         {
-            Start(ffmpeg, string.Format("-i \"{0}\" -f ogg \"{1}\" -y", input, output));
+            Start(ffmpeg, string.Format("-i \"{0}\"{2} \"{1}\" -y", input, output, ios ? string.Empty : " -f ogg"));
         }
         private string FallbackPath(string path, bool isSfx = false)
         {
@@ -434,10 +437,11 @@ namespace Mygod.Edge.Tool
             try
             {
                 configDir = Path.GetDirectoryName(e.Argument.ToString());
-                outputDir = Path.Combine(configDir, "src", "assets");
                 orgDir = Path.Combine(configDir, "org");
                 ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
                 var root = XHelper.Load(e.Argument.ToString()).Root;
+                outputDir = Path.Combine(configDir, (ios = root.GetAttributeValue("preset") == "ios")
+                                                         ? @"Payload\Edge.app" : @"src\assets");
                 var regex = root.GetAttributeValue("keep");
                 keepRegex = regex == null ? null : new Regex(regex, RegexOptions.Compiled);
                 List<MappingLevel>
@@ -459,9 +463,11 @@ namespace Mygod.Edge.Tool
                 for (var i = 0; i <= 24; ++i)
                 {
                     dialog.ReportProgress(0, null, MobileMusics[i]);
-                    File.Copy(KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
+                    string source = KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
                                                  : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
-                              Path.Combine(outputDir, MobileMusics[i]), true);
+                           target = Path.Combine(outputDir, MobileMusics[i]);
+                    if (ios) Ffmpeg(source, target);
+                    else File.Copy(source, target, true);
                 }
                 foreach (var sound in MobileSounds)
                 {
