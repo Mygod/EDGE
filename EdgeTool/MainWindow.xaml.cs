@@ -125,11 +125,11 @@ namespace Mygod.Edge.Tool
             },
             MobileMusics =
             {
-                "00_Title.mp3", "01_Eternity.mp3", "02_Quiet.mp3", "03_Pad.mp3", "04_Jingle.wav", "05_Tec.mp3",
-                "06_Kakkoi.mp3", "07_Dark.mp3", "08_Squadron.mp3", "09_8bits.mp3", "10_Pixel.mp3", "11_Jupiter.mp3",
-                "12_Shame.mp3", "13_Debrief.mp3", "14_Space.mp3", "15_Voyage_geometrique.mp3", "16_Mzone.mp3",
-                "17_R2.mp3", "18_Mystery_cube.mp3", "19_Duty.mp3", "20_perfect_cell_you_are_perfect_1.mp3",
-                "21_fun.mp3", "22_LOL.mp3", "23_lostway.mp3", "24_wall_street.mp3"
+                "00_Title.mp3", "01_Eternity.mp3", "02_Quiet.mp3", "03_Pad.mp3", null, "05_Tec.mp3", "06_Kakkoi.mp3",
+                "07_Dark.mp3", "08_Squadron.mp3", "09_8bits.mp3", "10_Pixel.mp3", "11_Jupiter.mp3", "12_Shame.mp3",
+                "13_Debrief.mp3", "14_Space.mp3", "15_Voyage_geometrique.mp3", "16_Mzone.mp3", "17_R2.mp3",
+                "18_Mystery_cube.mp3", "19_Duty.mp3", "20_perfect_cell_you_are_perfect_1.mp3", "21_fun.mp3",
+                "22_LOL.mp3", "23_lostway.mp3", "24_wall_street.mp3"
             },
             MobileSounds =
             {
@@ -462,6 +462,7 @@ namespace Mygod.Edge.Tool
                           Path.Combine(outputDir, "font.bin"), true);
                 for (var i = 0; i <= 24; ++i)
                 {
+                    if (MobileMusics[i] == null) continue;
                     dialog.ReportProgress(0, null, MobileMusics[i]);
                     string source = KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
                                                  : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
