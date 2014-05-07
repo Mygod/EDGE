@@ -1,2 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project preset="ios" keep="." />
+<project preset="ios">
+  <levelpackA>
+    <!-- Standard levels -->
+    <level filename="level309_winter" leaderboard_id="44875" name_sfx="1st_contact" />
+    <level filename="level300" leaderboard_id="44881" name_sfx="training" />
+    <level filename="level310" leaderboard_id="44878" name_sfx="playground" />
+    <level filename="level36" leaderboard_id="44906" name_sfx="pushing_stars" />
+    <level filename="level201" leaderboard_id="44907" name_sfx="bump" />
+    <level filename="level37" leaderboard_id="44908" name_sfx="city_rythm" />
+    <level filename="level311" leaderboard_id="44909" name_sfx="speedrun" />
+    <level filename="level38" leaderboard_id="44877" name_sfx="milky_way" />
+    <level filename="level59" leaderboard_id="44910" name_sfx="8bit" />
+    <level filename="level301" leaderboard_id="44911" name_sfx="metro" />
+    <level filename="level40" leaderboard_id="44912" name_sfx="mini_me" />
+    <level filename="level43" leaderboard_id="44913" name_sfx="vertex" />
+    <level filename="level206" leaderboard_id="44914" name_sfx="equalizer" />
+    <level filename="level312" leaderboard_id="44879" name_sfx="peripherique" />
+    <level filename="level44" leaderboard_id="44880" name_sfx="time_machine" />
+    <level filename="level42" leaderboard_id="44915" name_sfx="mind_the_gap" />
+    <level filename="level315" leaderboard_id="44916" name_sfx="edge_code" />
+    <level filename="level45" leaderboard_id="44917" name_sfx="edge_time" />
+    <level filename="level46" leaderboard_id="44918" name_sfx="chase" />
+    <level filename="level60" leaderboard_id="44919" name_sfx="landing" />
+    <level filename="level307" leaderboard_id="44920" name_sfx="chess" />
+    <level filename="level48" leaderboard_id="44921" name_sfx="switch_keep" />
+    <level filename="level202" leaderboard_id="44922" name_sfx="mecanic" />
+    <level filename="level305" leaderboard_id="44923" name_sfx="higher" />
+    <level filename="level41" leaderboard_id="44924" name_sfx="squadron" />
+    <level filename="level303" leaderboard_id="44925" name_sfx="metronome" />
+    <level filename="level49" leaderboard_id="44926" name_sfx="orion" />
+    <level filename="level302" leaderboard_id="44927" name_sfx="try_again" />
+    <level filename="level204" leaderboard_id="44928" name_sfx="hypnozone" />
+    <level filename="level304" leaderboard_id="44929" name_sfx="beat" />
+    <level filename="level52" leaderboard_id="44930" name_sfx="star_castle" />
+    <level filename="level308" leaderboard_id="44931" name_sfx="sticker" />
+    <level filename="level50" leaderboard_id="44932" name_sfx="sync_the_wall" />
+    <level filename="level306" leaderboard_id="44933" name_sfx="snap" />
+    <level filename="level51" leaderboard_id="44934" name_sfx="braintonic" />
+    <level filename="level313" leaderboard_id="44935" name_sfx="2nd_contact" />
+    <level filename="level47" leaderboard_id="44936" name_sfx="jungle_fever" />
+    <level filename="level314" leaderboard_id="44937" name_sfx="speedrun_2" />
+    <level filename="level53" leaderboard_id="44938" name_sfx="edge_master" />
+    <level filename="level54" leaderboard_id="44939" name_sfx="cube_invaders" />
+    <level filename="level317" leaderboard_id="44940" name_sfx="starfield" />
+    <level filename="level319" leaderboard_id="44941" name_sfx="bonus" />
+    <level filename="level318" leaderboard_id="44942" name_sfx="extra_cube" />
+    <level filename="level222" leaderboard_id="44943" name_sfx="sliced" />
+    <level filename="level221" leaderboard_id="44944" name_sfx="earthquake" />
+    <level filename="level220" leaderboard_id="44945" name_sfx="vertigo" />
+    <level filename="level400" leaderboard_id="44946" name_sfx="push_me" />
+    <level filename="level401" leaderboard_id="44947" name_sfx="perfect_cell" />
+  </levelpackA>
+  <levelpackB>
+    <level filename="hangout_815_winter" leaderboard_id="46329" name_sfx="hangout" />
+    <level filename="hammer_810" leaderboard_id="44957" name_sfx="hammer" />
+    <level filename="compost_805" leaderboard_id="44952" name_sfx="compost" />
+    <level filename="babylonian_817" leaderboard_id="46331" name_sfx="babylonian" />
+    <level filename="swirl_801" leaderboard_id="44948" name_sfx="swirl" />
+    <level filename="density_806" leaderboard_id="44953" name_sfx="density" />
+    <level filename="magic_811" leaderboard_id="46332" name_sfx="magic" />
+    <level filename="cubism_808" leaderboard_id="44955" name_sfx="cubism" />
+    <level filename="mystic_813" leaderboard_id="45472" name_sfx="mystic" />
+    <level filename="indiana_804" leaderboard_id="44951" name_sfx="indiana" />
+    <level filename="chunk_816" leaderboard_id="47383" name_sfx="chunk" />
+    <level filename="goliath_812" leaderboard_id="47385" name_sfx="goliath" />
+    <level filename="fourohfour_818" leaderboard_id="47387" name_sfx="404" />
+    <level filename="gears_802" leaderboard_id="47389" name_sfx="gears" />
+    <level filename="fireworks_800" leaderboard_id="47391" name_sfx="fireworks" />
+    <level filename="winners_820" leaderboard_id="53400" name_sfx="winners" />
+    <level filename="zias_850" leaderboard_id="91709" name_sfx="zias" />
+  </levelpackB>
+</project>
