@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-  <levelPackA>
+  <levelpackA>
     <!-- Android Extended Bonus Levels x15 -->
     <level filename="level574" leaderboard_id="70574" name_sfx="crystal_mine" />
     <level filename="level570" leaderboard_id="70570" name_sfx="remember" />
@@ -24,5 +24,5 @@
     <level filename="scientist_803" leaderboard_id="46020" name_sfx="scientist" />
     <level filename="switchboard_807" leaderboard_id="46022" name_sfx="switchboard" />
     <level filename="tide_814" leaderboard_id="46023" name_sfx="tide" />
-  </levelPackA>
+  </levelpackA>
 </project>

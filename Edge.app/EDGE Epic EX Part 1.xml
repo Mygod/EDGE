@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project preset="ios">
-  <levelPackA>
+  <levelpackA>
     <!-- Extended Levels x48 -->
     <level filename="level537" name_sfx="ex_01_first_step" />
     <level filename="level536" name_sfx="ex_02_climbing" />
@@ -54,5 +54,5 @@
     <level filename="level534" name_sfx="ex_42_pushy" />
     <level filename="level551" name_sfx="ex_43_arcsector" />
     <level filename="level550" name_sfx="ex_44_timorg" />
-  </levelPackA>
+  </levelpackA>
 </project>

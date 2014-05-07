@@ -445,9 +445,9 @@ namespace Mygod.Edge.Tool
                 var regex = root.GetAttributeValue("keep");
                 keepRegex = regex == null ? null : new Regex(regex, RegexOptions.Compiled);
                 List<MappingLevel>
-                    levelPackA = new List<MappingLevel>(root.XPathSelectElements("levelPackA/level").Take(48)
+                    levelPackA = new List<MappingLevel>(root.XPathSelectElements("levelpackA/level").Take(48)
                         .Select((c, i) => new MappingLevel(LevelType.Standard, i, c))),
-                    levelPackB = new List<MappingLevel>(root.XPathSelectElements("levelPackB/level").Take(17)
+                    levelPackB = new List<MappingLevel>(root.XPathSelectElements("levelpackB/level").Take(17)
                         .Select((c, i) => new MappingLevel(LevelType.Bonus, i, c)));
                 while (levelPackA.Count < 48) levelPackA.Add(new MappingLevel(LevelType.Standard, levelPackA.Count));
                 while (levelPackB.Count < 17) levelPackB.Add(new MappingLevel(LevelType.Bonus, levelPackB.Count));
