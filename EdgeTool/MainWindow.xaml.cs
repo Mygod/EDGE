@@ -351,6 +351,7 @@ namespace Mygod.Edge.Tool
             }
         }
         private Regex keepRegex;
+        private static readonly Regex VersionMatcher = new Regex("(?<=<integer tag=\"version\">)\\d+(?=<\\/integer>)");
         private bool KeepRegexCheck(string name)
         {
             return keepRegex != null && keepRegex.IsMatch(name);
@@ -377,9 +378,10 @@ namespace Mygod.Edge.Tool
                 UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = Path.GetDirectoryName(path)
             }).WaitForExit();
         }
-        private void Ffmpeg(string input, string output)
+        private void Ffmpeg(string input, string output, bool caf = true)
         {
-            Start(ffmpeg, string.Format("-i \"{0}\"{2} \"{1}\" -y", input, output, ios ? string.Empty : " -f ogg"));
+            Start(ffmpeg, string.Format("-i \"{0}\"{2} \"{1}\" -y", input, output,
+                                        ios ? caf ? " -acodec adpcm_ima_qt" : string.Empty : " -f ogg"));
         }
         private string FallbackPath(string path, bool isSfx = false)
         {
@@ -389,7 +391,7 @@ namespace Mygod.Edge.Tool
             return File.Exists(result) ? result : null;
         }
         private void GenerateMobileLevelFiles(int count, IReadOnlyList<MappingLevel> levelPack,
-                                              IList<string> levelList, IList<string> levelSoundList)
+                                              IList<string> levelList, IList<string> levelSoundList, bool easy = false)
         {
             for (var i = 0; i < count; ++i)
             {
@@ -402,18 +404,18 @@ namespace Mygod.Edge.Tool
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
                     else
                     {
-                        Level level;
-                        if (source == null) level = PlaceholderLevel.Value;
+                        if (source == null) PlaceholderLevel.Value.EasyCompile(target);
+                        else if (easy) File.Copy(source, target, true);
                         else
                         {
-                            level = Level.CreateFromCompiled(source);
+                            var level = Level.CreateFromCompiled(source);
                             level.SPlusTime *= 100;
                             level.STime *= 100;
                             level.ATime *= 100;
                             level.BTime *= 100;
                             level.CTime *= 100;
+                            level.EasyCompile(target);
                         }
-                        level.EasyCompile(target);
                     }
                     dialog.ReportProgress(0, null, name = levelSoundList[i] + ".caf");
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
@@ -441,7 +443,7 @@ namespace Mygod.Edge.Tool
                 ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
                 var root = XHelper.Load(e.Argument.ToString()).Root;
                 outputDir = Path.Combine(configDir, (ios = root.GetAttributeValue("preset") == "ios")
-                                                         ? @"Payload\Edge.app" : @"src\assets");
+                                                         ? @"Payload\EDGE Epic.app" : @"src\assets");
                 var regex = root.GetAttributeValue("keep");
                 keepRegex = regex == null ? null : new Regex(regex, RegexOptions.Compiled);
                 List<MappingLevel>
@@ -453,7 +455,7 @@ namespace Mygod.Edge.Tool
                 while (levelPackB.Count < 17) levelPackB.Add(new MappingLevel(LevelType.Bonus, levelPackB.Count));
                 sfxPath = null;
                 GenerateMobileLevelFiles(48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
-                GenerateMobileLevelFiles(17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds);
+                GenerateMobileLevelFiles(17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds, true);
                 dialog.ReportProgress(0, null, "cos.bin");
                 File.Copy(KeepRegexCheck("cos.bin") ? Path.Combine(orgDir, "cos.bin") : FallbackPath("cos.bin"),
                           Path.Combine(outputDir, "cos.bin"), true);
@@ -467,7 +469,7 @@ namespace Mygod.Edge.Tool
                     string source = KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
                                                  : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
                            target = Path.Combine(outputDir, MobileMusics[i]);
-                    if (ios) Ffmpeg(source, target);
+                    if (ios) Ffmpeg(source, target, false);
                     else File.Copy(source, target, true);
                 }
                 foreach (var sound in MobileSounds)
@@ -483,6 +485,13 @@ namespace Mygod.Edge.Tool
                     dialog.ReportProgress(0, null, name);
                     File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name)
                                   : FallbackPath(Path.Combine("sprites", name)), Path.Combine(outputDir, name), true);
+                }
+                if (ios)
+                {
+                    dialog.ReportProgress(0, null, "iTunesMetadata.plist");
+                    var target = Path.Combine(configDir, "iTunesMetadata.plist");
+                    File.WriteAllText(target, VersionMatcher.Replace(File.ReadAllText(target),
+                                      m => (int.Parse(m.Value) + 1).ToString(CultureInfo.InvariantCulture)));
                 }
                 dialog.ReportProgress(0, null, Localization.AlmostThere);
                 Start(Path.Combine(configDir, "compile.bat"));
