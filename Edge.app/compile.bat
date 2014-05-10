@@ -1,1 +1,0 @@
-@7za a -tzip EDGE_Epic.ipk Payload iTunesArtwork iTunesMetadata.plist
