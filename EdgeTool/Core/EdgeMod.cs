@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -28,7 +27,7 @@ namespace Mygod.Edge.Tool
             var i = 0;
             using (var extractor = new SevenZipExtractor(path))
             {
-                FilesCount = extractor.FilesCount;
+                FilesCount = (int) extractor.FilesCount;
                 foreach (var fileName in extractor.ArchiveFileNames)
                 {
                     switch (fileName.ToLowerInvariant())
@@ -120,7 +119,7 @@ namespace Mygod.Edge.Tool
         private const string XslHead = "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n  <xsl:template match=\"* | comment()\">\r\n    <xsl:copy>\r\n      <xsl:copy-of select=\"@*\" />\r\n      <xsl:apply-templates />\r\n    </xsl:copy>\r\n  </xsl:template>\r\n  <xsl:template match=\"/levels/extended\">\r\n    <xsl:element name=\"{name()}\">\r\n      <xsl:for-each select=\"/levels/extended/@*\">\r\n        <xsl:attribute name=\"{name()}\">\r\n          <xsl:value-of select=\".\" />\r\n        </xsl:attribute>\r\n      </xsl:for-each>\r\n      <xsl:attribute name=\"special_locked_level_count\">0</xsl:attribute>\r\n      <xsl:apply-templates />\r\n      <xsl:text>";
 
         private readonly Edge parent;
-        public readonly uint FilesCount;
+        public readonly int FilesCount;
         public readonly string FilePath, ID, Description;
         public readonly Version MinEngineVersion, MaxEngineVersion;
         public readonly EdgeModType Type;
@@ -359,7 +358,7 @@ namespace Mygod.Edge.Tool
             ModifiedFiles.Clear();
             ModifiedFiles.Save();
         }
-        public string Install(ProgressCallback callback = null, DoWorkEventArgs e = null)
+        public string Install(ProgressCallback callback, ref bool cancelled)
         {
             var allModifiedFiles = new HashSet<string>(ModifiedFiles);
             ModifiedFiles.Clear();
@@ -370,7 +369,6 @@ namespace Mygod.Edge.Tool
                 allModifiedFiles.Remove(file);
                 RestoreCopy(file);
             }
-            var cancelled = false;
             foreach (var group in EdgeMods.Where(edgeMod => edgeMod.Enabled).GroupBy(edgeMod => edgeMod.Type)
                                           .OrderByDescending(group => group.Key).Select(group => group.ToList()))
             {
@@ -390,11 +388,7 @@ namespace Mygod.Edge.Tool
                 var result = sorter.Sort();
                 for (var i = 0; i < group.Count; i++)
                 {
-                    if (e != null && e.Cancel)
-                    {
-                        cancelled = true;
-                        break;
-                    }
+                    if (cancelled) break;
                     if (result[i] < 0)
                         error.AppendLine(string.Format(Localization.EdgeModErrorDependenciesLoop, group[i].ID));
                     else group[i].Install(allModifiedFiles, error, conflicts, callback);

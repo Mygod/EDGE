@@ -9,6 +9,9 @@
         <CommandBinding Command="{StaticResource OpenSettingsIni}"
                         Executed="OpenSettingsIni" CanExecute="SettingsIniCanOpen" />
     </m:GlassWindow.CommandBindings>
+    <m:GlassWindow.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </m:GlassWindow.TaskbarItemInfo>
     <Grid>
         <Grid.Resources>
             <local:AchievementStatusConverter x:Key="AchievementStatus" />

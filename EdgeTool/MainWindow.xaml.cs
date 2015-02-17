@@ -9,12 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shell;
 using System.Xml.XPath;
 using Mygod.Edge.Tool.LibTwoTribes;
 using Mygod.Edge.Tool.LibTwoTribes.Util;
@@ -22,7 +24,6 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using Mygod.Net;
 using Mygod.Windows;
-using Mygod.Windows.Dialogs;
 using Mygod.Xml.Linq;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
@@ -270,7 +271,7 @@ namespace Mygod.Edge.Tool
                 }
         }
 
-        private void RunGame(object sender, EventArgs e)
+        private void RunGame(object sender = null, EventArgs e = null)
         {
             if (Edge == null || (isDirty && TaskDialog.Show(this, Localization.Ask, Localization.ProceedConfirm,
                 Localization.EdgeModsChangesNotAppliedMessage, TaskDialogType.OKCancelQuestion)
@@ -360,15 +361,16 @@ namespace Mygod.Edge.Tool
         {
             if (projectSelector.ShowDialog(this) != CommonFileDialogResult.Ok) return;
             if (dialog != null) dialog.Dispose();
-            dialog = new ProgressDialog
+            dialog = new TaskDialog
             {
-                Text = Localization.CompileMobileVersionTitle, WindowTitle = Localization.CompileMobileVersionTitle,
-                Description = Localization.Preparing, ShowCancelButton = false, UseCompactPathsForDescription = true,
-                ProgressBarStyle = ProgressBarStyle.MarqueeProgressBar
+                ProgressBar = new TaskDialogProgressBar(), StandardButtons = TaskDialogStandardButtons.Cancel,
+                OwnerWindowHandle = WindowHandle, InstructionText = Localization.CompileMobileVersionTitle,
+                Caption = Localization.CompileMobileVersionTitle, Text = Localization.Preparing
             };
-            dialog.DoWork += CompileMobileVersion;
-            dialog.RunWorkerCompleted += GenerateAndroidAssetsCompleted;
-            dialog.ShowDialog(this, projectSelector.FileName);
+            cancelled = false;
+            new Thread(CompileMobileVersion).Start(projectSelector.FileName);
+            var result = dialog.Show();
+            if (result == TaskDialogResult.Cancel || result == TaskDialogResult.Close) cancelled = true;
         }
 
         private static void Start(string path, string args = null)
@@ -390,13 +392,31 @@ namespace Mygod.Edge.Tool
             result = Path.Combine(isSfx ? SfxPath : Edge.GameDirectory, path);
             return File.Exists(result) ? result : null;
         }
-        private void GenerateMobileLevelFiles(int count, IReadOnlyList<MappingLevel> levelPack,
+
+        private void UpdateProgress(int value = -1, int maximum = -1)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (value < 0) TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
+                else
+                {
+                    if (maximum >= 0) dialog.ProgressBar.Maximum = maximum;
+                    if (value > dialog.ProgressBar.Maximum) value = dialog.ProgressBar.Maximum;
+                    dialog.ProgressBar.Value = value;
+                    TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
+                    TaskbarItemInfo.ProgressValue = (double) value / dialog.ProgressBar.Maximum;
+                }
+            });
+        }
+        private void GenerateMobileLevelFiles(int offset, int count, IReadOnlyList<MappingLevel> levelPack,
                                               IList<string> levelList, IList<string> levelSoundList, bool easy = false)
         {
             for (var i = 0; i < count; ++i)
             {
-                var name = levelList[i] + ".bin";
-                dialog.ReportProgress(0, null, name);
+                if (cancelled) return;
+                string name;
+                UpdateProgress(offset + i);
+                dialog.Text = name = levelList[i] + ".bin";
                 try
                 {
                     string target = Path.Combine(outputDir, name), source = levelPack[i].FileName == null ? null
@@ -417,7 +437,7 @@ namespace Mygod.Edge.Tool
                             level.EasyCompile(target);
                         }
                     }
-                    dialog.ReportProgress(0, null, name = levelSoundList[i] + ".caf");
+                    dialog.Text = name = levelSoundList[i] + ".caf";
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
                     else
                     {
@@ -434,89 +454,117 @@ namespace Mygod.Edge.Tool
                 }
             }
         }
-        private void CompileMobileVersion(object sender, DoWorkEventArgs e)
+
+        private void CloseDialog()
+        {
+            dialog.Text = Localization.Done;
+            if (!cancelled) dialog.Close();
+            try
+            {
+                Dispatcher.Invoke(() => TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None);
+            }
+            catch (TaskCanceledException) { }
+        }
+        private void CompileMobileVersion(object arg)
         {
             try
             {
-                configDir = Path.GetDirectoryName(e.Argument.ToString());
+                configDir = Path.GetDirectoryName(arg.ToString());
                 orgDir = Path.Combine(configDir, "org");
                 ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
-                var root = XHelper.Load(e.Argument.ToString()).Root;
+                var root = XHelper.Load(arg.ToString()).Root;
                 outputDir = Path.Combine(configDir, (ios = root.GetAttributeValue("preset") == "ios")
                                                          ? @"Payload\EDGE Epic.app" : @"src\assets");
                 var regex = root.GetAttributeValue("keep");
                 keepRegex = regex == null ? null : new Regex(regex, RegexOptions.Compiled);
                 List<MappingLevel>
                     levelPackA = new List<MappingLevel>(root.XPathSelectElements("levelpackA/level").Take(48)
-                        .Select((c, i) => new MappingLevel(LevelType.Standard, i, c))),
+                        .Select((c, k) => new MappingLevel(LevelType.Standard, k, c))),
                     levelPackB = new List<MappingLevel>(root.XPathSelectElements("levelpackB/level").Take(17)
-                        .Select((c, i) => new MappingLevel(LevelType.Bonus, i, c)));
+                        .Select((c, k) => new MappingLevel(LevelType.Bonus, k, c)));
                 while (levelPackA.Count < 48) levelPackA.Add(new MappingLevel(LevelType.Standard, levelPackA.Count));
                 while (levelPackB.Count < 17) levelPackB.Add(new MappingLevel(LevelType.Bonus, levelPackB.Count));
                 sfxPath = null;
-                GenerateMobileLevelFiles(48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
-                GenerateMobileLevelFiles(17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds, true);
-                dialog.ReportProgress(0, null, "cos.bin");
+                var sprs = Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"), "*.spr")
+                                    .Select(Path.GetFileName).ToList();
+                if (cancelled) return;
+                UpdateProgress(0, 92 + MobileSounds.Length + sprs.Count + (ios ? 1 : 0));
+                GenerateMobileLevelFiles(0, 48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
+                if (cancelled) return;
+                GenerateMobileLevelFiles(48, 17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds, true);
+                if (cancelled) return;
+                UpdateProgress(65);
+                dialog.Text = "cos.bin";
                 File.Copy(KeepRegexCheck("cos.bin") ? Path.Combine(orgDir, "cos.bin") : FallbackPath("cos.bin"),
                           Path.Combine(outputDir, "cos.bin"), true);
-                dialog.ReportProgress(0, null, "font.bin");
+                if (cancelled) return;
+                UpdateProgress(66);
+                dialog.Text = "font.bin";
                 File.Copy(KeepRegexCheck("font.bin") ? Path.Combine(orgDir, "font.bin") : FallbackPath("font.bin"),
                           Path.Combine(outputDir, "font.bin"), true);
-                for (var i = 0; i <= 24; ++i)
+                int i;
+                for (i = 0; i <= 24; ++i)
                 {
                     if (MobileMusics[i] == null) continue;
-                    dialog.ReportProgress(0, null, MobileMusics[i]);
+                    if (cancelled) return;
+                    UpdateProgress(67 + i);
+                    dialog.Text = "font.bin";
                     string source = KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
                                                  : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
                            target = Path.Combine(outputDir, MobileMusics[i]);
                     if (ios) Ffmpeg(source, target, false);
                     else File.Copy(source, target, true);
                 }
+                i = 91;
                 foreach (var sound in MobileSounds)
                 {
+                    if (cancelled) return;
                     string name = sound + ".caf", target = Path.Combine(outputDir, name);
-                    dialog.ReportProgress(0, null, name);
+                    UpdateProgress(++i);
+                    dialog.Text = name;
                     if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
                     else Ffmpeg(FallbackPath(Path.Combine("sfx", sound + ".wav"), true), target);
                 }
-                foreach (var name in Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"),
-                                                              "*.spr").Select(Path.GetFileName))
+                foreach (var name in sprs)
                 {
-                    dialog.ReportProgress(0, null, name);
+                    if (cancelled) return;
+                    UpdateProgress(++i);
+                    dialog.Text = name;
                     File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name)
                                   : FallbackPath(Path.Combine("sprites", name)), Path.Combine(outputDir, name), true);
                 }
+                if (cancelled) return;
                 if (ios)
                 {
-                    dialog.ReportProgress(0, null, "iTunesMetadata.plist");
+                    UpdateProgress(++i);
+                    dialog.Text = "iTunesMetadata.plist";
                     var target = Path.Combine(configDir, "iTunesMetadata.plist");
                     File.WriteAllText(target, VersionMatcher.Replace(File.ReadAllText(target),
                                       m => (int.Parse(m.Value) + 1).ToString(CultureInfo.InvariantCulture)));
                 }
-                dialog.ReportProgress(0, null, Localization.AlmostThere);
+                if (cancelled) return;
+                UpdateProgress(++i);
+                dialog.Text = Localization.AlmostThere;
                 Start(Path.Combine(configDir, "compile.bat"));
-                dialog.ReportProgress(0, null, Localization.Done);
             }
             catch (Exception exc)
             {
-                e.Result = exc;
+                Dispatcher.Invoke(() => TaskDialog.Show(this, Localization.Error,
+                    Localization.CompileMobileVersionFailed, footerText: exc.GetMessage(), type: TaskDialogType.Error));
             }
-        }
-        private void GenerateAndroidAssetsCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
+            finally
             {
-                if (e.Result != null)
-                    TaskDialog.Show(this, Localization.Error, Localization.CompileMobileVersionFailed,
-                                    footerText: ((Exception) e.Result).GetMessage(), type: TaskDialogType.Error);
-            });
-            if (sfxPath == null) return;
-            try
-            {
-                Directory.Delete(sfxPath, true);
+                CloseDialog();
+                if (sfxPath != null)
+                {
+                    try
+                    {
+                        Directory.Delete(sfxPath, true);
+                    }
+                    catch { }
+                    sfxPath = null;
+                }
             }
-            catch { }
-            sfxPath = null;
         }
 
         private void CheckForUpdates(object sender, RoutedEventArgs e)
@@ -782,9 +830,9 @@ namespace Mygod.Edge.Tool
                                                         Localization.LoadEdgeModsError, result, TaskDialogType.Error);
         }
 
-        private ProgressDialog dialog;
-        private long filesCount, currentFileIndex;
-        private bool isDirty;
+        private TaskDialog dialog;
+        private int currentFileIndex;
+        private bool isDirty, cancelled, needsRunning;
 
         private void InstallEdgeMods(object sender, EventArgs e)
         {
@@ -795,14 +843,17 @@ namespace Mygod.Edge.Tool
                                 type: TaskDialogType.Information);
             }
             if (dialog != null) dialog.Dispose();
-            dialog = new ProgressDialog
+            dialog = new TaskDialog
             {
-                Text = Localization.InstallEdgeModsTitle, WindowTitle = Localization.InstallEdgeModsTitle,
-                Description = Localization.Preparing, ShowTimeRemaining = true, UseCompactPathsForDescription = true
+                ProgressBar = new TaskDialogProgressBar(), StandardButtons = TaskDialogStandardButtons.Cancel,
+                OwnerWindowHandle = WindowHandle, InstructionText = Localization.InstallEdgeModsTitle,
+                Caption = Localization.InstallEdgeModsTitle, Text = Localization.Preparing,
             };
-            dialog.DoWork += InstallEdgeMods;
-            dialog.RunWorkerCompleted += InstallEdgeModsCompleted;
-            dialog.ShowDialog(this);
+            UpdateProgress();
+            cancelled = false;
+            new Thread(InstallEdgeMods).Start();
+            var result = dialog.Show();
+            if (result == TaskDialogResult.Cancel || result == TaskDialogResult.Close) cancelled = true;
         }
 
         private void InstallEdgeModsAndRun(object sender, EventArgs e)
@@ -811,35 +862,28 @@ namespace Mygod.Edge.Tool
             InstallEdgeMods(sender, e);
         }
 
-        private bool needsRunning;
-
-        private void InstallEdgeModsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void InstallEdgeMods()
         {
+            currentFileIndex = 0;
+            UpdateProgress(0, Edge.EdgeMods.Where(edgeMod => edgeMod.Enabled).Sum(edgeMod => edgeMod.FilesCount));
+            var result = Edge.Install(additionalMessage =>
+            {
+                UpdateProgress(++currentFileIndex);
+                dialog.Text = additionalMessage;
+            }, ref cancelled);
+            CloseDialog();
             Dispatcher.Invoke(() =>
             {
                 isDirty = false;
-                if (!string.IsNullOrWhiteSpace(e.Result.ToString()))
+                if (!string.IsNullOrWhiteSpace(result))
                 {
-                    DescriptionBlock.Text = e.Result.ToString();
+                    DescriptionBlock.Text = result;
                     TaskDialog.Show(this, Localization.Finished, Localization.InstallEdgeModsFinished,
                                     Localization.InstallEdgeModsFinishedError, TaskDialogType.Information);
                 }
-                else if (needsRunning) RunGame(sender, e);
+                else if (needsRunning) RunGame();
                 needsRunning = false;
             });
-        }
-
-        private void InstallEdgeMods(object sender, DoWorkEventArgs e)
-        {
-            filesCount = Edge.EdgeMods.Where(edgeMod => edgeMod.Enabled).Sum(edgeMod => edgeMod.FilesCount);
-            currentFileIndex = 0;
-            e.Result = Edge.Install(UpdateProgress, e);
-        }
-
-        private void UpdateProgress(string additionalMessage)
-        {
-            Dispatcher.Invoke(() => dialog.ReportProgress(filesCount == 0 ? 100
-                : (int) (currentFileIndex++ * 100 / filesCount), null, additionalMessage));
         }
 
         private void CleanUpInstall(object sender, RoutedEventArgs e)
