@@ -2,7 +2,7 @@ Introduction
 ============
 EDGE Related Projects includes: EdgeTool & a bunch of mods!
 
-Command line arguments description can be found here: https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/edgetool/command-line-arguments.htmledgefans.tk/edgetool/command-line-arguments.html
+Command line arguments description can be found here: https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/edgetool/command-line-arguments.html
 
 EdgeTool used third party libraries & utilities
 -----------------------------------------------
