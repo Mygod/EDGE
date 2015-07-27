@@ -7,7 +7,7 @@ Command line arguments description can be found here: https://github.com/Mygod/e
 EdgeTool used third party libraries & utilities
 -----------------------------------------------
 * [MygodLibrary](https://github.com/Mygod/MygodLibrary/)
-* [LibTwoTribes](https://github.com/WillKirkby/LibTwoTribes/) (modified)
+* [LibTwoTribes](https://github.com/WillKirkby/LibTwoTribes/) (modified, removed for some reason)
 * [SevenZipSharp](http://sevenzipsharp.codeplex.com/)
 * [ExcelLibrary](https://code.google.com/p/excellibrary/)
 * [Windows API Code Pack](http://archive.msdn.microsoft.com/WindowsAPICodePack) (outdated, modified)

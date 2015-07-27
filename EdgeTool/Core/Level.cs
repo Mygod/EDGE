@@ -372,7 +372,7 @@ namespace Mygod.Edge.Tool
             foreach (var cube in OtherCubes)
             {
                 cube.MovingBlockSync.Name.DoNothing();
-                if (cube.DarkCubeMovingBlockSync != null) cube.DarkCubeMovingBlockSync.Name.DoNothing();
+                cube.DarkCubeMovingBlockSync?.Name.DoNothing();
             }
         }
         private Level(string path) : this()
@@ -469,7 +469,7 @@ namespace Mygod.Edge.Tool
         }
 
         public string FilePath { get; private set; }
-        public MappingLevel Mapping { get { return MappingLevels.GetMapping(this); } }
+        public MappingLevel Mapping => MappingLevels.GetMapping(this);
 
         public string GetRelativePath(string levelsDir)
         {
@@ -490,12 +490,10 @@ namespace Mygod.Edge.Tool
         public ushort BTime { get; set; }
         public ushort CTime { get; set; }
         public Size3D Size { get; set; }
-        public ushort Temp1 { get { return (ushort) (Size.Width + Size.Length); } }
-        public ushort Temp2 { get { return (ushort)(Temp1 + Size.Height + Size.Height); } }
-        public Size2D LegacyMinimapSize
-        {
-            get { return new Size2D((ushort)((Temp1 + 9) / 10), (ushort)((Temp2 + 9) / 10)); }
-        }
+        public ushort Temp1 => (ushort) (Size.Width + Size.Length);
+        public ushort Temp2 => (ushort)(Temp1 + Size.Height + Size.Height);
+
+        public Size2D LegacyMinimapSize => new Size2D((ushort)((Temp1 + 9) / 10), (ushort)((Temp2 + 9) / 10));
 
         public Point3D16 SpawnPoint
         {
@@ -597,11 +595,9 @@ namespace Mygod.Edge.Tool
                 "07_03_EDGE", "08_jungle", "09_RetardTonic", "10_oldschool_simon", "11_planant"
             };
 
-        public string MusicName { get { return Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music]; } }
-        public string MusicJavaName
-        {
-            get { return MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")") : MusicsJava[MusicJava]; }
-        }
+        public string MusicName => Music > 24 ? (Musics[6] + " (" + Music + ")") : Musics[Music];
+        public string MusicJavaName => MusicJava > 11 ? (MusicsJava[0] + " (" + MusicJava + ")")
+                                                      : MusicsJava[MusicJava];
 
         public Level EasyCompile(string path)
         {
@@ -695,9 +691,8 @@ namespace Mygod.Edge.Tool
         public XElement GetXElement()
         {
             var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Name", Name),
-                                       new XAttribute("TimeThresholds", string.Format("{0},{1},{2},{3},{4}",
-                                           SPlusTime, STime, ATime, BTime, CTime)), new XAttribute("Size", Size),
-                                       new XAttribute("SpawnPoint", SpawnPoint),
+                                       new XAttribute("TimeThresholds", $"{SPlusTime},{STime},{ATime},{BTime},{CTime}"),
+                                       new XAttribute("Size", Size), new XAttribute("SpawnPoint", SpawnPoint),
                                        new XAttribute("ExitPoint", ExitPoint));
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
@@ -850,7 +845,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return string.Format("{0},{1}", X, Y);
+            return $"{X},{Y}";
         }
 
         public void Write(BinaryWriter writer)
@@ -898,7 +893,7 @@ namespace Mygod.Edge.Tool
         {
             unchecked
             {
-                int hashCode = X.GetHashCode();
+                var hashCode = X.GetHashCode();
                 hashCode = (hashCode * 397) ^ Y.GetHashCode();
                 hashCode = (hashCode * 397) ^ Z.GetHashCode();
                 return hashCode;
@@ -929,7 +924,7 @@ namespace Mygod.Edge.Tool
         
         public override string ToString()
         {
-            return string.Format("{0},{1},{2}", X, Y, Z);
+            return $"{X},{Y},{Z}";
         }
 
         public void Write(BinaryWriter writer)
@@ -968,7 +963,7 @@ namespace Mygod.Edge.Tool
         }
 
         public readonly ushort Width, Length;
-        public int FlatBytes { get { return Flat.GetBytes(Width, Length); } }
+        public int FlatBytes => Flat.GetBytes(Width, Length);
 
         public static implicit operator Size2D(Size3D size)
         {
@@ -1002,7 +997,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return string.Format("{0}x{1}", Width, Length);
+            return $"{Width}x{Length}";
         }
 
         public void Write(BinaryWriter writer)
@@ -1041,7 +1036,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return string.Format("{0}x{1}x{2}", Width, Length, Height);
+            return $"{Width}x{Length}x{Height}";
         }
         public static Size3D Parse(string str)
         {
@@ -1177,7 +1172,7 @@ namespace Mygod.Edge.Tool
             return (width * length + 7) >> 3;
         }
 
-        public int Bytes { get { return GetBytes(Width, Length); } }
+        public int Bytes => GetBytes(Width, Length);
 
         private int GetPosition(int x, int y)
         {
@@ -1187,8 +1182,7 @@ namespace Mygod.Edge.Tool
 
         public Color GetColor(int x, int y)
         {
-            return detailedInformation == null ? this[x, y] ? Color.White : Color.Black
-                                               : detailedInformation[y * Width + x];
+            return detailedInformation?[y * Width + x] ?? (this[x, y] ? Color.White : Color.Black);
         }
         public bool this[int x, int y]
         {
@@ -1342,7 +1336,7 @@ namespace Mygod.Edge.Tool
 
         private string id;
         public string ID { get { if (!IDGenerated) id = parent.RequestID(); return id; } set { id = value; } }
-        public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
+        public bool IDGenerated => !string.IsNullOrWhiteSpace(id);
     }
     public sealed class Waypoints : XElementObjectList<Waypoint>
     {
@@ -1421,8 +1415,7 @@ namespace Mygod.Edge.Tool
         }
         public Bumper(Bumpers parent, XElement element) : this(parent)
         {
-            id = element.GetAttributeValue("ID");
-            if (id != null) id = id.Trim();
+            id = element.GetAttributeValue("ID")?.Trim();
             element.GetAttributeValueWithDefault(out Enabled, "Enabled", true);
             Position = element.GetAttributeValue<Point3D16>("Position");
             North = new BumperSide(element.ElementCaseInsensitive("North"));
@@ -1449,7 +1442,7 @@ namespace Mygod.Edge.Tool
         private readonly Bumpers parent;
         private string id;
         public string ID { get { if (!IDGenerated) id = parent.RequestID(); return id; } set { id = value; } }
-        public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
+        public bool IDGenerated => !string.IsNullOrWhiteSpace(id);
 
         public void Write(BinaryWriter writer)
         {
@@ -1909,8 +1902,7 @@ namespace Mygod.Edge.Tool
         private void Initialize(XElement element)
         {
             initialized = true;
-            id = element.GetAttributeValue("ID");
-            if (id != null) id = id.Trim();
+            id = element.GetAttributeValue("ID")?.Trim();
             element.GetAttributeValueWithDefault(out Visible, "Visible", NullableBoolean.True);
             element.GetAttributeValueWithDefault(out DisableCount, "DisableCount");
             element.GetAttributeValueWithDefault(out Mode, "Mode", ButtonMode.StayDown);
@@ -1934,7 +1926,7 @@ namespace Mygod.Edge.Tool
         private readonly Buttons parent;
         private string id;
         public string ID { get { if (!IDGenerated) id = parent.RequestID(); return id; } set { id = value; } }
-        public bool IDGenerated { get { return !string.IsNullOrWhiteSpace(id); } }
+        public bool IDGenerated => !string.IsNullOrWhiteSpace(id);
 
         public NullableBoolean Visible = NullableBoolean.True;
         public byte DisableCount;
@@ -2071,7 +2063,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return Payload == 0 ? ID.Name : string.Format("{0} ({1})", ID.Name, Payload);
+            return Payload == 0 ? ID.Name : $"{ID.Name} ({Payload})";
         }
 
         public static BlockEvent Parse(Level parent, BlockEventType type, string value)
@@ -2188,7 +2180,8 @@ namespace Mygod.Edge.Tool
                 { ID = new IDReference((short) level.MovingPlatforms.Count), Type = BlockEventType.AffectMovingPlatform });
             child = container.ElementCaseInsensitive("MovingPlatform");
             MovingPlatform platform;
-            if (child == null) platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = false, LoopStartIndex = 0 };
+            if (child == null)
+                platform = new MovingPlatform(level.MovingPlatforms) { AutoStart = false, LoopStartIndex = 0 };
             else
             {
                 platform = new MovingPlatform(level.MovingPlatforms, child)
