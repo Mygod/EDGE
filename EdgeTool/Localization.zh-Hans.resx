@@ -423,7 +423,7 @@
     <value>严重错误</value>
   </data>
   <data name="FatalMessage" xml:space="preserve">
-    <value>你干了什么？赶紧向 bugs.mygod.tk 报告错误信息和你的不当行径。</value>
+    <value>请向报告错误信息：https://github.com/Mygod/EDGE/issues</value>
   </data>
   <data name="FatalTitle" xml:space="preserve">
     <value>哇靠崩溃啦！</value>

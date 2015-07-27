@@ -297,7 +297,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value>FATAL</value>
   </data>
   <data name="FatalMessage" xml:space="preserve">
-    <value>What have you done? Please report this and the error messages to bugs.mygod.tk to help us solve the problem.</value>
+    <value>Please report to: https://github.com/Mygod/EDGE/issues</value>
   </data>
   <data name="FatalTitle" xml:space="preserve">
     <value>YOU CRASHED MY PROGRAM?!</value>

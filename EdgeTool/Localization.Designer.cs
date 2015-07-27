@@ -947,7 +947,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What have you done? Please report this and the error messages to bugs.mygod.tk to help us solve the problem..
+        ///   Looks up a localized string similar to Please report to: https://github.com/Mygod/EDGE/issues.
         /// </summary>
         public static string FatalMessage {
             get {
