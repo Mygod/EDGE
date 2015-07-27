@@ -240,7 +240,7 @@ namespace Mygod.Edge.Tool
                 AchievementsList.Items.Refresh();
                 RunGameButton.IsEnabled = true;
                 SwitchProfileButton.IsEnabled = Edge.SteamOtl != null;
-                Settings.Instance.CurrentPath = GamePath.Text;
+                Settings.Instance.SetCurrentPath(GamePath.Text);
                 Settings.Save();
                 GamePath.ItemsSource = Settings.Instance.RecentPaths;
             }
