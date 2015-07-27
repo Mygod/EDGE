@@ -265,8 +265,6 @@ namespace Mygod.Edge.Tool
             result.SetAttributeValueWithDefault("Int1", ema.Int1);
             result.SetAttributeValueWithDefault("Int2", ema.Int2);
             result.SetAttributeValueWithDefault("Int3", ema.Int3);
-            result.SetAttributeValueWithDefault("Footer4", ema.Footer4);
-            result.SetAttributeValueWithDefault("Footer5", ema.Footer5);
             foreach (var texture in ema.Textures)
             {
                 var e = new XElement("Texture");
@@ -346,8 +344,6 @@ namespace Mygod.Edge.Tool
                 Int1 = element.GetAttributeValueWithDefault<int>("Int1"),
                 Int2 = element.GetAttributeValueWithDefault<int>("Int2"), DefaultTransforms = transforms.ToArray(),
                 Int3 = element.GetAttributeValueWithDefault<int>("Int3"), Textures = textures.ToArray(),
-                Footer4 = element.GetAttributeValueWithDefault<int>("Footer4"),
-                Footer5 = element.GetAttributeValueWithDefault<int>("Footer5"),
                 AnimationBlocks = blocks.ToArray(), Name = element.GetAttributeValue("Name")
             };
         }
@@ -412,8 +408,8 @@ namespace Mygod.Edge.Tool
                 element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
             if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
                 element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Wat))
-                element.SetAttributeValueWithDefault("Unknown", model.Wat[index]);
+            if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords2))
+                element.SetAttributeValueWithDefault("TexCoords2", model.TexCoords2[index]);
             return element;
         }
 
@@ -453,7 +449,7 @@ namespace Mygod.Edge.Tool
                     MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"),
                     Normals = new List<Vec3>(vertexCount), TexCoords = new List<Vec2>(vertexCount),
                     Vertices = new List<Vec3>(vertexCount), Colors = new List<Color>(vertexCount),
-                    Wat = new List<Vec2>(vertexCount)
+                    TexCoords2 = new List<Vec2>(vertexCount)
                 };
                 foreach (var triangle in triangles)
                 {
@@ -484,10 +480,10 @@ namespace Mygod.Edge.Tool
                             model.TexCoords.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoord"));
                             model.TypeFlags |= ESOModel.Flags.TexCoords;
                         }
-                        if (vertex.AttributeCaseInsensitive("Unknown") != null)
+                        if (vertex.AttributeCaseInsensitive("TexCoords2") != null)
                         {
-                            model.Wat.Add(vertex.GetAttributeValueWithDefault<Vec2>("Unknown"));
-                            model.TypeFlags |= ESOModel.Flags.Wat;
+                            model.TexCoords2.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoords2"));
+                            model.TypeFlags |= ESOModel.Flags.TexCoords2;
                         }
                     }
                     if (!autoNormals) continue;

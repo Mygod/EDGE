@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Mygod.Edge.Tool.LibTwoTribes
@@ -19,7 +20,9 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 m_Unknown1 = br.ReadSingle();
                 m_Duration = br.ReadSingle();
                 m_Zero1 = br.ReadUInt32();
+                if (m_Zero1 != 0) Warning.WriteLine("ean_file_t::zero1 not 0!");
                 m_Zero2 = br.ReadUInt32();
+                if (m_Zero2 != 0) Warning.WriteLine("ean_file_t::zero2 not 0!");
                 m_NodeChild = AssetHash.FromStream(stream);
                 m_NodeSibling = AssetHash.FromStream(stream);
             }

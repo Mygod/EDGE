@@ -1,4 +1,4 @@
-﻿// Downloaded from: http://will.kirk.by/labs/twotribes/edge-bin.html
+﻿// Downloaded from: http://will.kirk.by/labs/tt/edge/level.bin
 // Modified by: Mygod 2013.7.29
 
 #define TIME_THRESHOLDS_LENGTH 5

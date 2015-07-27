@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
 
@@ -13,8 +14,8 @@ namespace Mygod.Edge.Tool.LibTwoTribes
         private Color m_Color4;
         private EMADefaultTransform[] m_DefaultTransforms;
         private float m_Float1;
-        private int m_Footer4;
-        private int m_Footer5;
+        private int m_Footer4 = 4;
+        private int m_Footer5 = 5;
         private int m_Int1;
         private int m_Int2;
         private int m_Int3;
@@ -92,6 +93,8 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 m_Int3 = br.ReadInt32();
 
                 int num_default_transforms = br.ReadInt32(); // always(?) the same as the number of textures.
+                if (num_textures != num_default_transforms)
+                    Warning.WriteLine("ema_file_t::num_textures != ema_file_t::num_default_transforms");
                 m_DefaultTransforms = new EMADefaultTransform[num_default_transforms];
                 for (int i = 0; i < num_default_transforms; i++)
                     m_DefaultTransforms[i] = EMADefaultTransform.FromStream(stream);
@@ -102,7 +105,9 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                     m_AnimationBlocks[i] = EMAAnimationBlock.FromStream(stream);
 
                 m_Footer4 = br.ReadInt32();
+                if (m_Footer4 != 4) Warning.WriteLine("ema_file_t::unknown5 != 4");
                 m_Footer5 = br.ReadInt32();
+                if (m_Footer5 != 5) Warning.WriteLine("ema_file_t::unknown6 != 5");
             }
         }
 

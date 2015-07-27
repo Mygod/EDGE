@@ -47,11 +47,9 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             using (var br = new BinaryReader(stream, Encoding.Unicode, true))
                 if (m_Header.NumModels > 0)
                 {
-                    m_HasFooter = (br.ReadInt32() == 1);
-                    if (m_HasFooter)
-                        m_Footer = ESOFooter.FromStream(stream);
-                    else
-                        m_Footer = new ESOFooter();
+                    var i = br.ReadUInt32();
+                    if (i > 1) Warning.WriteLine("eso_file_t::footer_check is not a valid bool.");
+                    m_Footer = (m_HasFooter = i == 1) ? ESOFooter.FromStream(stream) : new ESOFooter();
                 }
                 else
                 {

@@ -18,7 +18,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             using (var br = new BinaryReader(stream, Encoding.Unicode, true))
             {
                 m_ProbablyTextureId = br.ReadInt32();
-                if (m_ProbablyTextureId != 0) Warning.WriteLine("ProbablyTextureId != 0!");
+                if (m_ProbablyTextureId != 0) Warning.WriteLine("ema_animation_block_t::unknown1 != 0");
                 m_ScaleU = new KeyframeBlock(stream);
                 m_ScaleV = new KeyframeBlock(stream);
                 m_Rotation = new KeyframeBlock(stream);

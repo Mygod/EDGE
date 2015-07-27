@@ -26,7 +26,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             using (var br = new BinaryReader(stream, Encoding.Unicode, true))
             {
                 var zero = br.ReadSingle();
-                if (Math.Abs(zero) > 1e-5) Debug.Fail("keyframe_block_t::zero1 not 0!");
+                if (Math.Abs(zero) > 1e-5) Warning.WriteLine("keyframe_block_t::zero1 not 0!");
                 m_DefaultValue = br.ReadSingle();
                 int num_keyframes = br.ReadInt32();
                 m_Keyframes = new Keyframe[num_keyframes];
