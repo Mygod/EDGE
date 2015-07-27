@@ -6,6 +6,9 @@ using Mygod.Edge.Tool.LibTwoTribes;
 
 namespace Mygod.Edge.Tool
 {
+    /// <summary>
+    /// Cubic Hermite spline implementation.
+    /// </summary>
     class TwoTribesAnimation : DoubleAnimationBase
     {
         public TwoTribesAnimation() { }
