@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Mygod.Edge.Tool.LibTwoTribes
@@ -23,7 +25,8 @@ namespace Mygod.Edge.Tool.LibTwoTribes
         {
             using (var br = new BinaryReader(stream, Encoding.Unicode, true))
             {
-                br.BaseStream.Position += 4;
+                var zero = br.ReadSingle();
+                if (Math.Abs(zero) > 1e-5) Debug.Fail("keyframe_block_t::zero1 not 0!");
                 m_DefaultValue = br.ReadSingle();
                 int num_keyframes = br.ReadInt32();
                 m_Keyframes = new Keyframe[num_keyframes];
@@ -42,8 +45,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 bw.Write(0f); // 4 bytes pad.
                 bw.Write(m_DefaultValue);
                 bw.Write(m_Keyframes.Length);
-                for (int i = 0; i < m_Keyframes.Length; i++)
-                    m_Keyframes[i].Save(stream);
+                foreach (var keyframe in m_Keyframes) keyframe.Save(stream);
             }
         }
     }
