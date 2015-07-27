@@ -163,8 +163,8 @@ namespace Mygod.Edge.Tool
                 {
                     extractor.ExtractFiles(e =>
                     {
-                        if (e.Reason == ExtractFileCallbackReason.Start && callback != null)
-                            callback(ID + '\\' + e.ArchiveFileInfo.FileName);
+                        if (e.Reason == ExtractFileCallbackReason.Start)
+                            callback?.Invoke(ID + '\\' + e.ArchiveFileInfo.FileName);
                         var path = Path.Combine(parent.GameDirectory, e.ArchiveFileInfo.FileName);
                         try
                         {
@@ -302,7 +302,7 @@ namespace Mygod.Edge.Tool
         public readonly StringSetFile ModifiedFiles;
         public readonly Version EngineVersion;
         public SteamOtl SteamOtl { get; private set; }
-        public bool IsCracked { get { return EngineVersion == CrackedEngineVersion; } }
+        public bool IsCracked => EngineVersion == CrackedEngineVersion;
         public EventHandler DisabledEdgeModsChanged;
 
         public bool GetIsDisabled(EdgeMod edgeMod)
@@ -312,7 +312,7 @@ namespace Mygod.Edge.Tool
         public void SetIsDisabled(EdgeMod edgeMod, bool value)
         {
             if (value ? !disabledEdgeMods.Add(edgeMod.ID) : !disabledEdgeMods.Remove(edgeMod.ID)) return;
-            if (DisabledEdgeModsChanged != null) DisabledEdgeModsChanged(this, EventArgs.Empty);
+            DisabledEdgeModsChanged?.Invoke(this, EventArgs.Empty);
             disabledEdgeMods.Save();
         }
 
@@ -395,12 +395,12 @@ namespace Mygod.Edge.Tool
                 }
                 if (cancelled) break;
             }
-            if (callback != null) callback(Localization.AlmostThere);
+            callback?.Invoke(Localization.AlmostThere);
             EndSfx(allModifiedFiles);
             allModifiedFiles.ExceptWith(ModifiedFiles);
             foreach (var oldFile in allModifiedFiles) RestoreCopy(oldFile);
             ModifiedFiles.Save();
-            if (callback != null) callback(Localization.Done);
+            callback?.Invoke(Localization.Done);
             return error.ToString();
         }
 

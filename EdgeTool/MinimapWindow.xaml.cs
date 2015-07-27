@@ -89,8 +89,8 @@ namespace Mygod.Edge.Tool
         {
             var position = e.GetPosition((IInputElement) sender);
             int x = (int) Math.Floor(position.X), y = (int) Math.Floor(position.Y);
-            if (x >= 0 && x < level.Size.Width && y >= 0 && y < level.Size.Length) Coordinates.Text =
-                string.Format("({0}, {1}{2})", x, y, heightMap[y, x] >= 0 ? ", " + heightMap[y, x] : string.Empty);
+            if (x >= 0 && x < level.Size.Width && y >= 0 && y < level.Size.Length)
+                Coordinates.Text = $"({x}, {y}{(heightMap[y, x] >= 0 ? ", " + heightMap[y, x] : string.Empty)})";
         }
     }
 }

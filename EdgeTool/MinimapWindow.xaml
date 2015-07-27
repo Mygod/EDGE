@@ -16,19 +16,22 @@
                 <Run Name="Coordinates" x:FieldModifier="private" Text="-" />
                 <Run Text="{x:Static local:Localization.MinimapHint}" />
             </TextBlock>
-            <ToggleButton Name="SpawnPoint" x:FieldModifier="private" Content="{x:Static local:Localization.SpawnPoint}" IsChecked="True"
-                          Foreground="Blue" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="ExitPoint" x:FieldModifier="private" Content="{x:Static local:Localization.ExitPoint}" IsChecked="True"
-                          Foreground="Red" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="Prism" x:FieldModifier="private" Content="{x:Static local:Localization.Prism}" IsChecked="True"
-                          Foreground="Yellow" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="FallingPlatform" x:FieldModifier="private" Content="{x:Static local:Localization.FallingPlatform}"
+            <ToggleButton Name="SpawnPoint" x:FieldModifier="private" Content="{x:Static local:Localization.SpawnPoint}"
+                          IsChecked="True" Foreground="Blue" Checked="Redraw" Unchecked="Redraw" />
+            <ToggleButton Name="ExitPoint" x:FieldModifier="private" Content="{x:Static local:Localization.ExitPoint}"
+                          IsChecked="True" Foreground="Red" Checked="Redraw" Unchecked="Redraw" />
+            <ToggleButton Name="Prism" x:FieldModifier="private" Content="{x:Static local:Localization.Prism}"
+                          IsChecked="True" Foreground="Yellow" Checked="Redraw" Unchecked="Redraw" />
+            <ToggleButton Name="FallingPlatform" x:FieldModifier="private"
+                          Content="{x:Static local:Localization.FallingPlatform}"
                           IsChecked="True" Foreground="Green" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="Bumper" x:FieldModifier="private" Content="{x:Static local:Localization.Bumper}" IsChecked="True"
-                          Foreground="Brown" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="ResizerGrow" x:FieldModifier="private" Content="{x:Static local:Localization.ResizerGrow}" IsChecked="True"
+            <ToggleButton Name="Bumper" x:FieldModifier="private" Content="{x:Static local:Localization.Bumper}"
+                          IsChecked="True" Foreground="Brown" Checked="Redraw" Unchecked="Redraw" />
+            <ToggleButton Name="ResizerGrow" x:FieldModifier="private"
+                          Content="{x:Static local:Localization.ResizerGrow}" IsChecked="True"
                           Foreground="Purple" Checked="Redraw" Unchecked="Redraw" />
-            <ToggleButton Name="ResizerShrink" x:FieldModifier="private" Content="{x:Static local:Localization.ResizerShrink}"
+            <ToggleButton Name="ResizerShrink" x:FieldModifier="private"
+                          Content="{x:Static local:Localization.ResizerShrink}"
                           IsChecked="True" Foreground="Plum" Checked="Redraw" Unchecked="Redraw" />
             <Button Content="{x:Static local:Localization.MinimapSaveButton}" Click="Save" HorizontalAlignment="Center" />
         </StackPanel>

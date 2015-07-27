@@ -208,8 +208,7 @@ namespace Mygod.Edge.Tool
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var brush = value as SolidColorBrush;
-            if (brush == null) return null;
-            return brush.Color;
+            return brush?.Color;
         }
     }
 }

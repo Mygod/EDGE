@@ -74,10 +74,7 @@ namespace Mygod.Edge.Tool
         }
 
         private static KeyEventRecorder instance;
-        public static KeyEventRecorder Instance
-        {
-            get { return instance ?? (instance = new KeyEventRecorder()); }
-        }
+        public static KeyEventRecorder Instance => instance ?? (instance = new KeyEventRecorder());
 
         private KeyEventRecorder()
         {

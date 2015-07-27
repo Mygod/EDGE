@@ -114,7 +114,7 @@ namespace Mygod.Edge.Tool
             }
         }
 
-        public static string CountString { get { return Current.Count.ToString(CultureInfo.InvariantCulture); } }
+        public static string CountString => Current.Count.ToString(CultureInfo.InvariantCulture);
 
         public static Achievements Current { get; private set; }
     }
@@ -133,7 +133,7 @@ namespace Mygod.Edge.Tool
         internal void OnPropertyChanged(string propertyName)
         {
             var propertyChanged = PropertyChanged;
-            if (propertyChanged != null) propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override string ToString()
@@ -141,37 +141,20 @@ namespace Mygod.Edge.Tool
             return Title;
         }
 
-        public string ApiName { get; private set; }
-        public string Title { get; private set; }
-        public string Description { get; private set; }
-        public double GlobalPercent
-        {
-            get
-            {
-                return Achievements.GlobalPercents != null && Achievements.GlobalPercents.ContainsKey(ApiName)
-                    ? double.Parse(Achievements.GlobalPercents[ApiName]) : double.NaN;
-            }
-        }
-        public string GlobalPercentText
-        {
-            get
-            {
-                return Achievements.GlobalPercents != null && Achievements.GlobalPercents.ContainsKey(ApiName)
-                    ? Achievements.GlobalPercents[ApiName] : null;
-            }
-        }
-        public string Help { get; private set; }
-        public Uri PictureUri
-        {
-            get
-            {
-                return new Uri(Path.Combine(CurrentApp.Directory,
-                    string.Format("Resources/Achievements/{0}.jpg", ApiName)), UriKind.Absolute);
-            }
-        }
-        public int Points { get; private set; }
+        public string ApiName { get; }
+        public string Title { get; }
+        public string Description { get; }
+        public double GlobalPercent => Achievements.GlobalPercents != null && Achievements.GlobalPercents
+            .ContainsKey(ApiName) ? double.Parse(Achievements.GlobalPercents[ApiName]) : double.NaN;
+        public string GlobalPercentText => Achievements.GlobalPercents != null && Achievements.GlobalPercents
+            .ContainsKey(ApiName) ? Achievements.GlobalPercents[ApiName] : null;
 
-        public bool CurrentUserAchieved { get { return Users.Current.CurrentUser.GetAchieved(this); } }
+        public string Help { get; }
+        public Uri PictureUri => new Uri(Path.Combine(CurrentApp.Directory, $"Resources/Achievements/{ApiName}.jpg"),
+            UriKind.Absolute);
+        public int Points { get; }
+
+        public bool CurrentUserAchieved => Users.Current.CurrentUser.GetAchieved(this);
     }
 
     public sealed class Users : ObservableKeyedCollection<string, User>
@@ -248,7 +231,7 @@ namespace Mygod.Edge.Tool
 
         public int AchievedAchievementsCount { get; private set; }
         public int AchievedPoints { get; private set; }
-        public string Name { get; private set; }
+        public string Name { get; }
         public int Points { get; private set; }
     }
 }

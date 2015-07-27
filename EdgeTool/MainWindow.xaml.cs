@@ -220,7 +220,7 @@ namespace Mygod.Edge.Tool
                 Edge = new Edge(GamePath.Text);
                 Edge.DisabledEdgeModsChanged += (a, b) => isDirty = true;
                 EdgeModGrid.ItemsSource = Edge.EdgeMods;
-                if (searcher != null) searcher.Abort();
+                searcher?.Abort();
                 try
                 {
                     MappingLevels.Current = new MappingLevels(Edge.LevelsDirectory);
@@ -267,8 +267,7 @@ namespace Mygod.Edge.Tool
                 }
                 catch (Exception exc)
                 {
-                    Trace.WriteLine(string.Format("{0} error: {1}", Path.GetFileNameWithoutExtension(file),
-                                                  exc.Message));
+                    Trace.WriteLine($"{Path.GetFileNameWithoutExtension(file)} error: {exc.Message}");
                 }
         }
 
@@ -361,7 +360,7 @@ namespace Mygod.Edge.Tool
         private void CompileMobileVersion(object sender, RoutedEventArgs e)
         {
             if (projectSelector.ShowDialog(this) != CommonFileDialogResult.Ok) return;
-            if (dialog != null) dialog.Dispose();
+            dialog?.Dispose();
             dialog = new TaskDialog
             {
                 ProgressBar = new TaskDialogProgressBar(), StandardButtons = TaskDialogStandardButtons.Cancel,
@@ -822,8 +821,7 @@ namespace Mygod.Edge.Tool
         private void UpdateDescription(object sender, SelectionChangedEventArgs e)
         {
             var edgeMod = EdgeModGrid.SelectedItem as EdgeMod;
-            if (edgeMod != null && !string.IsNullOrWhiteSpace(edgeMod.Description))
-                DescriptionBlock.Text = edgeMod.Description;
+            if (!string.IsNullOrWhiteSpace(edgeMod?.Description)) DescriptionBlock.Text = edgeMod.Description;
         }
 
         private void RefreshEdgeMods(object sender = null, RoutedEventArgs e = null)
@@ -846,7 +844,7 @@ namespace Mygod.Edge.Tool
                 TaskDialog.Show(this, Localization.Information, Localization.EdgeModsFirstInstallHint,
                                 type: TaskDialogType.Information);
             }
-            if (dialog != null) dialog.Dispose();
+            dialog?.Dispose();
             dialog = new TaskDialog
             {
                 ProgressBar = new TaskDialogProgressBar(), StandardButtons = TaskDialogStandardButtons.Cancel,
@@ -921,9 +919,8 @@ namespace Mygod.Edge.Tool
             DropTargetHelper.Drop(e.Data, e.GetPosition(this), e.Effects);
             if (e.Effects != DragDropEffects.Copy) return;
             var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if (files == null) return;
-            if (files.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture))
-                     .Count(InstallEdgeMod) > 0) RefreshEdgeMods();
+            if (files?.Where(file => file.EndsWith(".edgemod", true, CultureInfo.InvariantCulture))
+                .Count(InstallEdgeMod) > 0) RefreshEdgeMods();
         }
 
         private bool InstallEdgeMod(string file)
@@ -991,7 +988,7 @@ namespace Mygod.Edge.Tool
                 return;
             }
             var ean = EAN.FromFile(path);
-            item.Header = string.Format("{0}.ean ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, ean));
+            item.Header = $"{fileName}.ean ({Helper.GetDecompiledFileName(fileName, ean)}.xml)";
             if (!ean.Header.NodeChild.IsZero()) DrawEan(item.Items, ean.Header.NodeChild.ToString());
             if (!ean.Header.NodeSibling.IsZero()) DrawEan(parent, ean.Header.NodeSibling.ToString());
         }
@@ -1009,7 +1006,7 @@ namespace Mygod.Edge.Tool
                 return;
             }
             var eso = ESO.FromFile(path);
-            item.Header = string.Format("{0}.eso ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, eso));
+            item.Header = $"{fileName}.eso ({Helper.GetDecompiledFileName(fileName, eso)}.xml)";
             foreach (var model in eso.Models.Where(model => !model.MaterialAsset.IsZero()))
                 DrawEma(item.Items, model.MaterialAsset.ToString());
             if (!eso.Header.NodeChild.IsZero()) DrawEso(item.Items, eso.Header.NodeChild.ToString());
@@ -1029,7 +1026,7 @@ namespace Mygod.Edge.Tool
                 return;
             }
             var ema = EMA.FromFile(path);
-            item.Header = string.Format("{0}.ema ({1}.xml)", fileName, Helper.GetDecompiledFileName(fileName, ema));
+            item.Header = $"{fileName}.ema ({Helper.GetDecompiledFileName(fileName, ema)}.xml)";
             foreach (var texture in ema.Textures) DrawEtx(item.Items, texture.Asset.ToString());
         }
 
@@ -1046,7 +1043,7 @@ namespace Mygod.Edge.Tool
                 return;
             }
             var etx = ETX.FromFile(path);
-            item.Header = string.Format("{0}.etx ({1}.png)", fileName, etx.AssetHeader.Name);
+            item.Header = $"{fileName}.etx ({etx.AssetHeader.Name}.png)";
         }
 
         private void GetModelTreeHelp(object sender, RoutedEventArgs e)
@@ -1232,7 +1229,7 @@ namespace Mygod.Edge.Tool
             if (!(value is ushort)) return null;
             var seconds = (ushort)value;
             if (seconds < 60) return seconds.ToString(CultureInfo.InvariantCulture) + '"';
-            return string.Format("{0}'{1:00}\"", seconds / 60, seconds % 60);
+            return $"{seconds / 60}'{seconds % 60:00}\"";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

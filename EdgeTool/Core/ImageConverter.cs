@@ -59,7 +59,7 @@ namespace Mygod.Edge.Tool
             }
             finally
             {
-                if (clone != null) clone.Dispose();
+                clone?.Dispose();
             }
         }
     }

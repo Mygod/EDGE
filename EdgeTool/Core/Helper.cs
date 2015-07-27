@@ -57,7 +57,7 @@ namespace Mygod.Edge.Tool
 
         public static string ToCorrectPath(this string value)
         {
-            return value == null ? null : value.Replace('\\', '/').Trim('/');
+            return value?.Replace('\\', '/').Trim('/');
         }
 
         private static readonly ILookup<int, Color> Lookup =
@@ -67,9 +67,9 @@ namespace Mygod.Edge.Tool
         {
             // it will only return the first if there is one or more
             foreach (var first in Lookup[color.ToArgb()]) return first.Name;
-            var result = string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+            var result = $"{color.R:X2}{color.G:X2}{color.B:X2}";
             if (color.A == 255) return '#' + result;
-            return string.Format("#{0:X2}{1}", color.A, result);
+            return $"#{color.A:X2}{result}";
         }
 
         public static Color Parse(string value)
@@ -132,8 +132,7 @@ namespace Mygod.Edge.Tool
         public static void SaveXls(this LOC loc, string path)
         {
             var workbook = new Workbook();
-            var worksheet = new Worksheet("localization");
-            worksheet.Cells[0, 0] = new Cell("id");
+            var worksheet = new Worksheet("localization") { Cells = { [0, 0] = new Cell("id") } };
             for (var i = 0; i < loc.Languages.Length; i++) worksheet.Cells[0, i + 1] = new Cell(loc.Languages[i]);
             for (var i = 0; i < loc.StringKeys.Length; i++)
             {
@@ -173,10 +172,8 @@ namespace Mygod.Edge.Tool
             var result = new XElement("Animation");
             result.SetAttributeValueWithDefault("Unknown", ean.Header.Unknown1);
             result.SetAttributeValueWithDefault("Duration", ean.Header.Duration);
-            if (ean.Header.Zero1 != 0)
-                Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero1));
-            if (ean.Header.Zero2 != 0)
-                Warning.WriteLine(string.Format("EANHeader.Zero1: {0} => 0", ean.Header.Zero2));
+            if (ean.Header.Zero1 != 0) Warning.WriteLine($"EANHeader.Zero1: {ean.Header.Zero1} => 0");
+            if (ean.Header.Zero2 != 0) Warning.WriteLine($"EANHeader.Zero1: {ean.Header.Zero2} => 0");
             result.SetAttributeValueWithDefault("NodeChild", ean.Header.NodeChild);
             result.SetAttributeValueWithDefault("NodeSibling", ean.Header.NodeSibling);
             result.AddIfNotEmpty(GetKeyframeBlockElement(ean.BlockRotateX, "RotateX"));
@@ -422,7 +419,7 @@ namespace Mygod.Edge.Tool
 
         public static ESO ParseEso(XElement element, string name, string nameSpace = "models")
         {
-            var scaleXYZ = element.GetAttributeValueWithDefault<float>("ScaleXYZ", 1);
+            var scaleXyz = element.GetAttributeValueWithDefault<float>("ScaleXYZ", 1);
             Vec3 translate = element.GetAttributeValueWithDefault<Vec3>("Translate"),
                  rotate = element.GetAttributeValueWithDefault<Vec3>("Rotate") * ToRadian,
                  scale = element.GetAttributeValueWithDefault("Scale", new Vec3(1, 1, 1));
@@ -431,7 +428,7 @@ namespace Mygod.Edge.Tool
             if (mode.HasFlag(ApplyTransformMode.MultiplicationOnly) || mode.HasFlag(ApplyTransformMode.DivisionOnly))
             {
                 matrix.Scale(ConvertVector(scale));
-                matrix.Scale(new Vector3D(scaleXYZ, scaleXYZ, scaleXYZ));
+                matrix.Scale(new Vector3D(scaleXyz, scaleXyz, scaleXyz));
                 matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), rotate.X * ToDegree));
                 matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), rotate.Y * ToDegree));
                 matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), rotate.Z * ToDegree));
@@ -440,7 +437,7 @@ namespace Mygod.Edge.Tool
             }
             if (mode.HasFlag(ApplyTransformMode.Remove))
             {
-                scaleXYZ = 1;
+                scaleXyz = 1;
                 rotate = translate = default(Vec3);
                 scale = new Vec3(1, 1, 1);
             }
@@ -516,7 +513,7 @@ namespace Mygod.Edge.Tool
                     V08 = element.GetAttributeValueWithDefault<int>("V08"),
                     V09 = element.GetAttributeValueWithDefault<int>("V09"),
                     V21 = element.GetAttributeValueWithDefault<int>("V21"),
-                    ScaleXYZ = scaleXYZ, Scale = scale, Translate = translate, Rotate = rotate,
+                    ScaleXYZ = scaleXyz, Scale = scale, Translate = translate, Rotate = rotate,
                     NumModels = models.Count, V20 = element.GetAttributeValueWithDefault<float>("V20")
                 }
             };
@@ -736,7 +733,7 @@ namespace Mygod.Edge.Tool
                                 }
                                 var unxwb = new Process { StartInfo = new ProcessStartInfo(
                                     Path.Combine(CurrentApp.Directory, "Resources/Libraries/unxwb.exe"),
-                                    string.Format("-d \"{0}\" -b \"{1}\" {2} \"{3}\"", outputPath, xsb, offset, xwb))
+                                    $"-d \"{outputPath}\" -b \"{xsb}\" {offset} \"{xwb}\"")
                                         { UseShellExecute = false, CreateNoWindow = true } };
                                 unxwb.Start();
                                 unxwb.WaitForExit();
