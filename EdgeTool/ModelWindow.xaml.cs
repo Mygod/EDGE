@@ -134,15 +134,17 @@ namespace Mygod.Edge.Tool
                 GetAnimation(repeatBehavior, ean.Header.Duration, ean.BlockTranslateX));
         }
 
-        private static DoubleAnimationUsingKeyFrames GetAnimation(RepeatBehavior repeatBehavior, float duration,
+        private static TwoTribesAnimation GetAnimation(RepeatBehavior repeatBehavior, float duration,
                                                                   KeyframeBlock block, double k = 1)
         {
-            var animation = new DoubleAnimationUsingKeyFrames
-                { RepeatBehavior = repeatBehavior, Duration = new Duration(TimeSpan.FromSeconds(duration / 30.0)) };
-            animation.KeyFrames.Add(new DiscreteDoubleKeyFrame(block.DefaultValue * k, TimeSpan.Zero));
-            foreach (var keyframe in block.Keyframes) animation.KeyFrames.Add(
-                new LinearDoubleKeyFrame(keyframe.Value * k, TimeSpan.FromSeconds(keyframe.Time / 30.0)));
-            return animation;
+            //var animation = new DoubleAnimationUsingKeyFrames
+            //    { RepeatBehavior = repeatBehavior, Duration = new Duration(TimeSpan.FromSeconds(duration / 30.0)) };
+            //animation.KeyFrames.Add(new DiscreteDoubleKeyFrame(block.DefaultValue * k, TimeSpan.Zero));
+            //foreach (var keyframe in block.Keyframes) animation.KeyFrames.Add(
+            //    new LinearDoubleKeyFrame(keyframe.Value * k, TimeSpan.FromSeconds(keyframe.Time / 30.0)));
+            //return animation;
+            return new TwoTribesAnimation(block, k)
+                { RepeatBehavior = repeatBehavior, Duration = new Duration(TimeSpan.FromSeconds(duration / 30D)) };
         }
 
         private const double ToDegree = 180 / Math.PI;

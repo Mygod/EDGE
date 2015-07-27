@@ -224,8 +224,8 @@ namespace Mygod.Edge.Tool
                 element.SetAttributeValueWithDefault("Time", keyframe.Time);
                 element.SetAttributeValueWithDefault("Value",
                     isRotate ? keyframe.Value * 180 / Math.PI : keyframe.Value, isScale ? 1 : 0);
-                element.SetAttributeValueWithDefault("Delta",
-                    isRotate ? keyframe.Delta * 180 / Math.PI : keyframe.Delta);
+                element.SetAttributeValueWithDefault("Velocity",
+                    isRotate ? keyframe.Velocity * 180 / Math.PI : keyframe.Velocity);
                 result.Add(element);
             }
             return result;
@@ -246,8 +246,8 @@ namespace Mygod.Edge.Tool
                                     (e.GetAttributeValueWithDefault<double>("Value", isScale ? 1 : 0) * Math.PI / 180)
                                 : e.GetAttributeValueWithDefault<float>("Value", isScale ? 1 : 0),
                             isRotate ? (float)
-                                    (e.GetAttributeValueWithDefault<double>("Delta") * Math.PI / 180)
-                                : e.GetAttributeValueWithDefault<float>("Delta"))).ToArray();
+                                    (e.GetAttributeValueWithDefault<double>("Velocity") * Math.PI / 180)
+                                : e.GetAttributeValueWithDefault<float>("Velocity"))).ToArray();
             }
             else if (isScale) result.DefaultValue = 1;
             return result;

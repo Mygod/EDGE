@@ -68,6 +68,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -117,6 +118,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
     <Compile Include="Core\ModelGenerator.cs" />
+    <Compile Include="Core\TwoTribesAnimation.cs" />
     <Compile Include="KeyEventRecorder.xaml.cs">
       <DependentUpon>KeyEventRecorder.xaml</DependentUpon>
     </Compile>

@@ -5,15 +5,15 @@ namespace Mygod.Edge.Tool.LibTwoTribes
 {
     public class Keyframe
     {
-        private float m_Delta;
         private float m_Time;
         private float m_Value;
+        private float m_Velocity;  // used for interpolation
 
-        public Keyframe(float time, float value, float delta)
+        public Keyframe(float time, float value, float velocity)
         {
             m_Time = time;
             m_Value = value;
-            m_Delta = delta;
+            m_Velocity = velocity;
         }
 
         private Keyframe(Stream stream)
@@ -22,13 +22,13 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             {
                 m_Time = br.ReadSingle();
                 m_Value = br.ReadSingle();
-                m_Delta = br.ReadSingle();
+                m_Velocity = br.ReadSingle();
             }
         }
 
         public float Time { get { return m_Time; } set { m_Time = value; } }
         public float Value { get { return m_Value; } set { m_Value = value; } }
-        public float Delta { get { return m_Delta; } set { m_Delta = value; } }
+        public float Velocity { get { return m_Velocity; } set { m_Velocity = value; } }
 
         public static Keyframe FromStream(Stream stream)
         {
@@ -41,7 +41,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             {
                 bw.Write(m_Time);
                 bw.Write(m_Value);
-                bw.Write(m_Delta);
+                bw.Write(m_Velocity);
             }
         }
     }
