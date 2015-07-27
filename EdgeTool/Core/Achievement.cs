@@ -26,6 +26,7 @@ namespace Mygod.Edge.Tool
     }
     public sealed class AchievementSection : IniSection
     {
+#pragma warning disable 612
         public AchievementSection(IniFile iniFile, string name) : base(iniFile, name)
         {
             state = new Int64HexData(this, "State");
@@ -219,7 +220,8 @@ namespace Mygod.Edge.Tool
 
         internal User(string name)
         {
-            achievementsFile = new IniFile(Path.Combine(Users.GetStatsDirectory(Name = name), 
+            achievementsFile = new IniFile(Path.Combine(Users.GetStatsDirectory(Name = name),
+#pragma warning restore 612
                                                         AchievementsIniFileName));
             Refresh();
         }

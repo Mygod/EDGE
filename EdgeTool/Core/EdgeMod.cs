@@ -562,7 +562,9 @@ namespace Mygod.Edge.Tool
         }
     }
 
+#pragma warning disable 612
     public sealed class SteamOtl : IniFile
+#pragma warning restore 612
     {
         public SteamOtl(string filePath, uint stringLong = 1024) : base(filePath, stringLong)
         {

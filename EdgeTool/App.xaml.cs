@@ -71,7 +71,7 @@ namespace Mygod.Edge.Tool
                     files.AddRange(fileSelector.FileNames);
                 else if (arg.StartsWith("-lg", true, CultureInfo.InvariantCulture))
                 {
-                    var path = GamePath ?? Settings.CurrentPath;
+                    var path = GamePath ?? Settings.Instance.CurrentPath;
                     Process.Start(new ProcessStartInfo(path) { WorkingDirectory = Path.GetDirectoryName(path) });
                     shouldNotClose = true;
                 }

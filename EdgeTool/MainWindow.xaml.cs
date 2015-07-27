@@ -48,8 +48,8 @@ namespace Mygod.Edge.Tool
             DecompileHistoryBox.ItemsSource = decompileHistory;
             checkBoxes = CheckBoxPanel.Children.OfType<CheckBox>().ToDictionary(box => box.Content as string);
             LevelList.ItemsSource = levels;
-            GamePath.ItemsSource = Settings.RecentPaths;
-            GamePath.Text = Settings.CurrentPath;
+            GamePath.ItemsSource = Settings.Instance.RecentPaths;
+            GamePath.Text = Settings.Instance.CurrentPath;
             foreach (var name in ModelNames) ModelNameBox.Items.Add(name);
             foreach (var name in AnimationNames) AnimationNameBox.Items.Add(name);
             if (!string.IsNullOrWhiteSpace(App.GamePath)) GamePath.Text = App.GamePath;
@@ -240,8 +240,9 @@ namespace Mygod.Edge.Tool
                 AchievementsList.Items.Refresh();
                 RunGameButton.IsEnabled = true;
                 SwitchProfileButton.IsEnabled = Edge.SteamOtl != null;
-                Settings.CurrentPath = GamePath.Text;
-                GamePath.ItemsSource = Settings.RecentPaths;
+                Settings.Instance.CurrentPath = GamePath.Text;
+                Settings.Save();
+                GamePath.ItemsSource = Settings.Instance.RecentPaths;
             }
             catch (Exception exc)
             {
@@ -836,9 +837,10 @@ namespace Mygod.Edge.Tool
 
         private void InstallEdgeMods(object sender, EventArgs e)
         {
-            if (!Settings.EdgeModLoaded)
+            if (!Settings.Instance.EdgeModLoaded)
             {
-                Settings.EdgeModLoaded = true;
+                Settings.Instance.EdgeModLoaded = true;
+                Settings.Save();
                 TaskDialog.Show(this, Localization.Information, Localization.EdgeModsFirstInstallHint,
                                 type: TaskDialogType.Information);
             }
