@@ -582,7 +582,7 @@ namespace Mygod.Edge.Tool
         }
         private void Help(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/developers");
+            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers.html");
         }
 
         private void PopContextMenu(object sender, RoutedEventArgs e)
@@ -665,7 +665,8 @@ namespace Mygod.Edge.Tool
 
         private void ShowMappingXmlHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/developers/file-formats/mapping-xml.html");
+            Process.Start
+                ("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/mapping-xml.html");
         }
 
         #endregion
@@ -733,11 +734,12 @@ namespace Mygod.Edge.Tool
 
         private void ShowCommandLineHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/edgetool/command-line-arguments.html");
+            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/edgetool/command-line-arguments.html");
         }
         private void OpenReference(object sender, MouseButtonEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/developers/file-formats/" + ((FrameworkElement)sender).Tag + ".html");
+            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/" +
+                ((FrameworkElement)sender).Tag + ".html");
         }
 
         private void OnBinaryDragEnter(object sender, DragEventArgs e)
@@ -1049,12 +1051,14 @@ namespace Mygod.Edge.Tool
 
         private void GetModelTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/developers/file-formats/asset/drawing-model-tree.html");
+            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/" +
+                          "drawing-model-tree.html");
         }
 
         private void GetAnimationTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/Mygod/edgefans-archive/tree/master/edgefans.tk/developers/file-formats/asset/ean/drawing-animation-tree.html");
+            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/ean/" +
+                          "drawing-animation-tree.html");
         }
 
         private void ShowFileInExplorer(object sender, RoutedEventArgs e)
