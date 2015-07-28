@@ -58,8 +58,8 @@ namespace Mygod.Edge.Tool
                 return K * (next.Value - next.Velocity * (next.Time - currentFrame));
             var previous = block.Keyframes[i - 1];
             double interval = next.Time - previous.Time, t = (currentFrame - previous.Time) / interval, t2 = t * t,
-                   t3 = t2 * t, t22 = t2 + t2, t23 = t22 + t2, t32 = t3 + t3;
-            return (previous.Value + (t32 - t23) * (previous.Value - next.Value) +
+                   t3 = t2 * t, t22 = t2 + t2;
+            return (previous.Value + (t3 + t3 - t22 - t2) * (previous.Value - next.Value) +
                    ((t3 - t22 + t) * previous.Velocity + (t3 - t2) * next.Velocity) * interval) * K;
         }
     }
