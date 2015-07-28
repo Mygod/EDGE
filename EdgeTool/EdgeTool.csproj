@@ -118,6 +118,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\EdgeMod.cs" />
     <Compile Include="Core\ModelGenerator.cs" />
+    <Compile Include="Core\RectilinearPolygonSolver.cs" />
     <Compile Include="Core\TwoTribesAnimation.cs" />
     <Compile Include="KeyEventRecorder.xaml.cs">
       <DependentUpon>KeyEventRecorder.xaml</DependentUpon>

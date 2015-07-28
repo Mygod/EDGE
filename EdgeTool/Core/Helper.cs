@@ -592,8 +592,7 @@ namespace Mygod.Edge.Tool
                                 list.Add(new FileEntry(outputPath, "cos.txt"));
                                 break;
                             case "font":
-                                using (var stream = File.OpenRead(file))
-                                    File.WriteAllText(outputPath += ".xml", GetFontElement(stream).ToString());
+                                DecompileFont(file, ref outputPath);
                                 list.Add(new FileEntry(outputPath, "font.xml"));
                                 break;
                             default:
@@ -649,8 +648,7 @@ namespace Mygod.Edge.Tool
                             }
                             case "font":
                             {
-                                using (var stream = File.Create(outputPath = inputPath + ".bin"))
-                                    WriteFontElement(stream, root);
+                                CompileFont(inputPath, out outputPath, root);
                                 list.Add(new FileEntry(outputPath, "font.bin"));
                                 break;
                             }
@@ -785,76 +783,86 @@ namespace Mygod.Edge.Tool
                 Warning.Clear();
             }
         }
+        
+        private static readonly string
+            CharLookup = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%１２３４５６７８９,.？!：'()_" +
+                         "-=+@／＂çβāäēëīíōöūü＞＜[]ñ¡À$ÉȇÜ｜şğÇĕčřýňšžŮďĎŐȁÚâćęźɫąśńżŚ",
+            DuplicateChars = "abcdefghijklmnopqrstuvwxyzÜÇĎŚ";  // fix for stupid windows FS
+        private static readonly HashSet<char> CharSet = new HashSet<char>(CharLookup),
+            DuplicateCharSet = new HashSet<char>(DuplicateChars);
+        private static string GetCharPath(string prefix, char ch)
+        {
+            return prefix + '.' + ch + (DuplicateCharSet.Contains(ch) ? "_" : string.Empty) + ".png";
+        }
 
-        private static XElement GetFontElement(Stream stream)
+        private static void DecompileFont(string file, ref string outputPath)
         {
             var result = new XElement("Font");
+            using (var stream = File.OpenRead(file))
             using (var reader = new BinaryReader(stream))
             {
-                result.SetAttributeValueWithDefault("SpaceWidth", reader.ReadByte());
-                result.SetAttributeValueWithDefault("LineSpacing", reader.ReadByte());
+                result.SetAttributeValueWithDefault("SpaceWidth", reader.ReadByte(), 9);
+                var line = reader.ReadByte();
+                result.SetAttributeValueWithDefault("LineSpacing", line, 9);
                 var count = reader.ReadUInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var ch = new XElement("Char");
-                    if (i < CharLookup.Length) ch.SetAttributeValue("Character", CharLookup[i]);
-                    var rects = reader.ReadByte();
-                    ch.SetAttributeValueWithDefault("Width", reader.ReadByte());
-                    for (var j = 0; j < rects; j++)
+                    var ch = i < CharLookup.Length ? CharLookup[i] : '\0';
+                    var rects = new Rect8[reader.ReadByte()];
+                    byte specifiedWidth = reader.ReadByte(), width = 0, height = line;
+                    for (var j = 0; j < rects.Length; j++)
                     {
-                        var rect = new XElement("Rect");
-                        rect.SetAttributeValue("Point", new Point2D8(reader));
-                        rect.SetAttributeValue("Size", new Point2D8(reader));
-                        ch.Add(rect);
+                        var rect = rects[j] = new Rect8(reader);
+                        if (rect.Size.X == 0 || rect.Size.Y == 0) continue;
+                        var t = (byte) (rect.Point.X + rect.Size.X);
+                        if (t > width) width = t;
+                        if ((t = (byte) (rect.Point.Y + rect.Size.Y)) > height) height = t;
                     }
-                    result.Add(ch);
+                    if (width > 0)
+                    {
+                        if (width < specifiedWidth) width = specifiedWidth;
+                        using (var bitmap = new Bitmap(width, height))
+                        {
+                            using (var graphics = Graphics.FromImage(bitmap)) foreach (var rect in rects) graphics
+                                .FillRectangle(Brushes.Black, rect.Point.X, rect.Point.Y, rect.Size.X, rect.Size.Y);
+                            bitmap.Save(GetCharPath(outputPath, ch));
+                        }
+                    }
+                    if (width == specifiedWidth) continue;
+                    var element = new XElement("Char");
+                    element.SetAttributeValueWithDefault("Character", ch);
+                    element.SetAttributeValue("Width", specifiedWidth);
+                    result.Add(element);
                 }
             }
-            return result;
+            File.WriteAllText(outputPath += ".xml", result.ToString());
         }
 
-        private static void WriteFontElement(Stream stream, XElement element)
+        private static void CompileFont(string filePrefix, out string outputPath, XElement element)
         {
+            using (var stream = File.Create(outputPath = filePrefix + ".bin"))
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write(element.GetAttributeValueWithDefault<byte>("SpaceWidth"));
-                writer.Write(element.GetAttributeValueWithDefault<byte>("LineSpacing"));
-                var chars = element.ElementsCaseInsensitive("Char").ToArray();
-                writer.Write((ushort) chars.Length);
-                var charsLookup = chars.ToLookup(e => e.GetAttributeValue("Character"));
-                foreach (var ch in CharLookup.Select(ch => ch.ToString(CultureInfo.InvariantCulture)))
-                    if (charsLookup.Contains(ch)) WriteCharElement(writer, charsLookup[ch].First());
-                    else    // write an empty char here!
-                    {
-                        writer.Write((byte)0);
-                        writer.Write((byte)1);
-                    }
-                foreach (var pair in charsLookup)
-                {
-                    if (pair.Key != null && pair.Key.Length == 1)   // is a valid char
-                    {
-                        var i = 0;
-                        foreach (var ch in pair.Where(ch => i++ > 0 || !CharSet.Contains(pair.Key[0])))
-                            WriteCharElement(writer, ch);
-                    }
-                    else foreach (var ch in pair) WriteCharElement(writer, ch);
-                }
+                writer.Write(element.GetAttributeValueWithDefault<byte>("SpaceWidth", 9));
+                writer.Write(element.GetAttributeValueWithDefault<byte>("LineSpacing", 9));
+                var lookup = element.ElementsCaseInsensitive("Char")
+                    .ToLookup(e => e.GetAttributeValueWithDefault("Character", "\0")[0]);
+                var reserved = lookup.Where(pair => !CharSet.Contains(pair.Key)).ToList();
+                writer.Write((ushort) (CharSet.Count + reserved.SelectMany(_ => _).Count()));
+                foreach (var ch in CharLookup) CompileChar(writer, filePrefix, ch, lookup[ch].SingleOrDefault());
+                foreach (var pair in reserved) foreach (var e in pair)
+                    CompileChar(writer, filePrefix, pair.Key, e);   // write unknown chars
             }
         }
-        private static void WriteCharElement(BinaryWriter writer, XElement ch)
+        private static void CompileChar(BinaryWriter writer, string filePrefix, char ch, XElement element)
         {
-            var rects = ch.ElementsCaseInsensitive("Rect").ToArray();
+            byte width = 0;
+            var rects = (RectilinearPolygonSolver.Solve(GetCharPath(filePrefix, ch), ref width) ??
+                Enumerable.Empty<Rect8>()).ToArray();
             writer.Write((byte)rects.Length);
-            writer.Write(ch.GetAttributeValueWithDefault<byte>("Width"));
-            foreach (var rect in rects)
-            {
-                rect.GetAttributeValueWithDefault<Point2D8>("Point").Write(writer);
-                rect.GetAttributeValueWithDefault<Point2D8>("Size").Write(writer);
-            }
+            writer.Write(element?.GetAttributeValueWithDefault("Width", width) ?? width);
+            foreach (var rect in rects) rect.Write(writer);
         }
-
-        private static readonly string CharLookup = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%１２３４５６７８９,.?!:'()_-=+@/\"çβāäēëīíōöūü><[]ñ¡À$ÉȇÜ|şğÇĕčřýňšžŮďĎŐȁÚâćęźɫąśńżŚ";
-        private static readonly HashSet<char> CharSet = new HashSet<char>(CharLookup);
 
         #region GenerateXactProject
         private static string GenerateXactProject(string inputPath, string outputPath)

@@ -954,6 +954,28 @@ namespace Mygod.Edge.Tool
         }
     }
 
+    public struct Rect8
+    {
+        public Rect8(Point2D8 point, Point2D8 size)
+        {
+            Point = point;
+            Size = size;
+        }
+
+        public Rect8(int x, int y, int sizeX, int sizeY)
+            : this(new Point2D8((byte) x, (byte) y), new Point2D8((byte) sizeX, (byte) sizeY)) { }
+        public Rect8(BinaryReader reader) : this(new Point2D8(reader), new Point2D8(reader)) { }
+
+        public Point2D8 Point;
+        public Point2D8 Size;
+
+        public void Write(BinaryWriter writer)
+        {
+            Point.Write(writer);
+            Size.Write(writer);
+        }
+    }
+
     public struct Size2D : IXSerializable, IEquatable<Size2D>
     {
         public Size2D(ushort width, ushort length)
