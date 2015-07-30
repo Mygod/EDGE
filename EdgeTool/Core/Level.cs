@@ -637,10 +637,15 @@ namespace Mygod.Edge.Tool
             temp = path + ".png";
             LegacyMinimap.SaveToImage(temp);
             yield return temp;
+            CollisionMap.InitImage();
+            foreach (var resizer in Resizers.Where(resizer => Size.IsCubeInArea(resizer.Position) &&
+                CollisionMap.GetColor(resizer.Position.X, resizer.Position.Y, resizer.Position.Z - 1) == Flat.Empty))
+                CollisionMap.SetColor(resizer.Position.X, resizer.Position.Y, resizer.Position.Z - 1,
+                                      resizer.Position.Z == 1 ? Flat.HalfBlockModelOnly : Flat.BlockModelOnly);
             for (var z = 0; z < Size.Height; z++)
             {
                 temp = path + '.' + z + ".png";
-                CollisionMap[z].SaveToImage(temp, z == 0);
+                CollisionMap[z].SaveToImage(temp);
                 yield return path + '.' + z + ".png";
             }
         }
@@ -1167,23 +1172,31 @@ namespace Mygod.Edge.Tool
             }
         }
 
+        public static readonly Color Empty = Color.Black,
+            HalfBlock = Color.FromArgb(unchecked ((int) 0xFFFFFF80)), Block = Color.White,
+            HalfBlockModelOnly = Color.FromArgb(unchecked ((int) 0xFF00FF80)), BlockModelOnly = Color.Cyan;
+
+        public void InitImage(bool half = false)
+        {
+            detailedInformation = new Color[Width * Length];
+            var block = half ? HalfBlock : Block;
+            for (var y = 0; y < Length; ++y) for (var x = 0; x < Width; ++x)
+                detailedInformation[y * Width + x] = this[x, y] ? block : Empty;
+        }
+
         public void SaveToImage(string path, bool half = false)
         {
-            if (detailedInformation != null)
+            if (detailedInformation == null) InitImage(half);
+            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++) if (GetColor(x, y) != Empty)
             {
                 ImageConverter.Save(detailedInformation, Width, Length, path);
                 return;
             }
-            var array = new BitArray(Width * Length);
-            var pos = 0;
-            var hasBlock = false;
-            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++) hasBlock |= array[pos++] = this[x, y];
-            if (hasBlock) ImageConverter.Save(array, Width, Length, path, half);
         }
 
         private readonly BitArray data;
         public readonly int Width, Length;
-        private readonly Color[] detailedInformation;
+        private Color[] detailedInformation;
 
         public static int GetBytes(int width, int length)
         {
@@ -1198,9 +1211,15 @@ namespace Mygod.Edge.Tool
             return pos + 7 - posBit - posBit;           // return posBase + (7 - posBit);
         }
 
-        public Color GetColor(int x, int y)
+        public Color GetColor(int x, int y, bool half = false)
         {
-            return detailedInformation?[y * Width + x] ?? (this[x, y] ? Color.White : Color.Black);
+            if (detailedInformation == null) InitImage(half);
+            return detailedInformation[y * Width + x];
+        }
+        public void SetColor(int x, int y, Color color, bool half = false)
+        {
+            if (detailedInformation == null) InitImage(half);
+            detailedInformation[y * Width + x] = color;
         }
         public bool this[int x, int y]
         {
@@ -1236,9 +1255,18 @@ namespace Mygod.Edge.Tool
 
         public Size3D Size;
 
+        public void InitImage()
+        {
+            for (var z = 0; z < Size.Height; z++) this[z].InitImage(z == 0);
+        }
         public Color GetColor(int x, int y, int z)
         {
-            return Size.IsBlockInArea(x, y, z) ? this[z].GetColor(x, y) : Color.Black;
+            return Size.IsBlockInArea(x, y, z) ? this[z].GetColor(x, y) : Flat.Empty;
+        }
+        public void SetColor(int x, int y, int z, Color value)
+        {
+            if (Size.IsBlockInArea(x, y, z)) this[z].SetColor(x, y, value);
+            else throw new ArgumentOutOfRangeException();
         }
         public bool this[Point3D16 point]
         {

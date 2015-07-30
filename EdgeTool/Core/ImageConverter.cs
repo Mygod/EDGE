@@ -1,24 +1,10 @@
-﻿using System.Collections;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace Mygod.Edge.Tool
 {
     public static class ImageConverter
     {
-        public static unsafe void Save(BitArray greyPixels, int width, int height, string path, bool half = false)
-        {
-            using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
-            {
-                var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                                           PixelFormat.Format32bppArgb);
-                var pointer = (uint*)data.Scan0;
-                var n = half ? 0xFFFFFF80 : 0xFFFFFFFF;
-                for (var i = 0; i < greyPixels.Length; i++) *pointer++ = greyPixels[i] ? n : 0xFF000000;
-                bitmap.UnlockBits(data);
-                bitmap.Save(path);
-            }
-        }
         public static unsafe void Save(Color[] pixels, int width, int height, string path)
         {
             using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
