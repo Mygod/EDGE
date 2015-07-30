@@ -1177,11 +1177,7 @@ namespace Mygod.Edge.Tool
             var array = new BitArray(Width * Length);
             var pos = 0;
             var hasBlock = false;
-            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++)
-            {
-                array[pos++] = this[x, y];
-                hasBlock = true;
-            }
+            for (var y = 0; y < Length; y++) for (var x = 0; x < Width; x++) hasBlock |= array[pos++] = this[x, y];
             if (hasBlock) ImageConverter.Save(array, Width, Length, path, half);
         }
 
