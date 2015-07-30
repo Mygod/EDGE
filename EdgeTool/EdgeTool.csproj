@@ -116,7 +116,24 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Core\AssetHelper.cs" />
+    <Compile Include="Core\Compiler.cs" />
     <Compile Include="Core\EdgeMod.cs" />
+    <Compile Include="Core\Level\FallingPlatform.cs" />
+    <Compile Include="Core\Level\Bumper.cs" />
+    <Compile Include="Core\Level\Button.cs" />
+    <Compile Include="Core\Level\CameraTrigger.cs" />
+    <Compile Include="Core\Level\Checkpoint.cs" />
+    <Compile Include="Core\Level\IIDReference.cs" />
+    <Compile Include="Core\Level\Level.cs" />
+    <Compile Include="Core\Level\MappingLevel.cs" />
+    <Compile Include="Core\Level\MovingPlatform.cs" />
+    <Compile Include="Core\Level\OtherCube.cs" />
+    <Compile Include="Core\Level\Prism.cs" />
+    <Compile Include="Core\Level\Resizer.cs" />
+    <Compile Include="Core\Level\Serialization.cs" />
+    <Compile Include="Core\Level\Space.cs" />
+    <Compile Include="Core\LocHelper.cs" />
     <Compile Include="Core\ModelGenerator.cs" />
     <Compile Include="Core\RectilinearPolygonSolver.cs" />
     <Compile Include="Core\TwoTribesAnimation.cs" />
@@ -177,7 +194,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Core\Helper.cs" />
-    <Compile Include="Core\Level.cs" />
+    <Compile Include="Core\Level\Misc.cs" />
     <Compile Include="Core\ImageConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -203,7 +220,7 @@
     <Resource Include="Resources\placeholder.caf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\EdgeBin.h" />
+    <None Include="Core\Level\EdgeBin.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\DotNet\Other\SevenZipSharp\SevenZip\SevenZip2010.csproj">
