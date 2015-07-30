@@ -12,15 +12,9 @@ namespace Mygod.Edge.Tool
             {
                 var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                                            PixelFormat.Format32bppArgb);
-                var pointer = (byte*)data.Scan0;
-                var n = half ? 128 : 255;
-                for (var i = 0; i < greyPixels.Length; i++)
-                {
-                    pointer[0] = (byte)(greyPixels[i] ? n : 0);
-                    pointer[1] = pointer[2] = (byte) (greyPixels[i] ? 255 : 0);
-                    pointer[3] = 255;
-                    pointer += 4;
-                }
+                var pointer = (uint*)data.Scan0;
+                var n = half ? 0xFFFFFF80 : 0xFFFFFFFF;
+                for (var i = 0; i < greyPixels.Length; i++) *pointer++ = greyPixels[i] ? n : 0xFF000000;
                 bitmap.UnlockBits(data);
                 bitmap.Save(path);
             }
