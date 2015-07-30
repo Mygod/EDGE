@@ -77,13 +77,7 @@ namespace Mygod.Edge.Tool
                     };
                     var model = models[theme];
                     short x1 = (short)(x + 1), y1 = (short)(y + 1), z1 = (short)(z + 1);
-                    float texY, texY1;
-                    if (z > 3) texY = texY1 = 0;
-                    else
-                    {
-                        texY1 = 1 - (z > 3 ? 3 : z) * 0.25F;
-                        texY = texY1 - 0.25F;
-                    }
+                    float texY1 = 1 - z * 0.25F, texY = texY1 - 0.25F;
                     if (GetInformation(x, y, z1).Height < 1 && (Math.Abs(x - level.ExitPoint.X) > 1
                         || Math.Abs(y - level.ExitPoint.Y) > 1 || z1 != level.ExitPoint.Z))
                     {
@@ -104,7 +98,7 @@ namespace Mygod.Edge.Tool
                     }
                     if (info.Height <= 0) continue;
                     var zB = z1 - info.Height;
-                    if (z <= 3) texY1 -= 0.25F * (1 - info.Height);
+                    texY1 -= 0.25F * (1 - info.Height);
                     if (GetInformation(x1, y, z).Height < info.Height)
                     {
                         model.Vertices.Add(Transform(new Vec3(x1, zB, y)));
