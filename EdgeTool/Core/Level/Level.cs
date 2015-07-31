@@ -128,8 +128,8 @@ namespace Mygod.Edge.Tool
         {
             var element = XHelper.Load(path + ".xml").GetElement("Level");
             ID = element.GetAttributeValue<int>("ID");
-            Name = element.GetAttributeValue("Name");
-            var thresholds = element.GetAttributeValue("TimeThresholds").Split(',')
+            Name = element.GetAttributeValueWithDefault("Name", string.Empty);
+            var thresholds = element.GetAttributeValueWithDefault("TimeThresholds", "1,2,3,4,5").Split(',')
                                     .Select(str => ushort.Parse(str.Trim())).ToArray();
             SPlusTime = thresholds[0];
             STime = thresholds[1];
@@ -448,10 +448,12 @@ namespace Mygod.Edge.Tool
         }
         public XElement GetXElement()
         {
-            var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Name", Name),
-                                       new XAttribute("TimeThresholds", $"{SPlusTime},{STime},{ATime},{BTime},{CTime}"),
-                                       new XAttribute("Size", Size), new XAttribute("SpawnPoint", SpawnPoint),
+            var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Size", Size),
+                                       new XAttribute("SpawnPoint", SpawnPoint),
                                        new XAttribute("ExitPoint", ExitPoint));
+            element.SetAttributeValueWithDefault("Name", Name, string.Empty);
+            element.SetAttributeValueWithDefault("TimeThresholds", $"{SPlusTime},{STime},{ATime},{BTime},{CTime}",
+                                                 "1,2,3,4,5");
             element.SetAttributeValueWithDefault("Theme", Theme);
             element.SetAttributeValueWithDefault("MusicJava", MusicJava);
             element.SetAttributeValueWithDefault("Music", Music, 6);
