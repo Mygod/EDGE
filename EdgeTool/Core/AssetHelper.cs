@@ -248,14 +248,11 @@ namespace Mygod.Edge.Tool
         {
             var element = new XElement("Vertex");
             element.SetAttributeValueWithDefault("Position", model.Vertices[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Normals))
-                element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+            if (model.HasNormals) element.SetAttributeValueWithDefault("Normal", model.Normals[index]);
+            if (model.HasColors)
                 element.SetAttributeValueWithDefault("Color", model.Colors[index].GetString(), "Transparent");
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
-                element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
-            if (model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords2))
-                element.SetAttributeValueWithDefault("TexCoords2", model.TexCoords2[index]);
+            if (model.HasTexCoords) element.SetAttributeValueWithDefault("TexCoord", model.TexCoords[index]);
+            if (model.HasTexCoords2) element.SetAttributeValueWithDefault("TexCoords2", model.TexCoords2[index]);
             return element;
         }
 
@@ -290,12 +287,9 @@ namespace Mygod.Edge.Tool
                 var modelAutoNormals = e.GetAttributeValueWithDefault("AutoNormals", modelsAutoNormals);
                 var triangles = e.ElementsCaseInsensitive("Triangle").ToArray();
                 var vertexCount = triangles.Length * 3;
-                var model = new ESOModel
+                var model = new ESOModel(numVerts: vertexCount)
                 {
-                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset"),
-                    Normals = new List<Vec3>(vertexCount), TexCoords = new List<Vec2>(vertexCount),
-                    Vertices = new List<Vec3>(vertexCount), Colors = new List<Color>(vertexCount),
-                    TexCoords2 = new List<Vec2>(vertexCount)
+                    MaterialAsset = e.GetAttributeValueWithDefault<AssetHash>("MaterialAsset")
                 };
                 foreach (var triangle in triangles)
                 {
@@ -310,35 +304,49 @@ namespace Mygod.Edge.Tool
                             (ConvertVertex(vertex.GetAttributeValueWithDefault<Vec3>("Position")))));
                         if (vertex.AttributeCaseInsensitive("Normal") != null)
                         {
+                            if (!model.HasNormals)
+                            {
+                                model.HasNormals = true;
+                                model.Normals.AddRange(
+                                    from j in Enumerable.Range(0, model.Vertices.Count - 1) select default(Vec3));
+                            }
                             normals[model.Normals.Count - i] = true;
-                            model.Normals.Add(ConvertFromVector(matrix.Transform
-                                (ConvertVector(vertex.GetAttributeValueWithDefault<Vec3>("Normal")))));
-                            model.TypeFlags |= ESOModel.Flags.Normals;
                         }
-                        if (vertex.AttributeCaseInsensitive("Color") != null)
+                        if (model.HasNormals) model.Normals.Add(ConvertFromVector(matrix.Transform(
+                            ConvertVector(vertex.GetAttributeValueWithDefault<Vec3>("Normal")))));
+                        if (!model.HasColors && vertex.AttributeCaseInsensitive("Color") != null)
                         {
-                            model.Colors.Add(Helper.Parse
-                                (vertex.GetAttributeValueWithDefault("Color", "Transparent")));
-                            model.TypeFlags |= ESOModel.Flags.Colors;
+                            model.HasColors = true;
+                            model.Colors.AddRange(
+                                from j in Enumerable.Range(0, model.Vertices.Count - 1) select Color.Transparent);
                         }
-                        if (vertex.AttributeCaseInsensitive("TexCoord") != null)
+                        if (model.HasColors)
+                            model.Colors.Add(Helper.Parse(vertex.GetAttributeValueWithDefault("Color", "Transparent")));
+                        if (!model.HasTexCoords && vertex.AttributeCaseInsensitive("TexCoord") != null)
                         {
+                            model.HasTexCoords = true;
+                            model.TexCoords.AddRange(
+                                from j in Enumerable.Range(0, model.Vertices.Count - 1) select default(Vec2));
+                        }
+                        if (model.HasTexCoords)
                             model.TexCoords.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoord"));
-                            model.TypeFlags |= ESOModel.Flags.TexCoords;
-                        }
-                        if (vertex.AttributeCaseInsensitive("TexCoords2") != null)
+                        if (!model.HasTexCoords2 && vertex.AttributeCaseInsensitive("TexCoord2") != null)
                         {
-                            model.TexCoords2.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoords2"));
-                            model.TypeFlags |= ESOModel.Flags.TexCoords2;
+                            model.HasTexCoords2 = true;
+                            model.TexCoords2.AddRange(
+                                from j in Enumerable.Range(0, model.Vertices.Count - 1) select default(Vec2));
                         }
+                        if (model.HasTexCoords2)
+                            model.TexCoords2.Add(vertex.GetAttributeValueWithDefault<Vec2>("TexCoord2"));
                     }
                     if (!autoNormals) continue;
+                    model.HasNormals = true;
+                    model.Normals.AddRange(from j in Enumerable.Range(0, i - model.Normals.Count) select default(Vec3));
                     var p0 = ConvertVertex(model.Vertices[i]);
                     var normal = Vector3D.CrossProduct(ConvertVertex(model.Vertices[i + 2]) - p0,
                         ConvertVertex(model.Vertices[i + 1]) - p0);
                     var vec3 = new Vec3((float) normal.X, (float) normal.Y, (float) normal.Z);
                     for (var j = i; j < model.Vertices.Count; j++) if (!normals[j - i]) model.Normals[j] = vec3;
-                    model.TypeFlags |= ESOModel.Flags.Normals;
                 }
                 models.Add(model);
             }

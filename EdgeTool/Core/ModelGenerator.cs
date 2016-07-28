@@ -70,11 +70,11 @@ namespace Mygod.Edge.Tool
                     var info = GetInformation(x, y, z);
                     if (info.Height < 0) continue;
                     var theme = themes[info.Theme];
-                    if (models[theme] == null) models[theme] = new ESOModel
-                    {
-                        TypeFlags = ESOModel.Flags.Normals | ESOModel.Flags.TexCoords,
-                        MaterialAsset = AssetHash.Parse(Materials[theme] + ModelsNamespace)
-                    };
+                    if (models[theme] == null)
+                        models[theme] = new ESOModel(ESOModel.Flags.Normals | ESOModel.Flags.TexCoords)
+                        {
+                            MaterialAsset = AssetHash.Parse(Materials[theme] + ModelsNamespace)
+                        };
                     var model = models[theme];
                     short x1 = (short)(x + 1), y1 = (short)(y + 1), z1 = (short)(z + 1);
                     float texY1 = 1 - z * 0.25F, texY = texY1 - 0.25F;

@@ -18,17 +18,29 @@ namespace Mygod.Edge.Tool.LibTwoTribes
             TexCoords2 = 0x00000008 // only seen in RUSH for the checkerboard pattern
         }
 
-        private List<Color> m_Colors = new List<Color>();
+        private List<Color> m_Colors;
 
         private AssetHash m_MaterialAsset;
-        private List<Vec3> m_Normals = new List<Vec3>();
-        private List<Vec2> m_TexCoords = new List<Vec2>();
+        private List<Vec3> m_Normals;
+        private List<Vec2> m_TexCoords;
         private Flags m_TypeFlags;
-        private List<Vec3> m_Vertices = new List<Vec3>();
-        private List<Vec2> mTexCoords2 = new List<Vec2>();
+        private List<Vec3> m_Vertices;
+        private List<Vec2> mTexCoords2;
 
-        public ESOModel()
+        /// <summary>
+        /// Initialize ESOModel with the number of vertices.
+        /// </summary>
+        /// <param name="typeFlags">Initial value for type flags.</param>
+        /// <param name="numVerts">Number of vertices there will be. This is only used for reserving storage. You can
+        /// have other number of vertices too if you'd like to.</param>
+        public ESOModel(Flags typeFlags = 0, int numVerts = 0)
         {
+            m_TypeFlags = typeFlags;
+            m_Vertices = new List<Vec3>(numVerts);
+            m_Colors = new List<Color>(HasColors ? numVerts : 0);
+            m_Normals = new List<Vec3>(HasNormals ? numVerts : 0);
+            m_TexCoords = new List<Vec2>(HasTexCoords ? numVerts : 0);
+            mTexCoords2 = new List<Vec2>(HasTexCoords2 ? numVerts : 0);
         }
 
         private ESOModel(Stream stream)
@@ -48,7 +60,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 for (var i = 0; i < numVerts; i++)
                     m_Vertices.Add(Vec3.FromStream(stream));
 
-                if (m_TypeFlags.HasFlag(Flags.Normals))
+                if (HasNormals)
                 {
                     m_Normals.Capacity = numVerts;
                     m_Normals = new List<Vec3>(numVerts);
@@ -56,21 +68,21 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                         m_Normals.Add(Vec3.FromStream(stream));
                 }
 
-                if (m_TypeFlags.HasFlag(Flags.Colors))
+                if (HasColors)
                 {
                     m_Colors.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         m_Colors.Add(Color.FromArgb(br.ReadInt32()));
                 }
 
-                if (m_TypeFlags.HasFlag(Flags.TexCoords))
+                if (HasTexCoords)
                 {
                     m_TexCoords.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         m_TexCoords.Add(Vec2.FromStream(stream));
                 }
 
-                if (m_TypeFlags.HasFlag(Flags.TexCoords2))
+                if (HasTexCoords2)
                 {
                     mTexCoords2.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
@@ -95,6 +107,27 @@ namespace Mygod.Edge.Tool.LibTwoTribes
         public List<Vec2> TexCoords { get { return m_TexCoords; } set { m_TexCoords = value; } }
         public List<Vec2> TexCoords2 { get { return mTexCoords2; } set { mTexCoords2 = value; } }
         // public ushort[] Indices { get { return m_Indices; } set { m_Indices = value; } }
+
+        public bool HasNormals
+        {
+            get { return TypeFlags.HasFlag(Flags.Normals); }
+            set { if (value) TypeFlags |= Flags.Normals; else TypeFlags &= ~Flags.Normals; }
+        }
+        public bool HasColors
+        {
+            get { return TypeFlags.HasFlag(Flags.Colors); }
+            set { if (value) TypeFlags |= Flags.Colors; else TypeFlags &= ~Flags.Colors; }
+        }
+        public bool HasTexCoords
+        {
+            get { return TypeFlags.HasFlag(Flags.TexCoords); }
+            set { if (value) TypeFlags |= Flags.TexCoords; else TypeFlags &= ~Flags.TexCoords; }
+        }
+        public bool HasTexCoords2
+        {
+            get { return TypeFlags.HasFlag(Flags.TexCoords2); }
+            set { if (value) TypeFlags |= Flags.TexCoords2; else TypeFlags &= ~Flags.TexCoords2; }
+        }
 
         public static ESOModel FromStream(Stream stream)
         {

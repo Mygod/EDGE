@@ -44,7 +44,7 @@ namespace Mygod.Edge.Tool
                     };
                     var ema = EMA.FromFile(Path.Combine(MainWindow.Edge.ModelsDirectory,
                                                         model.MaterialAsset + ".ema"));
-                    if (ema.Textures.Length > 0 && model.TypeFlags.HasFlag(ESOModel.Flags.TexCoords))
+                    if (ema.Textures.Length > 0 && model.HasTexCoords)
                     {
                         geom.TextureCoordinates = new PointCollection(model.TexCoords.Select(ConvertTexCoord));
                         var etx = ETX.FromFile(Path.Combine(MainWindow.Edge.TexturesDirectory,
@@ -53,7 +53,7 @@ namespace Mygod.Edge.Tool
                         Viewport2DVisual3D.SetIsVisualHostMaterial(material, true);
                     }
                     else image = new BitmapImage();
-                    if (!parentMatrix.HasValue && model.TypeFlags.HasFlag(ESOModel.Flags.Colors))
+                    if (!parentMatrix.HasValue && model.HasColors)
                         TaskDialog.Show(this, Localization.Warning, Localization.ModelColorWarning,
                                         Localization.ModelColorWarningDetails, TaskDialogType.Warning);
                     for (var i = model.Vertices.Count - 1; i >= 0; i--) geom.TriangleIndices.Add(i);
