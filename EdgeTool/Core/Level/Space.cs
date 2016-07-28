@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -54,8 +55,9 @@ namespace Mygod.Edge.Tool
         {
             var numbers = str.Trim('(', ')').Split(',');
             byte x, y;
-            if (numbers.Length != 2 || !byte.TryParse(numbers[0].Trim(), out x) || !byte.TryParse
-                (numbers[1].Trim(), out y))
+            if (numbers.Length != 2 ||
+                !byte.TryParse(numbers[0].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out x) ||
+                !byte.TryParse(numbers[1].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out y))
                 throw new FormatException(Localization.UnrecognizedCoordinate);
             return new Point2D8(x, y);
         }
@@ -133,7 +135,8 @@ namespace Mygod.Edge.Tool
 
         public static Point3D16 Parse(string str)
         {
-            var numbers = str.Trim('(', ')').Split(',').Select(short.Parse).ToArray();
+            var numbers =
+                str.Trim('(', ')').Split(',').Select(s => short.Parse(s, CultureInfo.InvariantCulture)).ToArray();
             return new Point3D16(numbers[0], numbers[1], numbers[2]);
         }
 
@@ -263,8 +266,10 @@ namespace Mygod.Edge.Tool
             var numbers = str.Split('x');
             ushort width, length;
             byte height;
-            if (numbers.Length != 3 || !ushort.TryParse(numbers[0].Trim(), out width)
-                || !ushort.TryParse(numbers[1].Trim(), out length) || !byte.TryParse(numbers[2].Trim(), out height))
+            if (numbers.Length != 3 ||
+                !ushort.TryParse(numbers[0].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out width) ||
+                !ushort.TryParse(numbers[1].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out length) ||
+                !byte.TryParse(numbers[2].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
                 throw new FormatException(Localization.UnrecognizedSize);
             return new Size3D(height, width, length);
         }

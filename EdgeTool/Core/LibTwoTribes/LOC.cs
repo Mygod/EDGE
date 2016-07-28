@@ -114,10 +114,10 @@ namespace Mygod.Edge.Tool.LibTwoTribes
                 }
 
             if (lang_id < 0)
-                throw new Exception(string.Format("Requested language {0} was not found.", lang));
+                throw new Exception($"Requested language {lang} was not found.");
 
             if (key_id < 0)
-                throw new Exception(string.Format("Requested key {0} was not found.", key.ToString("X8")));
+                throw new Exception($"Requested key {key.ToString("X8")} was not found.");
 
             return m_StringData[lang_id, key_id];
         }

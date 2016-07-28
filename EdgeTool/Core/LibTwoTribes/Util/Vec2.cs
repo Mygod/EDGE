@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -90,12 +91,13 @@ namespace Mygod.Edge.Tool.LibTwoTribes.Util
 
         public override string ToString()
         {
-            return string.Format("{0},{1}", X, Y);
+            return FormattableString.Invariant($"{X},{Y}");
         }
 
         public static Vec2 Parse(string value)
         {
-            float[] numbers = value.Trim('(', ')').Split(',').Select(float.Parse).ToArray();
+            var numbers =
+                value.Trim('(', ')').Split(',').Select(f => float.Parse(f, CultureInfo.InvariantCulture)).ToArray();
             return new Vec2(numbers[0], numbers[1]);
         }
     }

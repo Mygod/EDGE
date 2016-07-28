@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -326,7 +327,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return Payload == 0 ? ID.Name : $"{ID.Name} ({Payload})";
+            return Payload == 0 ? ID.Name : FormattableString.Invariant($"{ID.Name} ({Payload})");
         }
 
         public static BlockEvent Parse(Level parent, BlockEventType type, string value)
@@ -334,7 +335,8 @@ namespace Mygod.Edge.Tool
             var match = Parser.Match(value);
             if (!match.Success) throw new FormatException(Localization.UnrecognizedEvent);
             var result = new BlockEvent(parent) { Type = type, id = new IDReference(match.Groups[1].Value.Trim()) };
-            if (match.Groups[3].Success) result.Payload = ushort.Parse(match.Groups[3].Value.Trim());
+            if (match.Groups[3].Success)
+                result.Payload = ushort.Parse(match.Groups[3].Value.Trim(), CultureInfo.InvariantCulture);
             return result;
         }
     }

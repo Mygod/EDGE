@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -52,13 +53,14 @@ namespace Mygod.Edge.Tool.LibTwoTribes
 
         public static AssetHash Parse(string value)
         {
-            return new AssetHash(uint.Parse(value.Substring(0, 8), NumberStyles.HexNumber),
-                uint.Parse(value.Substring(8, 8), NumberStyles.HexNumber));
+            return new AssetHash(
+                uint.Parse(value.Substring(0, 8), NumberStyles.HexNumber, CultureInfo.InvariantCulture),
+                uint.Parse(value.Substring(8, 8), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
         }
 
         public override string ToString()
         {
-            return m_Name.ToString("X8") + m_Namespace.ToString("X8");
+            return FormattableString.Invariant($"{m_Name:X8}{m_Namespace:X8}");
         }
     }
 }

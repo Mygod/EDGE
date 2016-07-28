@@ -46,15 +46,12 @@ namespace Mygod.Edge.Tool
             if (!Reset)
                 Warning.WriteLine(string.Format(Localization.AdvancedCameraModeDisabled, "CameraTrigger",
                                                 "@Reset, @Angle, @FieldOfView"));
-            if (element.AttributeCaseInsensitive("StartDelay") != null)
-                Warning.WriteLine
-(string.Format(Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@StartDelay"));
-            if (element.AttributeCaseInsensitive("Duration") != null)
-                Warning.WriteLine
-(string.Format(Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@Duration"));
-            if (element.AttributeCaseInsensitive("SingleUse") != null)
-                Warning.WriteLine
-(string.Format(Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@SingleUse"));
+            if (element.AttributeCaseInsensitive("StartDelay") != null) Warning.WriteLine(string.Format(
+                Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@StartDelay"));
+            if (element.AttributeCaseInsensitive("Duration") != null) Warning.WriteLine(string.Format(
+                Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@Duration"));
+            if (element.AttributeCaseInsensitive("SingleUse") != null) Warning.WriteLine(string.Format(
+                Localization.AdvancedCameraModeDisabled, "CameraTrigger", "@SingleUse"));
         }
 
         private short zoom, value;
