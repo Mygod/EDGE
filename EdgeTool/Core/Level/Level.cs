@@ -450,8 +450,8 @@ namespace Mygod.Edge.Tool
         {
             var element = new XElement("Level", new XAttribute("ID", ID), new XAttribute("Size", Size));
             element.SetAttributeValueWithDefault("Name", Name, string.Empty);
-            element.SetAttributeValueWithDefault("TimeThresholds", $"{SPlusTime},{STime},{ATime},{BTime},{CTime}",
-                                                 "1,2,3,4,5");
+            element.SetAttributeValueWithDefault("TimeThresholds",
+                FormattableString.Invariant($"{SPlusTime},{STime},{ATime},{BTime},{CTime}"), "1,2,3,4,5");
             element.SetAttributeValue("SpawnPoint", SpawnPoint);
             element.SetAttributeValue("ExitPoint", ExitPoint);
             element.SetAttributeValueWithDefault("Theme", Theme);

@@ -188,7 +188,7 @@ namespace Mygod.Edge.Tool
                                 }
                                 var unxwb = new Process { StartInfo = new ProcessStartInfo(
                                     Path.Combine(CurrentApp.Directory, "Resources/Libraries/unxwb.exe"),
-                                    $"-d \"{outputPath}\" -b \"{xsb}\" {offset} \"{xwb}\"")
+                                    FormattableString.Invariant($"-d \"{outputPath}\" -b \"{xsb}\" {offset} \"{xwb}\""))
                                 { UseShellExecute = false, CreateNoWindow = true } };
                                 unxwb.Start();
                                 unxwb.WaitForExit();

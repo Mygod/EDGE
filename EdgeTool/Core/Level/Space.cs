@@ -42,7 +42,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return $"{X},{Y}";
+            return FormattableString.Invariant($"{X},{Y}");
         }
 
         public void Write(BinaryWriter writer)
@@ -123,7 +123,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return $"{X},{Y},{Z}";
+            return FormattableString.Invariant($"{X},{Y},{Z}");
         }
 
         public void Write(BinaryWriter writer)
@@ -220,7 +220,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return $"{Width}x{Length}";
+            return FormattableString.Invariant($"{Width}x{Length}");
         }
 
         public void Write(BinaryWriter writer)
@@ -259,7 +259,7 @@ namespace Mygod.Edge.Tool
 
         public override string ToString()
         {
-            return $"{Width}x{Length}x{Height}";
+            return FormattableString.Invariant($"{Width}x{Length}x{Height}");
         }
         public static Size3D Parse(string str)
         {

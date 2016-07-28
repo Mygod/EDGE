@@ -14,7 +14,7 @@ namespace Mygod.Edge.Tool
             for (var i = 0; i < loc.Languages.Length; i++) worksheet.Cells[0, i + 1] = new Cell(loc.Languages[i]);
             for (var i = 0; i < loc.StringKeys.Length; i++)
             {
-                worksheet.Cells[i + 1, 0] = new Cell(loc.StringKeys[i].ToString(CultureInfo.InvariantCulture));
+                worksheet.Cells[i + 1, 0] = new Cell(loc.StringKeys[i].ToStringInvariant());
                 for (var j = 0; j < loc.Languages.Length; j++)
                     worksheet.Cells[i + 1, j + 1] = new Cell(loc.GetString(loc.Languages[j], loc.StringKeys[i]));
             }

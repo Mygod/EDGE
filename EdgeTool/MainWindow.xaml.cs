@@ -540,7 +540,7 @@ namespace Mygod.Edge.Tool
                     dialog.Text = "iTunesMetadata.plist";
                     var target = Path.Combine(configDir, "iTunesMetadata.plist");
                     File.WriteAllText(target, VersionMatcher.Replace(File.ReadAllText(target),
-                                      m => (int.Parse(m.Value) + 1).ToString(CultureInfo.InvariantCulture)));
+                                      m => (int.Parse(m.Value, CultureInfo.InvariantCulture) + 1).ToStringInvariant()));
                 }
                 if (cancelled) return;
                 UpdateProgress(++i);
@@ -1228,8 +1228,8 @@ namespace Mygod.Edge.Tool
         {
             if (!(value is ushort)) return null;
             var seconds = (ushort)value;
-            if (seconds < 60) return seconds.ToString(CultureInfo.InvariantCulture) + '"';
-            return $"{seconds / 60}'{seconds % 60:00}\"";
+            if (seconds < 60) return seconds.ToStringInvariant() + '"';
+            return FormattableString.Invariant($"{seconds / 60}'{seconds % 60:00}\"");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1258,7 +1258,7 @@ namespace Mygod.Edge.Tool
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value != null ? value.ToString() + '%' : Localization.Unknown;
+            return value != null ? ((double) value).ToStringInvariant() + '%' : Localization.Unknown;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

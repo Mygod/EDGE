@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Mygod.Edge.Tool.LibTwoTribes.Util
 {
@@ -37,12 +38,12 @@ namespace Mygod.Edge.Tool.LibTwoTribes.Util
                 case EngineVersion.VersionDf03EdgeOld:
                     return "DF-03 [EDGE OLD]";
             }
-            return "[0x" + ((ulong) version).ToString("X16") + "]";
+            return FormattableString.Invariant($"[0x{(ulong) version:X16}]");
         }
 
         public static string CrcFullName(string name, string nameSpace, bool stripExtension = true)
         {
-            return CrcName(name, stripExtension).ToString("X8") + CrcNamespace(nameSpace).ToString("X8");
+            return FormattableString.Invariant($"{CrcName(name, stripExtension):X8}{CrcNamespace(nameSpace):X8}");
         }
 
         public static uint CrcName(string name, bool stripExtension = true)

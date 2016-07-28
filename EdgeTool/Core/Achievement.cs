@@ -114,7 +114,7 @@ namespace Mygod.Edge.Tool
             }
         }
 
-        public static string CountString => Current.Count.ToString(CultureInfo.InvariantCulture);
+        public static string CountString => Current.Count.ToStringInvariant();
 
         public static Achievements Current { get; private set; }
     }

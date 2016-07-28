@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -59,9 +60,9 @@ namespace Mygod.Edge.Tool
         {
             // it will only return the first if there is one or more
             foreach (var first in Lookup[color.ToArgb()]) return first.Name;
-            var result = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+            var result = FormattableString.Invariant($"{color.R:X2}{color.G:X2}{color.B:X2}");
             if (color.A == 255) return '#' + result;
-            return $"#{color.A:X2}{result}";
+            return FormattableString.Invariant($"#{color.A:X2}{result}");
         }
 
         public static Color Parse(string value)
@@ -79,7 +80,8 @@ namespace Mygod.Edge.Tool
             if (match.Success)
             {
                 name = match.Groups[1].Value;
-                compiledFileName = match.Groups[2].Value + AssetUtil.CrcNamespace(nameSpace).ToString("X8");
+                compiledFileName = match.Groups[2].Value +
+                                   AssetUtil.CrcNamespace(nameSpace).ToString("X8", CultureInfo.InvariantCulture);
             }
             else
             {
@@ -91,7 +93,7 @@ namespace Mygod.Edge.Tool
         public static string GetDecompiledFileName(string fileName, Asset asset)
         {
             var correctHash = fileName.Substring(0, 8);
-            if (correctHash == AssetUtil.CrcName(asset.AssetHeader.Name).ToString("X8"))
+            if (correctHash == AssetUtil.CrcName(asset.AssetHeader.Name).ToString("X8", CultureInfo.InvariantCulture))
                 return asset.AssetHeader.Name;
             return asset.AssetHeader.Name + '.' + correctHash;
         }
