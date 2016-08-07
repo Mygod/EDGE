@@ -27,6 +27,16 @@ namespace Mygod.Edge.Tool.LibTwoTribes
         private List<Vec3> m_Vertices;
         private List<Vec2> mTexCoords2;
 
+        private void Initialize(Flags typeFlags, int numVerts)
+        {
+            m_TypeFlags = typeFlags;
+            m_Vertices = new List<Vec3>(numVerts);
+            m_Colors = new List<Color>(HasColors ? numVerts : 0);
+            m_Normals = new List<Vec3>(HasNormals ? numVerts : 0);
+            m_TexCoords = new List<Vec2>(HasTexCoords ? numVerts : 0);
+            mTexCoords2 = new List<Vec2>(HasTexCoords2 ? numVerts : 0);
+        }
+
         /// <summary>
         /// Initialize ESOModel with the number of vertices.
         /// </summary>
@@ -35,12 +45,7 @@ namespace Mygod.Edge.Tool.LibTwoTribes
         /// have other number of vertices too if you'd like to.</param>
         public ESOModel(Flags typeFlags = 0, int numVerts = 0)
         {
-            m_TypeFlags = typeFlags;
-            m_Vertices = new List<Vec3>(numVerts);
-            m_Colors = new List<Color>(HasColors ? numVerts : 0);
-            m_Normals = new List<Vec3>(HasNormals ? numVerts : 0);
-            m_TexCoords = new List<Vec2>(HasTexCoords ? numVerts : 0);
-            mTexCoords2 = new List<Vec2>(HasTexCoords2 ? numVerts : 0);
+            Initialize(typeFlags, numVerts);
         }
 
         private ESOModel(Stream stream)
@@ -51,40 +56,35 @@ namespace Mygod.Edge.Tool.LibTwoTribes
 
                 m_TypeFlags = (Flags) br.ReadUInt32();
                 int numVerts = br.ReadInt32();
+                Initialize(m_TypeFlags, numVerts);
                 if (br.ReadInt32() * 3 != numVerts)
                     Warning.WriteLine("Polygon count is not correct! It will be ignored.");
                 int unknown = br.ReadInt32(); // not a clue. seems to be always zero.
                 if (unknown != 0) Warning.WriteLine("eso_model_t::unknown1 != 0");
 
-                m_Vertices.Capacity = numVerts;
                 for (var i = 0; i < numVerts; i++)
                     m_Vertices.Add(Vec3.FromStream(stream));
 
                 if (HasNormals)
                 {
-                    m_Normals.Capacity = numVerts;
-                    m_Normals = new List<Vec3>(numVerts);
                     for (var i = 0; i < numVerts; i++)
                         m_Normals.Add(Vec3.FromStream(stream));
                 }
 
                 if (HasColors)
                 {
-                    m_Colors.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         m_Colors.Add(Color.FromArgb(br.ReadInt32()));
                 }
 
                 if (HasTexCoords)
                 {
-                    m_TexCoords.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         m_TexCoords.Add(Vec2.FromStream(stream));
                 }
 
                 if (HasTexCoords2)
                 {
-                    mTexCoords2.Capacity = numVerts;
                     for (int i = 0; i < numVerts; i++)
                         mTexCoords2.Add(Vec2.FromStream(stream));
                 }
