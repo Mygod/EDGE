@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mygod")]
 [assembly: AssemblyProduct("EdgeTool")]
-[assembly: AssemblyCopyright("Copyright © Mygod 2012-2015")]
+[assembly: AssemblyCopyright("Copyright © Mygod 2012-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

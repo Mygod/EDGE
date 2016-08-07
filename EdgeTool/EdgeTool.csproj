@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Mygod.Edge.Tool</RootNamespace>
     <AssemblyName>EdgeTool</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -227,10 +227,6 @@
       <Project>{4960dd14-3431-47ec-b9d9-9d2730a98dc3}</Project>
       <Name>SevenZip2010</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\GitHub\MygodLibrary\MygodLibrary\MygodLibrary.csproj">
-      <Project>{d915ced8-ac3f-40d6-8c95-4d176c924a61}</Project>
-      <Name>MygodLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\DotNet\Other\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj">
       <Project>{0716f257-72dd-41ef-8e79-54ba388e3ab1}</Project>
       <Name>ExcelLibrary</Name>
@@ -242,6 +238,10 @@
     <ProjectReference Include="..\..\..\DotNet\Windows API Code Pack 1.1\source\WindowsAPICodePack\Shell\Shell.csproj">
       <Project>{aa0c00cb-8699-4f37-bfae-40ca87acc06d}</Project>
       <Name>Shell</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MygodLibrary\MygodLibrary\MygodLibrary.csproj">
+      <Project>{d915ced8-ac3f-40d6-8c95-4d176c924a61}</Project>
+      <Name>MygodLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -452,8 +452,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(ProjectDir)Resources\InsertIcons.exe $(TargetPath) $(ProjectDir)Resources\Icons
-"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" "$(TargetDir)$(TargetFileName)"
-$(TargetDir)Resources\Libraries\zh-Hans
+"C:\Program Files (x86)\Windows Kits\10\bin\x86\signtool.exe" sign /v /f "$(ProjectDir)Mygod.pfx" "$(TargetDir)$(TargetFileName)"
+mkdir $(TargetDir)Resources\Libraries\zh-Hans
 move /y $(TargetDir)zh-Hans\EdgeTool.resources.dll $(TargetDir)Resources\Libraries\zh-Hans\EdgeTool.resources.dll
 rd /s /q $(TargetDir)zh-Hans
 move /y $(TargetDir)*.dll $(TargetDir)Resources\Libraries

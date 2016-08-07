@@ -1253,12 +1253,12 @@ namespace Mygod.Edge.Tool
         }
     }
 
-    [ValueConversion(typeof(double), typeof(string))]
+    [ValueConversion(typeof(string), typeof(string))]
     public sealed class GlobalPercentTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value != null ? ((double) value).ToStringInvariant() + '%' : Localization.Unknown;
+            return value != null ? value.ToString() + '%' : Localization.Unknown;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
