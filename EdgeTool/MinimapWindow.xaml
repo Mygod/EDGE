@@ -1,7 +1,11 @@
-﻿<Window x:Class="Mygod.Edge.Tool.MinimapWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:m="http://schemas.mygod.tk/wpf"
-        xmlns:local="clr-namespace:Mygod.Edge.Tool" Height="400" SizeToContent="Width"
-        Icon="{x:Static m:CurrentApp.MainIcon}">
+﻿<m:PerMonitorDpiAwareWindow x:Class="Mygod.Edge.Tool.MinimapWindow"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:m="http://schemas.mygod.tk/wpf"
+                            xmlns:local="clr-namespace:Mygod.Edge.Tool"
+                            Height="400"
+                            SizeToContent="Width"
+                            Icon="{x:Static m:CurrentApp.MainIcon}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -36,4 +40,4 @@
             <Button Content="{x:Static local:Localization.MinimapSaveButton}" Click="Save" HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
-</Window>
+</m:PerMonitorDpiAwareWindow>
