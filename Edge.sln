@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeTool", "EdgeTool\EdgeTool.csproj", "{C718F9F3-2AF6-44A0-AA69-DB58C12363ED}"
 EndProject
@@ -117,8 +117,8 @@ Global
 		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|x64.ActiveCfg = Release|Any CPU
-		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|x86.ActiveCfg = Release|x86
-		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|x86.Build.0 = Release|x86
+		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|x86.ActiveCfg = Release|Any CPU
+		{D915CED8-AC3F-40D6-8C95-4D176C924A61}.Release|x86.Build.0 = Release|Any CPU
 		{0716F257-72DD-41EF-8E79-54BA388E3AB1}.CodeAnalysisDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0716F257-72DD-41EF-8E79-54BA388E3AB1}.CodeAnalysisDebug|Any CPU.Build.0 = Debug|Any CPU
 		{0716F257-72DD-41EF-8E79-54BA388E3AB1}.CodeAnalysisDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
