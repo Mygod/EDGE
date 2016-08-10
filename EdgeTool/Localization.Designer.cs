@@ -929,7 +929,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FallingPlatform: Z-coordinate is not larger than ! Player block will be unable to climb or EDGE on this platform!.
+        ///   Looks up a localized string similar to FallingPlatform: Z-coordinate is not larger than 0! Player block will be unable to climb or EDGE on this platform!.
         /// </summary>
         public static string FallingPlatformZOutOfRange {
             get {

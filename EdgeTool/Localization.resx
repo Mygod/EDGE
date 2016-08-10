@@ -689,7 +689,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value>FallingPlatform: Putting it at {0} will make it visible and un-collidable! Please move the platform or enlarge the level size.</value>
   </data>
   <data name="FallingPlatformZOutOfRange" xml:space="preserve">
-    <value>FallingPlatform: Z-coordinate is not larger than ! Player block will be unable to climb or EDGE on this platform!</value>
+    <value>FallingPlatform: Z-coordinate is not larger than 0! Player block will be unable to climb or EDGE on this platform!</value>
   </data>
   <data name="FieldOfViewIgnored" xml:space="preserve">
     <value>{0}: @Angle and @FieldOfView are both set! @FieldOfView will be ignored.</value>
