@@ -420,14 +420,14 @@ namespace Mygod.Edge.Tool
                             level.EasyCompile(target);
                         }
                     }
-                    dialog.Text = name = levelSoundList[i] + ".caf";
+                    dialog.Text = name = levelSoundList[i] + ".caf.ogg";
                     if (!KeepRegexCheck(name))
                     {
                         source = levelPack[i].NameSfx == null ? null
                             : FallbackPath(Path.Combine("sfx", "levelsfx_" + levelPack[i].NameSfx + ".wav"), true);
                         target = Path.Combine(outputDir, name);
                         if (source != null) Ffmpeg(source, target);
-                        else File.WriteAllBytes(target, CurrentApp.ReadResourceBytes("Resources/placeholder.caf"));
+                        else File.WriteAllBytes(target, CurrentApp.ReadResourceBytes("Resources/placeholder.ogg"));
                     }
                 }
                 catch (Exception exc)
