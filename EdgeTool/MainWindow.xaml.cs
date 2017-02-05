@@ -123,22 +123,6 @@ namespace Mygod.Edge.Tool
             {
                 "hangout", "hammer", "compost", "babylonian", "swirl", "density", "magic", "cubism", "mystic",
                 "indiana", "chunk", "goliath", "404", "gears", "fireworks", "zias", "winners"
-            },
-            MobileMusics =
-            {
-                "00_Title.mp3", "01_Eternity.mp3", "02_Quiet.mp3", "03_Pad.mp3", null, "05_Tec.mp3", "06_Kakkoi.mp3",
-                "07_Dark.mp3", "08_Squadron.mp3", "09_8bits.mp3", "10_Pixel.mp3", "11_Jupiter.mp3", "12_Shame.mp3",
-                "13_Debrief.mp3", "14_Space.mp3", "15_Voyage_geometrique.mp3", "16_Mzone.mp3", "17_R2.mp3",
-                "18_Mystery_cube.mp3", "19_Duty.mp3", "20_perfect_cell_you_are_perfect_1.mp3", "21_fun.mp3",
-                "22_LOL.mp3", "23_lostway.mp3", "24_wall_street.mp3"
-            },
-            MobileSounds =
-            {
-                "bumper", "enlarger", "finish", "gameover", "hologram_loop", "hologram_on-off", "menu_back",
-                "menu_confirm", "menu_confirm_final", "menu_move", "pf", "pff_amorce", "pff_fall", "player_fall",
-                "player_step_0", "player_step_1", "player_step_2", "player_step_3", "player_step_4",
-                "player_step_mini_0", "player_step_mini_1", "player_step_mini_2", "player_step_mini_3",
-                "player_step_mini_4", "prism", "shrinker", "switch"
             };
 
         private static void ShowInExplorer(string path)
@@ -337,7 +321,7 @@ namespace Mygod.Edge.Tool
 
         private static readonly Lazy<Level> PlaceholderLevel = new Lazy<Level>(() =>
             new Level("PLACEHOLDER", new Size3D(1, 1, 1)) { ModelTheme = 99, SpawnPoint = new Point3D16(0, 0, 1) });
-        private string sfxPath, configDir, ffmpeg, outputDir, orgDir;
+        private string sfxPath, configDir, ffmpeg, outputDir;
         private bool ios;
         private string SfxPath
         {
@@ -421,8 +405,7 @@ namespace Mygod.Edge.Tool
                 {
                     string target = Path.Combine(outputDir, name), source = levelPack[i].FileName == null ? null
                         : FallbackPath(Path.Combine("levels", name = levelPack[i].FileName + ".bin"));
-                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
-                    else
+                    if (!KeepRegexCheck(name))
                     {
                         if (source == null) PlaceholderLevel.Value.EasyCompile(target);
                         else if (easy) File.Copy(source, target, true);
@@ -438,8 +421,7 @@ namespace Mygod.Edge.Tool
                         }
                     }
                     dialog.Text = name = levelSoundList[i] + ".caf";
-                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
-                    else
+                    if (!KeepRegexCheck(name))
                     {
                         source = levelPack[i].NameSfx == null ? null
                             : FallbackPath(Path.Combine("sfx", "levelsfx_" + levelPack[i].NameSfx + ".wav"), true);
@@ -470,7 +452,6 @@ namespace Mygod.Edge.Tool
             try
             {
                 configDir = Path.GetDirectoryName(arg.ToString());
-                orgDir = Path.Combine(configDir, "org");
                 ffmpeg = Path.Combine(configDir, "ffmpeg.exe");
                 var root = XHelper.Load(arg.ToString()).Root;
                 outputDir = Path.Combine(configDir, (ios = root.GetAttributeValue("preset") == "ios")
@@ -488,50 +469,54 @@ namespace Mygod.Edge.Tool
                 var sprs = Directory.EnumerateFiles(Path.Combine(Edge.GameDirectory, "sprites"), "*.spr")
                                     .Select(Path.GetFileName).ToList();
                 if (cancelled) return;
-                UpdateProgress(0, 92 + MobileSounds.Length + sprs.Count + (ios ? 1 : 0));
+                var sounds = Directory.EnumerateFiles(outputDir, "*.caf.ogg").Select(file =>
+                    Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file))).ToList();
+                if (cancelled) return;
+                UpdateProgress(0, 92 + sounds.Count + sprs.Count + (ios ? 1 : 0));
                 GenerateMobileLevelFiles(0, 48, levelPackA, MobileStandardLevels, MobileStandardLevelSounds);
                 if (cancelled) return;
                 GenerateMobileLevelFiles(48, 17, levelPackB, MobileBonusLevels, MobileBonusLevelSounds, true);
                 if (cancelled) return;
                 UpdateProgress(65);
                 dialog.Text = "cos.bin";
-                File.Copy(KeepRegexCheck("cos.bin") ? Path.Combine(orgDir, "cos.bin") : FallbackPath("cos.bin"),
-                          Path.Combine(outputDir, "cos.bin"), true);
+                if (!KeepRegexCheck("cos.bin"))
+                    File.Copy(FallbackPath("cos.bin"), Path.Combine(outputDir, "cos.bin"), true);
                 if (cancelled) return;
                 UpdateProgress(66);
                 dialog.Text = "font.bin";
-                File.Copy(KeepRegexCheck("font.bin") ? Path.Combine(orgDir, "font.bin") : FallbackPath("font.bin"),
-                          Path.Combine(outputDir, "font.bin"), true);
+                if (!KeepRegexCheck("font.bin"))
+                    File.Copy(FallbackPath("font.bin"), Path.Combine(outputDir, "font.bin"), true);
                 int i;
                 for (i = 0; i <= 24; ++i)
                 {
-                    if (MobileMusics[i] == null) continue;
                     if (cancelled) return;
+                    var filename = Level.Musics[i] + (i == 4 ? ".wav" : ".mp3") + ".ogg";
+                    if (KeepRegexCheck(filename)) continue;
                     UpdateProgress(67 + i);
-                    dialog.Text = "font.bin";
-                    string source = KeepRegexCheck(MobileMusics[i]) ? Path.Combine(orgDir, MobileMusics[i])
-                                                 : FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
-                           target = Path.Combine(outputDir, MobileMusics[i]);
+                    dialog.Text = filename;
+                    string source = FallbackPath(Path.Combine("music", Level.Musics[i] + ".ogg")),
+                           target = Path.Combine(outputDir, filename);
                     if (ios) Ffmpeg(source, target, false);
                     else File.Copy(source, target, true);
                 }
                 i = 91;
-                foreach (var sound in MobileSounds)
+                foreach (var sound in sounds)
                 {
                     if (cancelled) return;
-                    string name = sound + ".caf", target = Path.Combine(outputDir, name);
+                    string name = sound + ".wav", target = Path.Combine(outputDir, name + ".caf.ogg");
+                    if (!KeepRegexCheck(name)) continue;
                     UpdateProgress(++i);
                     dialog.Text = name;
-                    if (KeepRegexCheck(name)) File.Copy(Path.Combine(orgDir, name), target, true);
-                    else Ffmpeg(FallbackPath(Path.Combine("sfx", sound + ".wav"), true), target);
+                    name = Path.Combine("sfx", name);
+                    if (File.Exists(name)) Ffmpeg(FallbackPath(name, true), target);
                 }
                 foreach (var name in sprs)
                 {
                     if (cancelled) return;
+                    if (!KeepRegexCheck(name)) continue;
                     UpdateProgress(++i);
                     dialog.Text = name;
-                    File.Copy(KeepRegexCheck(name) ? Path.Combine(orgDir, name)
-                                  : FallbackPath(Path.Combine("sprites", name)), Path.Combine(outputDir, name), true);
+                    File.Copy(FallbackPath(Path.Combine("sprites", name)), Path.Combine(outputDir, name), true);
                 }
                 if (cancelled) return;
                 if (ios)
@@ -581,7 +566,7 @@ namespace Mygod.Edge.Tool
         }
         private void Help(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers.html");
+            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers.html");
         }
 
         private void PopContextMenu(object sender, RoutedEventArgs e)
@@ -665,7 +650,7 @@ namespace Mygod.Edge.Tool
         private void ShowMappingXmlHelp(object sender, RoutedEventArgs e)
         {
             Process.Start
-                ("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/mapping-xml.html");
+                ("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/mapping-xml.html");
         }
 
         #endregion
@@ -733,11 +718,11 @@ namespace Mygod.Edge.Tool
 
         private void ShowCommandLineHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/edgetool/command-line-arguments.html");
+            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/edgetool/command-line-arguments.html");
         }
         private void OpenReference(object sender, MouseButtonEventArgs e)
         {
-            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/" +
+            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/" +
                 ((FrameworkElement)sender).Tag + ".html");
         }
 
@@ -1048,13 +1033,13 @@ namespace Mygod.Edge.Tool
 
         private void GetModelTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/" +
+            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/" +
                           "drawing-model-tree.html");
         }
 
         private void GetAnimationTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/ean/" +
+            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/ean/" +
                           "drawing-animation-tree.html");
         }
 

@@ -22,7 +22,7 @@
             <JumpTask Title="{x:Static local:Localization.JumpTaskCheckForUpdates}" Arguments="-c4u"
                       CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="6" />
             <JumpTask Title="{x:Static local:Localization.JumpTaskHelp}"
-                      ApplicationPath="https://mygod.tk/misc/edgefans-archive/edgefans.tk/developers.html"
+                      ApplicationPath="https://mygod.be/misc/edgefans-archive/edgefans.tk/developers.html"
                       CustomCategory="{x:Static local:Localization.JumpListToolkit}" IconResourceIndex="4" />
         </JumpList>
     </JumpList.JumpList>

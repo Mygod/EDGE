@@ -1,7 +1,7 @@
 ﻿<m:GlassWindow x:Class="Mygod.Edge.Tool.KeyEventRecorder" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Closing="OnClosing"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="{x:Static m:CurrentApp.MainIcon}"
-               xmlns:m="http://schemas.mygod.tk/wpf" Title="{x:Static local:Localization.KeyEventRecorder}"
+               xmlns:m="http://schemas.mygod.be/wpf" Title="{x:Static local:Localization.KeyEventRecorder}"
                xmlns:local="clr-namespace:Mygod.Edge.Tool">
     <m:GlassWindow.Resources>
         <Style TargetType="TextBlock">
