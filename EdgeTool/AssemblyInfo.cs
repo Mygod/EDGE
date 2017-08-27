@@ -13,7 +13,7 @@ using System.Windows.Media;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mygod")]
 [assembly: AssemblyProduct("EdgeTool")]
-[assembly: AssemblyCopyright("Copyright © Mygod 2012-2016")]
+[assembly: AssemblyCopyright("Copyright © Mygod 2012-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
