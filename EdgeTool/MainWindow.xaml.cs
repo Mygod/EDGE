@@ -566,7 +566,7 @@ namespace Mygod.Edge.Tool
         }
         private void Help(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers.html");
+            Process.Start("https://edgefans.mygod.be/edgefans.tk/developers.html");
         }
 
         private void PopContextMenu(object sender, RoutedEventArgs e)
@@ -650,7 +650,7 @@ namespace Mygod.Edge.Tool
         private void ShowMappingXmlHelp(object sender, RoutedEventArgs e)
         {
             Process.Start
-                ("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/mapping-xml.html");
+                ("https://edgefans.mygod.be/edgefans.tk/developers/file-formats/mapping-xml.html");
         }
 
         #endregion
@@ -718,11 +718,11 @@ namespace Mygod.Edge.Tool
 
         private void ShowCommandLineHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/edgetool/command-line-arguments.html");
+            Process.Start("https://edgefans.mygod.be/edgefans.tk/edgetool/command-line-arguments.html");
         }
         private void OpenReference(object sender, MouseButtonEventArgs e)
         {
-            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/" +
+            Process.Start("https://edgefans.mygod.be/edgefans.tk/developers/file-formats/" +
                 ((FrameworkElement)sender).Tag + ".html");
         }
 
@@ -1033,13 +1033,13 @@ namespace Mygod.Edge.Tool
 
         private void GetModelTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/" +
+            Process.Start("https://edgefans.mygod.be/edgefans.tk/developers/file-formats/asset/" +
                           "drawing-model-tree.html");
         }
 
         private void GetAnimationTreeHelp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://mygod.be/misc/edgefans-archive/edgefans.tk/developers/file-formats/asset/ean/" +
+            Process.Start("https://edgefans.mygod.be/edgefans.tk/developers/file-formats/asset/ean/" +
                           "drawing-animation-tree.html");
         }
 
