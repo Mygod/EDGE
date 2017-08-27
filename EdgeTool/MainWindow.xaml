@@ -398,6 +398,11 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <ListBox Name="DecompileHistoryBox" x:FieldModifier="private" SelectionMode="Extended">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <EventSetter Event="MouseDoubleClick" Handler="DecompileHistory" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Converter={StaticResource Files}}" />
