@@ -911,6 +911,15 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FallingPlatform: {0} is out of level boundaries. Player block will not be able to  climb from/to this block! Please move the platform or enlarge the level size..
+        /// </summary>
+        public static string FallingPlatformOutOfRange {
+            get {
+                return ResourceManager.GetString("FallingPlatformOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FallingPlatform: There is already a static block at {0}! This static block will be corrupted..
         /// </summary>
         public static string FallingPlatformStaticBlock {
@@ -925,15 +934,6 @@ namespace Mygod.Edge.Tool {
         public static string FallingPlatformXYOutOfRange {
             get {
                 return ResourceManager.GetString("FallingPlatformXYOutOfRange", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FallingPlatform: Z-coordinate is not larger than 0! Player block will be unable to climb or EDGE on this platform!.
-        /// </summary>
-        public static string FallingPlatformZOutOfRange {
-            get {
-                return ResourceManager.GetString("FallingPlatformZOutOfRange", resourceCulture);
             }
         }
         

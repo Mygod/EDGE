@@ -601,8 +601,8 @@
   <data name="FallingPlatformXYOutOfRange" xml:space="preserve">
     <value>FallingPlatform 元素：将可掉落平台放在 {0} 将使其可见但可被穿透！请移动该平台位置或扩大关卡大小。</value>
   </data>
-  <data name="FallingPlatformZOutOfRange" xml:space="preserve">
-    <value>FallingPlatform 元素：Z 坐标小于等于 0！玩家方块在此可掉落平台上将无法向上翻滚/EDGE！</value>
+  <data name="FallingPlatformOutOfRange" xml:space="preserve">
+    <value>FallingPlatform 元素：{0} 超出关卡边界！玩家方块将无法在此或从此翻滚。请移动该平台位置或扩大关卡大小。</value>
   </data>
   <data name="FieldOfViewIgnored" xml:space="preserve">
     <value>{0} 元素：@Angle 与 @FieldOfView 被同时设置！@FieldOfView 将会被忽略。</value>

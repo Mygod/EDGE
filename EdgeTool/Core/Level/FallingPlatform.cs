@@ -35,11 +35,12 @@ namespace Mygod.Edge.Tool
                     Warning.WriteLine(string.Format(Localization.ExitPointCorrupted, "FallingPlatform"));
                 if (parent.CollisionMap[value])
                     Warning.WriteLine(string.Format(Localization.FallingPlatformStaticBlock, value));
-                if (value.Z <= 0) Warning.WriteLine(Localization.FallingPlatformZOutOfRange);
-                else if (value.Z <= parent.Size.Height
-                    && (value.X >= 0 && value.X <= parent.Size.Width && value.Y == parent.Size.Length
-                        || value.X == parent.Size.Width && value.Y >= 0 && value.Y <= parent.Size.Length))
+                if (value.X < 0 || value.X > parent.Size.Width || value.Y < 0 || value.Y > parent.Size.Height ||
+                    value.Z <= 0 || value.Z > parent.Size.Height)
+                    Warning.WriteLine(string.Format(Localization.FallingPlatformOutOfRange, value));
+                else if (value.Y == parent.Size.Length || value.X == parent.Size.Width)
                     Warning.WriteLine(string.Format(Localization.FallingPlatformXYOutOfRange, value));
+
             }
         }
 
