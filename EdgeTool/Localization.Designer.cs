@@ -1865,7 +1865,7 @@ namespace Mygod.Edge.Tool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start after (de)compilation:.
+        ///   Looks up a localized string similar to Open after (de)compilation:.
         /// </summary>
         public static string StartAfterCompileLabel {
             get {

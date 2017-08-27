@@ -489,7 +489,7 @@ Help: Right click on any file format below to view its document, or</value>
     <value>Spawn Point</value>
   </data>
   <data name="StartAfterCompileLabel" xml:space="preserve">
-    <value>Start after (de)compilation:</value>
+    <value>Open after (de)compilation:</value>
   </data>
   <data name="SwitchToSelectedProfileButton" xml:space="preserve">
     <value>Switch to selecte_d profile</value>
